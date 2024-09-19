@@ -4,11 +4,13 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { LoginComponent } from './components/LoginComponent';
+import {AddUser} from './components/AddUser';
+import { ListUser } from './components/ListUser';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <LoginComponent />
+    <ListUser />
   </React.StrictMode>
 );
 
