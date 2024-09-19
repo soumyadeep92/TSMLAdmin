@@ -1,0 +1,133 @@
+.sidebar {
+	background-color: #1D1C2E;
+	color: white;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	overflow-x: hidden;
+	transition: width 0.3s ease-in-out;
+	padding-top: 60px;
+}
+
+.sidebar.collapsed {
+	width: 80px;
+}
+
+.sidebar.expanded {
+	width: 327px;
+}
+
+.sidebar .nav-link {
+	color: white;
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	transition: background-color 0.3s ease;
+}
+
+.sidebar .sidebar-icon {
+	font-size: 24px;
+	margin-right: 10px;
+}
+
+.sidebar .link-text {
+	display: inline-block;
+	align-items: center;
+}
+
+.content {
+	flex-grow: 1;
+	padding: 20px;
+	background-color: #000;
+	overflow-y: auto;
+	transition: margin-left 0.3s ease-in-out;
+	margin-left: 100px;
+}
+
+.sidebar.expanded~.content {
+	margin-left: 327px;
+}
+
+.main-content {
+	flex-grow: 1;
+	padding: 16px;
+	margin-left: 150px;
+	margin-top: 40px;
+	transition: margin-left 0.3s ease;
+	width: 1082px;
+	height: 95px;
+	background-color: white;
+	position: relative;
+}
+
+.sidebar.expanded~.main-content {
+	margin-left: 380px;
+}
+
+.link-text {
+	display: inline-block;
+	padding-left: 10px;
+	font-size: 17px;
+	margin-right: 10px;
+	position: fixed;
+}
+
+#navdiv span {
+	vertical-align: middle;
+}
+
+#navdiv {
+	padding-left: 15px;
+}
+
+.right-div {
+	margin-left: 450px;
+}
+
+.end-div {
+	margin-left: 100px;
+}
+
+.right-div~.end-div {
+	margin-left: 50px;
+}
+
+
+.badgenotif {
+	position: absolute;
+	border-radius: 50%;
+	width: 25px;
+	height: 25px;
+	background-color: red;
+	color: white;
+	padding: 2px 3px 5px 4px;
+	bottom: 40px;
+	left: 786px;
+}
+
+.badgemessage {
+	position: absolute;
+	border-radius: 50%;
+	width: 25px;
+	height: 25px;
+	background-color: red;
+	color: white;
+	padding: 2px 3px 5px 4px;
+	bottom: 40px;
+	left: 833px;
+}
+
+.btn-mj-small:hover {
+	background-color: #3A85E5;
+}
+
+.btn-mj-small {
+	background-color: #1D1C2E;
+	border: none;
+}
+
+.nav-link-main:hover {
+	background-color: #3A85E5;
+}

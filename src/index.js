@@ -6,11 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import { LoginComponent } from './components/LoginComponent';
 import {AddUser} from './components/AddUser';
 import { ListUser } from './components/ListUser';
+import {LoginComponent} from './components/LoginComponent';
+import {Sidebar} from './components/Sidebar';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <ListUser />
+    <LoginComponent/>
   </React.StrictMode>
 );
 
