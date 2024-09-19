@@ -27,10 +27,6 @@
 	transition: background-color 0.3s ease;
 }
 
-.sidebar .nav-link:hover {
-	background-color: #3A85E5;
-}
-
 .sidebar .sidebar-icon {
 	font-size: 24px;
 	margin-right: 10px;
@@ -87,5 +83,51 @@
 }
 
 .right-div {
-	margin-left: 350px;
+	margin-left: 450px;
+}
+
+.end-div {
+	margin-left: 100px;
+}
+
+.right-div~.end-div {
+	margin-left: 50px;
+}
+
+
+.badgenotif {
+	position: absolute;
+	border-radius: 50%;
+	width: 25px;
+	height: 25px;
+	background-color: red;
+	color: white;
+	padding: 2px 3px 5px 4px;
+	bottom: 40px;
+	left: 786px;
+}
+
+.badgemessage {
+	position: absolute;
+	border-radius: 50%;
+	width: 25px;
+	height: 25px;
+	background-color: red;
+	color: white;
+	padding: 2px 3px 5px 4px;
+	bottom: 40px;
+	left: 833px;
+}
+
+.btn-mj-small:hover {
+	background-color: #3A85E5;
+}
+
+.btn-mj-small {
+	background-color: #1D1C2E;
+	border: none;
+}
+
+.nav-link-main:hover {
+	background-color: #3A85E5;
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Nav, Navbar, Container, Image, InputGroup, Form, Row, Col } from 'react-bootstrap';
+import { Button, Nav, Navbar, Container, Image, InputGroup, Form, Row, Col, Badge } from 'react-bootstrap';
 import './Sidebar.css';
 import MjLogo from '../assets/mj-logo.png';
 import MjSmallLogo from '../assets/mj-small-logo.png';
@@ -28,18 +28,25 @@ export const Sidebar = () => {
               <div style={SmallImageStyle}><Image src={MjSmallLogo} /></div>}
             <br /><hr />
             <div id="navdiv">
-              <Nav.Link href="#dashboard">
-                {!isCollapsed ? <div><Image src={HomeIcon} /><span className="link-text">Dashboard</span></div> : <div><Image src={HomeIcon} /></div>}
-              </Nav.Link>
+            {!isCollapsed ? <Nav.Link className="nav-link-main" href="#dashboard">
+                <div>
+                  <><Image src={HomeIcon} /><span className="link-text">Dashboard</span></> 
+                </div>
+              </Nav.Link>: <><Button className="btn-mj-small" href="#dashboard"><Image src={HomeIcon} /></Button><br/></>
+            }
               <br />
-              <Nav.Link href="#usersgroup">
-                {!isCollapsed ? <div><Image src={UsersGroupIcon} /><span className="link-text">User Management</span></div> : <div><Image src={UsersGroupIcon} /></div>}
-              </Nav.Link>
+              {!isCollapsed ?
+              <Nav.Link className="nav-link-main" href="#usersgroup">
+                <div>
+                   <><Image src={UsersGroupIcon} /><span className="link-text">User Management</span></>
+                </div>
+              </Nav.Link> : <><Button className="btn-mj-small" href="#usersgroup"><Image src={UsersGroupIcon} /></Button><br/></>}
               <br />
-              <Nav.Link href="#logout">
-                {!isCollapsed ? <div><Image src={LogoutIcon} /><span className="link-text">Logout</span></div> : <div><Image src={LogoutIcon} /></div>}
-              </Nav.Link>
-              <br />
+              {!isCollapsed ? <Nav.Link className="nav-link-main" href="#logout">
+                <div>
+                  <><Image src={LogoutIcon} /><span className="link-text">Logout</span></> 
+                </div>
+              </Nav.Link>: <Button className="btn-mj-small" href="#usersgroup"><Image src={LogoutIcon} /></Button>}
             </div>
           </Nav>
         </div>
@@ -66,21 +73,28 @@ export const Sidebar = () => {
             </Container>
             <div className="right-div">
               <Container fluid="true">
-                <Row>
-                  <Col xs="3">
-                    <Col>
-                      <Image src={NotificationPicture} />
-                    </Col>
-                    <Col>
-                      <Image src={MessagePicture} />
-                    </Col>
+                <Row className="g-4">
+                  <Col>
+                    <Image src={MessagePicture} />
+                    <span className="badgemessage">19</span>
                   </Col>
+                  <Col>
+                    <Image src={NotificationPicture} />
+                    <span className="badgenotif">19</span>
+                  </Col>
+                </Row>
+              </Container>
+            </div>
+            <div className="end-div">
+              <Container fluid="true">
+                <Row className="g-2">
                   <Col>
                     <Image src={ProfilePicture} />
                   </Col>
                   <Col>
-                    <Form.Label style={{ fontSize: "16px" }} className="mb-1">Ramesh Roy</Form.Label>
-                    <Form.Label style={{ fontSize: "14px" }} className="mb-6">Admin</Form.Label>
+                    <Form.Label style={{ fontSize: "16px", position: "absolute" }} className="mb-1">Ramesh Roy</Form.Label>
+                    <br />
+                    <Form.Label style={{ fontSize: "14px" }} className="mb-1">Admin</Form.Label>
                   </Col>
                 </Row>
               </Container>
