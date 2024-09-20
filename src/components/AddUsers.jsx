@@ -3,7 +3,7 @@ import { Container, Row, Col, Form, Button,InputGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-export const AddUser = () => {
+export const AddUsers = () => {
     const inputFile = useRef(null);
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');

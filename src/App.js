@@ -1,10 +1,10 @@
 import './App.css';
 import { Routes, Route, useLocation } from "react-router-dom";
 import { LoginComponent } from './components/LoginComponent';
-import { AddUser } from './components/AddUsers';
-import { ListUser } from './components/ListUsers';
+import { AddUsers } from './components/AddUsers';
+// import { ListUsers } from './components/ListUsers';
 import { Sidebar } from './components/Sidebar';
-import { Dashboard } from './components/DashBoard';
+import { Dashboard } from './components/Dashboard';
 
 function App() {
   const location = useLocation();
@@ -19,10 +19,9 @@ function App() {
       <Routes>
         <Route exact path='/' element={<LoginComponent />} />
         <Route exact path='/dashboard' element={<Dashboard />} />
-        <Route exact path='/userGroup/addUser' element={<AddUser />} />
-        <Route exact path='/userGroup/listUser' element={<ListUser />} />
+        <Route exact path='/userGroup/addUser' element={<AddUsers />} />
+        {/* <Route exact path='/userGroup/listUser' element={<ListUsers />} /> */}
       </Routes>
-
     </div>
   );
 }
