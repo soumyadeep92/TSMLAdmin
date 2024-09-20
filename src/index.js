@@ -1,19 +1,16 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { LoginComponent } from './components/LoginComponent';
-import {AddUser} from './components/AddUser';
-import { ListUser } from './components/ListUser';
-import {LoginComponent} from './components/LoginComponent';
-import {Sidebar} from './components/Sidebar';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ListUser />
-    <LoginComponent/>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 );
 

@@ -11,6 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ProfilePicture from '../assets/profileImage.png';
 import MessagePicture from '../assets/mail.png';
 import NotificationPicture from '../assets/bell.png';
+import { NavLink, Link } from "react-router-dom";
+import NavDropdown from "react-bootstrap/NavDropdown";
 
 export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -28,19 +30,28 @@ export const Sidebar = () => {
               <div style={SmallImageStyle}><Image src={MjSmallLogo} /></div>}
             <br /><hr />
             <div id="navdiv">
-            {!isCollapsed ? <Nav.Link className="nav-link-main" href="#dashboard">
+            {!isCollapsed ? <Link className="nav-link-main" to="/dashboard">
                 <div>
                   <><Image src={HomeIcon} /><span className="link-text">Dashboard</span></> 
                 </div>
-              </Nav.Link>: <><Button className="btn-mj-small" href="#dashboard"><Image src={HomeIcon} /></Button><br/></>
+              </Link>: <><Button className="btn-mj-small" href="/dashboard"><Image src={HomeIcon} /></Button><br/></>
             }
               <br />
               {!isCollapsed ?
-              <Nav.Link className="nav-link-main" href="#usersgroup">
-                <div>
-                   <><Image src={UsersGroupIcon} /><span className="link-text">User Management</span></>
-                </div>
-              </Nav.Link> : <><Button className="btn-mj-small" href="#usersgroup"><Image src={UsersGroupIcon} /></Button><br/></>}
+
+                <Nav.Link className="nav-link-main">
+                  <NavDropdown title="User Management" id="collasible-nav-dropdown">
+                    <Image src={UsersGroupIcon} />
+                    <NavDropdown.Item>
+                      <Link to="/userGroup/addUser" className="ddMenu" >Add User</Link>
+                    </NavDropdown.Item>
+                    <NavDropdown.Item>
+                      <Link to="/userGroup/listUser" className="ddMenu" >User List</Link>
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </Nav.Link>
+
+              : <><Button className="btn-mj-small" href="#usersgroup"><Image src={UsersGroupIcon} /></Button><br/></>}
               <br />
               {!isCollapsed ? <Nav.Link className="nav-link-main" href="#logout">
                 <div>
