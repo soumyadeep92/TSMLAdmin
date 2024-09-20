@@ -5,8 +5,14 @@ import LoginImg from '../assets/Login.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router';
 
 export const LoginComponent=()=>{
+
+    const navigate = useNavigate();
+    const signIn = ()=>{
+        navigate('/dashboard');
+    }
     return(
         <>
             <Container fluid="true">
@@ -43,7 +49,7 @@ export const LoginComponent=()=>{
                                 label={`Remember Me`} style={remenberMeStyle}
                             />
                             
-                            <Button style={buttonStyle}>Sign In</Button>
+                            <Button style={buttonStyle} onClick={signIn}>Sign In</Button>
                         </Form>
                     </Col>
                 </Row>
