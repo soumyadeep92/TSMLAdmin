@@ -27,6 +27,15 @@
 	transition: background-color 0.3s ease;
 }
 
+.sidebar .nav-dropdown {
+	color: white;
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	transition: background-color 0.3s ease;
+}
+
 .sidebar .sidebar-icon {
 	font-size: 24px;
 	margin-right: 10px;
@@ -86,6 +95,10 @@
 	margin-left: 450px;
 }
 
+.drop-div {
+	padding-left: 25px;
+}
+
 .end-div {
 	margin-left: 100px;
 }
@@ -93,7 +106,6 @@
 .right-div~.end-div {
 	margin-left: 50px;
 }
-
 
 .badgenotif {
 	position: absolute;
@@ -130,4 +142,30 @@
 
 .nav-link-main:hover {
 	background-color: #3A85E5;
+}
+
+.list-items:hover {
+	background-color: #3A85E5;
+}
+
+.sidebar .nav-dropdown-link {
+	color: white;
+	padding-left: 10px;
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	transition: background-color 0.3s ease;
+}
+
+.dropdownbutton {
+	margin-left: 255px;
+}
+
+.dropdown-container.collapsed {
+	display: none;
+}
+
+.dropdown-container.expanded {
+	display: block;
+	margin-left: 40px;
 }
