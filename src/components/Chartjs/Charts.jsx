@@ -10,7 +10,8 @@ export const Charts = (props) => {
                     options={props.options}
                     series={props.series}
                     type={props.type}
-                    width={"380"}
+                    width={props.width}
+                    height={props.height}
                 />
             </div>
             <div id="html-dist"></div>

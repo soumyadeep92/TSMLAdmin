@@ -143,6 +143,9 @@ export const Sidebar = () => {
                 </Row>
               </Container>
             </div>
+            <div>
+              bcwqfbvwquifb
+            </div>
           </Navbar>
         </div>
       </div >
