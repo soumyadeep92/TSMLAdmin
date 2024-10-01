@@ -1,7 +1,8 @@
+import AdminLayout from '../../layout/AdminLayout'
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button,InputGroup } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { Link, useNavigate } from "react-router-dom";
+import { BASE_URL, API_URL } from '../../constant';
 
 export const AddUser = () => {
     const inputFile = useRef(null);
@@ -24,24 +25,33 @@ export const AddUser = () => {
             setError(true)
             return false;
         }
-        if(!file){
-            setError(true)
-            return false; 
-        }
+        // if(!file){
+        //     setError(true)
+        //     return false; 
+        // }
         const formData = new FormData();
-        formData.append('file', file);
-        formData.append('fileName', file.name);
-        formData.append('name', state.name);
+        formData.append('userFile', file);
+        formData.append('user_code', state.userId);
         formData.append('phone', state.phone);
         formData.append('email', state.email);
         formData.append('location', state.location);
-        formData.append('status', state.status);
-        formData.append('userId', state.userId);
-        formData.append('userType', state.userType);
+        formData.append('status_id', state.status);
+        formData.append('user_type_id', state.userType);
 
-        for (var pair of formData.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
-        }
+        console.log("sss");
+
+        let result = await fetch(`${BASE_URL}${API_URL}add-user`,{
+            method:'post',
+            body:formData,
+            headers:{
+                'Content-Type':'multipart/form-data',
+            }
+        });
+        ///result = await result.json();
+
+        // for (var pair of formData.entries()) {
+        //     console.log(pair[0] + ', ' + pair[1]);
+        // }
     }
 
     const formClear = async (e) => {
@@ -67,10 +77,16 @@ export const AddUser = () => {
     },[file])
     
     return (
-        <>
+        <AdminLayout>
+           
             <Container fluid="true">
-                <p style={textStyle}>Add User</p>
-                <Form style={formStyle}>
+                <Row>
+                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Add User</p></Col>
+                    <Col sm={6}></Col>
+                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/add-user" style={{ textDecoration: 'none' }}>Add User</Link></p></Col>
+                </Row>
+                <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
+                <Form style={{padding:'25px 20px 25px 25px'}}>
                     <Row className="g-2">
                         <Col md>
                             <Form.Label>Name</Form.Label><span style={asteriskStyle}> *</span>
@@ -139,7 +155,8 @@ export const AddUser = () => {
                         </Col>
                     </Row>
                 </Form>
-                <Row className="g-2" style={{ marginLeft: "505px" }}>
+                </Row>
+                <Row className="g-2" style={{ marginLeft: "629px" }}>
                     <Col md style={{ textAlign: "right" }}>
                         <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                     </Col>
@@ -148,7 +165,8 @@ export const AddUser = () => {
                     </Col>
                 </Row>
             </Container>
-        </>
+            
+        </AdminLayout>
     )
 }
 const invalidInput = {
@@ -173,22 +191,6 @@ const submitbuttonStyle = {
 const row_style = {
     marginTop: "20px"
 }
-const textStyle = {
-    marginLeft: "0px",
-    fontSize: "30px",
-    fontWeight: "700",
-    textAlign: "center",
-    fontFamily: "Mulish",
-    width: "399px",
-    height: "18px",
-    marginTop: "100px"
-}
-
-const formStyle = {
-    paddingTop: "20px",
-    paddingLeft: "50px",
-}
-
 const asteriskStyle = {
     color: "red"
 }

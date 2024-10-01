@@ -2,19 +2,22 @@ import { useState } from 'react';
 import { Charts } from './Charts';
 import * as dayjs from "dayjs";
 import * as moment from 'moment';
+import { useSelector } from 'react-redux';
 
-export const LineChart = () => {
+export const AreaChart = () => {
+
+    const isToggled = useSelector((state) => state.toggle.isToggled);
 
     const [height] = useState(350);
-    const [width] = useState(580);
+
     const [series] = useState([{
-        name: "Desktops",
+        name: "CVR",
         data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
     }]);
     const [options] = useState({
         chart: {
             height: 350,
-            type: 'line',
+            type: 'area',
             zoom: {
                 enabled: false
             }
@@ -35,12 +38,19 @@ export const LineChart = () => {
                 opacity: 0.5
             },
         },
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
         xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            type: 'string',
+        },
+        yaxis: {
+            opposite: true
+        },
+        legend: {
+        horizontalAlign: 'left'
         }
     });
 
   return (
-    <Charts options={options} type="line" series={series} width={width} height={height} />
+    <Charts options={options} type="area" series={series} width={isToggled==true?640:540} height={height} />
   );
 }

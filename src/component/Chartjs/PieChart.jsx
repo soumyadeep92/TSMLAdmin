@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Charts } from './Charts';
 import * as dayjs from "dayjs";
 import * as moment from 'moment';
+import ReactApexChart from 'react-apexcharts';
 
 export const PieChart = () => {
 
     const [height] = useState(350);
-    const [width] = useState(450);
+    const [width] = useState(350);
     const [series] = useState([44, 55, 13, 43, 22]);
     const [options] = useState({
         chart: {
@@ -30,6 +31,6 @@ export const PieChart = () => {
     });
 
   return (
-    <Charts options={options} type="pie" series={series} width={width} height={height} />
+     <Charts options={options} type="pie" series={series} width={width} height={height} />
   );
 }

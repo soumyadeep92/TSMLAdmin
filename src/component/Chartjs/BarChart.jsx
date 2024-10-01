@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { Charts } from './Charts';
 import * as dayjs from "dayjs";
 import * as moment from 'moment';
+import { useSelector } from 'react-redux';
 
 export const BarChart = () => {
+    const isToggled = useSelector((state) => state.toggle.isToggled);
 
     const [height] = useState(280);
-    const [width] = useState(1080);
+    
     const [series] = useState([{
-        name: "sales",
+        name: "cvr",
         data: [{
             x: '2019/01/01',
             y: 400
@@ -44,7 +46,7 @@ export const BarChart = () => {
             type: 'y',
             labels: {
                 formatter: function (val) {
-                    return "Q" + moment(val).quarter()
+                    return "Q" + moment(val).quarter();
                 }
             },
             group: {
@@ -61,17 +63,17 @@ export const BarChart = () => {
         // title: {
         //     text: 'Customer Wise CVR',
         // },
-        tooltip: {
-            x: {
-                formatter: function (val) {
-                    return "Q" + moment(val).quarter() + " " + moment(val).format("YYYY")
-                }
-            }
-        },
+        // tooltip: {
+        //     x: {
+        //         formatter: function (val) {
+        //             return "Q" + moment(val).quarter() + " " + moment(val).format("YYYY").toString();
+        //         }
+        //     }
+        // },
     },
     );
 
   return (
-    <Charts options={options} type="bar" series={series} width={width} height={height} />
+    <Charts options={options} type="bar" series={series} width={isToggled==true?1140:960} height={height} />
   );
 }
