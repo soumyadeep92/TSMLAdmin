@@ -7,6 +7,8 @@ import { faSearch, faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowDown } from 'react-feather';
 import { BASE_URL, API_URL } from '../../constant';
+import fetchWithAuth from '../../fetchWithAuth';
+
 
 export const ListUser = () => {
     const navigate = useNavigate();
@@ -52,13 +54,13 @@ export const ListUser = () => {
     }, [])
 
     const getUser = async () => {
-        let result = await fetch(`${BASE_URL}${API_URL}list-user`, {
+        let result = await fetchWithAuth(`${BASE_URL}${API_URL}list-user`, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
             }
         });
-        result = await result.json();
+        //result = await result.json();
         //console.log(result.data[0]);
         if (result.status === '1') {
             const itemElements = [];

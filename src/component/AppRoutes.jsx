@@ -15,6 +15,7 @@ import { ListReason } from '../pages/reason-for-not-buying/ListReason'
 import PrivateComponent from './PrivateComponent'
 
 const AppRoutes = () => {
+  
   return (
     <>
     <BrowserRouter>

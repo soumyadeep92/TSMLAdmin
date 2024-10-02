@@ -3,8 +3,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button,InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL, API_URL } from '../../constant';
+import fetchWithAuth from '../../fetchWithAuth';
 
 export const AddUser = () => {
+    const navigate = useNavigate();
     const inputFile = useRef(null);
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
@@ -20,17 +22,42 @@ export const AddUser = () => {
             status: "",
         }
     );
+    const [erroremail, setErroremail] = useState(false);
+    const [erroremailmsg, setErroremailMsg] = useState('');
+    const [errorphone, setErrorphone] = useState(false);
+    const [errorphonemsg, setErrorphoneMsg] = useState('');
+    const [errorname, setErrorname] = useState(false);
+    const [errornamemsg, setErrornameMsg] = useState('');
+    const [errorcode, setErrorcode] = useState(false);
+    const [errorcodemsg, setErrorcodeMsg] = useState('');
+    const [errorfile, setErrorfile] = useState(false);
+    const [errorfilemsg, setErrorfileMsg] = useState('');
     const addUser = async () => {
         if (!state.name || !state.phone || !state.email || !state.location || !state.status || !state.userId || !state.userType) {
             setError(true)
             return false;
         }
-        // if(!file){
-        //     setError(true)
-        //     return false; 
-        // }
+        console.log('file', file);
+        if(file){
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            const maxSize = 5 * 1024; // 5KB
+            if (!allowedTypes.includes(file.type)) {
+                setErrorfile(true);
+                setErrorfileMsg('Only JPEG, JPG, and PNG files are allowed!');
+                return false; 
+            }
+            if (file.size > maxSize) {
+                setErrorfile(true);
+                setErrorfileMsg('File size must be less than 5KB!');
+                return false; 
+            }
+        }else{
+            setError(true)
+            return false; 
+        }
         const formData = new FormData();
-        formData.append('userFile', file);
+        formData.append('file', file);
+        formData.append('username', state.name);
         formData.append('user_code', state.userId);
         formData.append('phone', state.phone);
         formData.append('email', state.email);
@@ -38,17 +65,61 @@ export const AddUser = () => {
         formData.append('status_id', state.status);
         formData.append('user_type_id', state.userType);
 
-        console.log("sss");
-
-        let result = await fetch(`${BASE_URL}${API_URL}add-user`,{
+        let result = await fetchWithAuth(`${BASE_URL}${API_URL}add-user`,{
             method:'post',
             body:formData,
-            headers:{
-                'Content-Type':'multipart/form-data',
-            }
+            headers:{}
         });
-        ///result = await result.json();
-
+        //result = await result.json();
+        console.log('result',result);
+        if (result.status === '5') {
+            setErroremail(true);
+            setErrorphone(false);
+            setErrorname(false);
+            setErrorcode(false);
+            setErrorfile(false);
+            setErroremailMsg(result.message);
+            return false;
+        }
+        if (result.status === '6') {
+            setErrorphone(true);
+            setErroremail(false);
+            setErrorname(false);
+            setErrorcode(false);
+            setErrorfile(false);
+            setErrorphoneMsg(result.message);
+            return false;
+        }
+        if (result.status === '7') {
+            setErrorname(true);
+            setErroremail(false);
+            setErrorphone(false);
+            setErrorcode(false);
+            setErrorfile(false);
+            setErrornameMsg(result.message);
+            return false;
+        }
+        if (result.status === '8') {
+            setErrorcode(true);
+            setErroremail(false);
+            setErrorphone(false);
+            setErrorname(false);
+            setErrorfile(false);
+            setErrorcodeMsg(result.message);
+            return false;
+        }
+        if (result.status === '9') {
+            setErrorfile(true);
+            setErrorcode(false);
+            setErroremail(false);
+            setErrorphone(false);
+            setErrorname(false);
+            setErrorfileMsg(result.message);
+            return false;
+        }
+        if (result.status === '1') {
+            navigate('/list-user');
+        }
         // for (var pair of formData.entries()) {
         //     console.log(pair[0] + ', ' + pair[1]);
         // }
@@ -92,11 +163,13 @@ export const AddUser = () => {
                             <Form.Label>Name</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Control value={state.name} onChange={(e) => { setState({ ...state, name: e.target.value }) }} type="text" />
                             {error && !state.name && <span style={invalidInput}>Enter Name</span>}
+                            {errorname && <span style={invalidInput}>{errornamemsg}</span>}
                         </Col>
                         <Col md>
                             <Form.Label>User Id</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Control value={state.userId} onChange={(e) => { setState({ ...state, userId: e.target.value }) }} type="text" />
                             {error && !state.userId && <span style={invalidInput}>Enter UserId</span>}
+                            {errorcode && <span style={invalidInput}>{errorcodemsg}</span>}
                         </Col>
                     </Row>
                     <Row className="g-2" style={row_style}>
@@ -114,6 +187,7 @@ export const AddUser = () => {
                             <Form.Label>Phone No.</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Control value={state.phone} onChange={(e) => { setState({ ...state, phone: e.target.value }) }} type="text" />
                             {error && !state.phone && <span style={invalidInput}>Enter Phne</span>}
+                            {errorphone && <span style={invalidInput}>{errorphonemsg}</span>}
                         </Col>
                     </Row>
                     <Row className="g-2" style={row_style}>
@@ -121,6 +195,7 @@ export const AddUser = () => {
                             <Form.Label>Email</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Control value={state.email} onChange={(e) => { setState({ ...state, email: e.target.value }) }} type="email" />
                             {error && !state.email && <span style={invalidInput}>Enter Email</span>}
+                            {erroremail && <span style={invalidInput}>{erroremailmsg}</span>}
                         </Col>
                         <Col md>
                             <Form.Label>Location</Form.Label><span style={asteriskStyle}> *</span>
@@ -150,7 +225,7 @@ export const AddUser = () => {
                             <InputGroup.Text onClick={browserBtn} style={{cursor:"pointer"}}>Browser</InputGroup.Text>
                             </InputGroup>
                             { error && !file && <span style={invalidInput}>Choose File</span>}
-                        
+                            {errorfile && <span style={invalidInput}>{errorfilemsg}</span>}
 
                         </Col>
                     </Row>
