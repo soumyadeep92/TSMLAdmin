@@ -107,7 +107,8 @@ body{background-color: $lightGrey;}
 .login-wrap{padding:40px;}
 
 
-.login-bg-wrap{ background:url('http://localhost:3000/static/media/Login.c3fb890628008241515f.png');
+.login-bg-wrap{ 
+	//background:url('./assets/Login.png');
     background-size: cover;
     background-position: center;
     width: 100%;

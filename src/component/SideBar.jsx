@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 import Logo from '../assets/mj-logo.png';
@@ -11,11 +11,9 @@ const SideBar = () => {
   const navigate = useNavigate();
   const isToggled = useSelector((state) => state.toggle.isToggled);
   const [showDropdown, setShowDropDown] = useState(false);
-  const[active, setActive] = useState(false);
-  const activeRef = useRef([]);
   const handledropDown = () => {
-    setShowDropDown(!showDropdown)
-    //setShowDropDown((prev) => !prev)
+    //setShowDropDown(!showDropdown)
+    setShowDropDown((prev) => !prev)
   }
   // const activeLink = (index)=>{
   //   setShowDropDown((prev) => {
@@ -33,7 +31,7 @@ const SideBar = () => {
 
   // }
 
- 
+ console.log('showDropdown', showDropdown);
 
   const logout = ()=>{
     localStorage.clear();
@@ -41,41 +39,50 @@ const SideBar = () => {
   }
   
   return (
-    <div className={`sidebar ${isToggled ? 'collapsedBlock' : 'expandBlock'}`}>
+    <div 
+    className={`sidebar ${isToggled ? 'collapsedBlock' : 'expandBlock'}`}
+      style={{
+        height: '100vh',
+        overflowY: 'auto',
+      }}
+    >
 
-      {isToggled == true ?
+      {isToggled === true ?
         <div className='text-center logo-block'><Image src={LogoSmall} /></div>
         :
         <div className='text-center logo-block'><Image src={Logo} /></div>
       }
       <ul className='left-sidebar-menu'>
         <li>
-          {isToggled == true ?
+          {isToggled === true ?
             <Home />
             :
             <Link to="/dashboard">Dashboard</Link>
           }
         </li>
         <li>
-          {isToggled == true ?
+          {isToggled === true ?
             <Users />
             :
             <Link to="#" onClick={handledropDown}>User Management</Link>
           }
         </li>
-        {isToggled == false && showDropdown &&
+        {isToggled === false && showDropdown &&
           <ul>
             
             <li><Link to="/list-user">User List</Link></li>
-            <li><Link to="/list-user-plant">User Plants</Link></li>
             <li><Link to="/list-user-type">User Type</Link></li>
             <li><Link to="/list-cvr-mode">CVR Mode</Link></li>
-            <li><Link to="/list-reason">Reason For Not Buying</Link></li>
+            <li><Link to="/list-category">Category</Link></li>
+            <li><Link to="/list-material">Material</Link></li>
+            <li><Link to="/list-product">Product</Link></li>
+            <li><Link to="/list-reason">Reason</Link></li>
+            <li><Link to="/list-standard">Standard</Link></li>
 
           </ul>
         }
         <li>
-          {isToggled == true ?
+          {isToggled === true ?
             <Power />
             :
             <Link onClick={logout} to={'/'}>Logout</Link>

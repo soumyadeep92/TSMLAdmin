@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import InputGroup from 'react-bootstrap/InputGroup';
 import LoginImg from '../assets/Login.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'react-feather';
+import { ADMIN_BACKEND_BASE_URL } from '../constant';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 export const Login = () => {
 
@@ -17,6 +19,22 @@ export const Login = () => {
     const [captcha, setCaptcha] = useState(null);
     const [captchacode, setCaptchacode] = useState(null);
     const [errors, setErrors] = useState({});
+
+    const [show1, setShow1] = useState(false);
+    const handleShow1 = () => setShow1(true);
+    const handleClose1 = () => setShow1(false);
+
+    const [showAlert, setShowAlert] = useState(false);
+    const handleLogin = () => {
+        setShowAlert(true);
+            setTimeout(() => {
+                navigate('/dashboard'); // Redirect after alert is shown
+            }, 2000);
+    }
+    const handleClose = () => {
+        setShowAlert(false);
+    };
+
 
     const validateForm = () => {
         const newErrors = {};
@@ -43,12 +61,10 @@ export const Login = () => {
         e.preventDefault();
         const validationErrors = validateForm();
         if (Object.keys(validationErrors).length === 0) {
-            // Submit the form (you can replace this with your actual submission logic)
-            console.log('Form submitted:', { username, password, captcha });
             const newErrors = {};
-            if (captcha == captchacode) {
+            if (captcha === captchacode) {
 
-                let result = await fetch('http://localhost:5000/api/v1/auth/login', {
+                let result = await fetch(`${ADMIN_BACKEND_BASE_URL}api/v1/auth/login`, {
                     method: 'post',
                     body: JSON.stringify({ username, password }),
                     headers: {
@@ -56,29 +72,45 @@ export const Login = () => {
                     }
                 });
                 result = await result.json();
-                if (result.status == '2') {
-                    newErrors.username = 'Invalid Username';
-                    setErrors(newErrors);
-                    return false;
-                }
-                if (result.status == '3') {
-                    newErrors.password = 'Invalid Password';
-                    setErrors(newErrors);
-                    return false;
-                }
-                console.warn(result);
-                localStorage.setItem('user', JSON.stringify(result.user))
-                localStorage.setItem('token', result.token)
-                navigate('/dashboard');
+                
+                if( result.response.admin_login ){
+                
+                    if (result.success === false && result.response.message.message === 'Username is wrong') {
+                        newErrors.username = 'Invalid Username';
+                        setErrors(newErrors);
+                        return false;
+                    }
+                    if (result.success === false && result.response.message.message === 'Incorrect password') {
+                        newErrors.password = 'Invalid Password';
+                        setErrors(newErrors);
+                        return false;
+                    }
+                    const userInfo = {
+                        "id":result.response.userData.id,
+                        "username":result.response.userData.username,
+                        "phone":result.response.userData.phone,
+                        "user_code":result.response.userData.user_code,
+                        "email":result.response.userData.email,
+                        "profile_pic":result.response.userData.profile_pic,
+                        "user_role_id":result.response.userData.user_role_id,
+                        "user_status_id":result.response.userData.user_status_id,
+                    };
+                    localStorage.setItem('user', JSON.stringify(userInfo))
+                    localStorage.setItem('token', result.response.access_token)
+                    handleLogin();
+                }else{
+                    handleShow1();
+                    console.log("else");
+                }    
             } else {
                 newErrors.captcha = 'Invalid Captcha';
                 setErrors(newErrors);
             }
             // Reset form
-            // setUsername('');
-            // setPassword('');
-            // setCaptcha('');
-            // setErrors({});
+            setUsername('');
+            setPassword('');
+            setCaptcha('');
+            setErrors({});
         } else {
             setErrors(validationErrors);
         }
@@ -103,10 +135,31 @@ export const Login = () => {
 
     return (
         <>
+        {show1 && (
+                <SweetAlert
+                    warning
+                    title="Oops!"
+                    onConfirm={handleClose1}
+                    onCancel={handleClose1}
+                    confirmBtnBsStyle="success"
+                >
+                    You are not authorized!
+                </SweetAlert>
+            )}
+            {showAlert && (
+                <SweetAlert
+                    success
+                    title="Login Successful!"
+                    onConfirm={handleClose}
+                    confirmBtnBsStyle="success"
+                >
+                    Welcome to your dashboard!
+                </SweetAlert>
+            )}
             <Container fluid className="vh-100">
                 <Row className="h-100">
                     <Col xs={12} lg={7} className="d-flex align-items-center px-0">
-                        <div className='login-bg-wrap w-100'>
+                        <div className='login-bg-wrap w-100' style={{ backgroundImage: `url(${LoginImg})` }}>
                         </div>
                     </Col>
                     <Col xs={12} lg={5} className="d-flex align-items-center justify-content-center px-0">

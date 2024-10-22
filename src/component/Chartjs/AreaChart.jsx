@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Charts } from './Charts';
-import * as dayjs from "dayjs";
-import * as moment from 'moment';
+//import * as dayjs from "dayjs";
+//import * as moment from 'moment';
 import { useSelector } from 'react-redux';
 
 export const AreaChart = () => {
@@ -51,6 +51,6 @@ export const AreaChart = () => {
     });
 
   return (
-    <Charts options={options} type="area" series={series} width={isToggled==true?640:540} height={height} />
+    <Charts options={options} type="area" series={series} width={isToggled===true?640:540} height={height} />
   );
 }

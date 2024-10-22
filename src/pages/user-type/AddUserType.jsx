@@ -1,10 +1,12 @@
 import AdminLayout from '../../layout/AdminLayout';
-import React, { useState, useRef, useEffect } from "react";
-import { Container, Row, Col, Form, Button,InputGroup } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
+import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
+import fetchWithAuth from '../../fetchWithAuth';
 
 export const AddUserType = ()=>{
-
+    const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [state, setState] = useState(
         {
@@ -18,12 +20,16 @@ export const AddUserType = ()=>{
             return false;
         }
         
-        const formData = new FormData();
-        formData.append('status', state.status);
-        formData.append('type', state.type);
-
-        for (var pair of formData.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
+        const data = { role_name: state.type, status: state.status };
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}create-role`,{
+            method:'post',
+            body:JSON.stringify(data),
+            headers:{
+                "Content-Type": "application/json"
+            }
+        });
+        if (result.response.status === true) {
+            navigate('/list-user-type');
         }
     }
     const formClear = async (e) => {
@@ -53,11 +59,10 @@ export const AddUserType = ()=>{
                         <Col md>
                             <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Select aria-label="Floating label select example" value={state.status} onChange={(e) => { setState({ ...state, status: e.target.value }) }}>
-                                <option>Select Type</option>
+                                <option value="0">Select Status</option>
                                 <option value="1">Active</option>
-                                <option value="2">Inactive</option>
+                                <option value="0">Inactive</option>
                             </Form.Select>
-                            {error && !state.status && <span style={invalidInput}>Select Status</span>}
                         </Col>
                     </Row>
                 </Form>
@@ -67,7 +72,7 @@ export const AddUserType = ()=>{
                         <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addUserType} style={submitbuttonStyle}>Submit</Button>
+                        <Button onClick={addUserType} style={submitbuttonStyle}>Add</Button>
                     </Col>
                 </Row>   
             </Container>    

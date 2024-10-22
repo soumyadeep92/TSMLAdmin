@@ -1,27 +1,30 @@
 import AdminLayout from '../../layout/AdminLayout';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 
-export const AddCvrMode = ()=>{
+export const EditCvrMode = ()=>{
+    const { id } = useParams();
     const navigate = useNavigate();
     const [error, setError] = useState(false);
+    const [modes, setModes] = useState({});
     const [state, setState] = useState(
         {
             mode: "",
             status: "",
         }
     );
-    const addCvrMode = async () => {
-        if (!state.mode || !state.status ) {
+    
+    const editCvrMode = async () => {
+        if (!state.mode ) {
             setError(true)
             return false;
         }
         
-        const data = { mode_name: state.mode, status: state.status };
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-cvr-mode`,{
+        const data = { 'mode_name': state.mode, 'status': state.status };
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}edit-cvr-mode/${id}`,{
             method:'post',
             body:JSON.stringify(data),
             headers:{
@@ -32,6 +35,7 @@ export const AddCvrMode = ()=>{
             navigate('/list-cvr-mode');
         }
     }
+    
     const formClear = async (e) => {
         e.preventDefault();
         setState({
@@ -40,13 +44,44 @@ export const AddCvrMode = ()=>{
         })
     }
 
+    const getCvrMode = async () => {
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-mode-by-id/${id}`, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (result.success === true && result.response.data) {
+            let itemElements = {};
+            itemElements = {
+                id: result.response.data.id,
+                userMode: result.response.data.mode_name,
+                userStatus: result.response.data.status,
+            };
+            
+            setModes(itemElements);
+        } 
+    }    
+   
+    useEffect(()=>{
+        getCvrMode();
+        setState(
+            {
+                ...state,
+                mode: modes.userMode,
+                status: modes.userStatus,
+            }
+        );
+    },[modes.id])
+    
+
     return(
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Add Cvr Mode</p></Col>
+                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Edit Cvr Mode</p></Col>
                     <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/add-cvr-mode" style={{ textDecoration: 'none' }}>Add Cvr Mode</Link></p></Col>
+                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/edit-cvr-mode" style={{ textDecoration: 'none' }}>Edit Cvr Mode</Link></p></Col>
                 </Row>
                 <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
                 <Form style={{padding:'25px 20px 25px 25px'}}>
@@ -54,16 +89,14 @@ export const AddCvrMode = ()=>{
                         <Col md>
                             <Form.Label>Cvr Mode</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Control value={state.mode} onChange={(e) => { setState({ ...state, mode: e.target.value }) }} type="text" />
-                            {error && !state.mode && <span style={invalidInput}>Enter Type</span>}
+                            {error && !state.mode && <span style={invalidInput}>Enter Cvr Mode</span>}
                         </Col>
                         <Col md>
                             <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Select aria-label="Floating label select example" value={state.status} onChange={(e) => { setState({ ...state, status: e.target.value }) }}>
-                                <option value="0">Select Status</option>
                                 <option value="1">Active</option>
                                 <option value="0">Inactive</option>
                             </Form.Select>
-                            {error && !state.status && <span style={invalidInput}>Select Status</span>}
                         </Col>
                     </Row>
                 </Form>
@@ -73,7 +106,7 @@ export const AddCvrMode = ()=>{
                         <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addCvrMode} style={submitbuttonStyle}>Add</Button>
+                        <Button onClick={editCvrMode} style={submitbuttonStyle}>Update</Button>
                     </Col>
                 </Row>   
             </Container>    

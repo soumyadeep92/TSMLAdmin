@@ -2,7 +2,7 @@ import AdminLayout from '../../layout/AdminLayout'
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button,InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL, API_URL } from '../../constant';
+import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 
 export const AddUser = () => {
@@ -10,6 +10,8 @@ export const AddUser = () => {
     const inputFile = useRef(null);
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
+    const [userStatus, setUserStatus] = useState([]);
+    const [userRole, setUserRole] = useState([]);
     const [error, setError] = useState(false);
     const [state, setState] = useState(
         {
@@ -37,7 +39,6 @@ export const AddUser = () => {
             setError(true)
             return false;
         }
-        console.log('file', file);
         if(file){
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
             const maxSize = 5 * 1024; // 5KB
@@ -56,68 +57,70 @@ export const AddUser = () => {
             return false; 
         }
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('profile_image', file);
         formData.append('username', state.name);
         formData.append('user_code', state.userId);
         formData.append('phone', state.phone);
         formData.append('email', state.email);
         formData.append('location', state.location);
-        formData.append('status_id', state.status);
-        formData.append('user_type_id', state.userType);
+        formData.append('user_status_name', state.status);
+        formData.append('user_role_name', state.userType);
+        formData.append('password', '123456');
 
-        let result = await fetchWithAuth(`${BASE_URL}${API_URL}add-user`,{
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}add-user`,{
             method:'post',
             body:formData,
             headers:{}
         });
         //result = await result.json();
-        console.log('result',result);
-        if (result.status === '5') {
+        console.log('resulthhh',result);
+        if (result.response.status === false && result.response.code === 5) {
             setErroremail(true);
             setErrorphone(false);
             setErrorname(false);
             setErrorcode(false);
             setErrorfile(false);
-            setErroremailMsg(result.message);
+            setErroremailMsg(result.response.message);
+            console.log('email',result.response.message);
             return false;
         }
-        if (result.status === '6') {
+        if (result.response.status === false && result.response.code === 6) {
             setErrorphone(true);
             setErroremail(false);
             setErrorname(false);
             setErrorcode(false);
             setErrorfile(false);
-            setErrorphoneMsg(result.message);
+            setErrorphoneMsg(result.response.message);
             return false;
         }
-        if (result.status === '7') {
+        if (result.response.status === false && result.response.code === 7) {
             setErrorname(true);
             setErroremail(false);
             setErrorphone(false);
             setErrorcode(false);
             setErrorfile(false);
-            setErrornameMsg(result.message);
+            setErrornameMsg(result.response.message);
             return false;
         }
-        if (result.status === '8') {
+        if (result.response.status === false && result.response.code === 8) {
             setErrorcode(true);
             setErroremail(false);
             setErrorphone(false);
             setErrorname(false);
             setErrorfile(false);
-            setErrorcodeMsg(result.message);
+            setErrorcodeMsg(result.response.message);
             return false;
         }
-        if (result.status === '9') {
+        if (result.response.status === false && result.response.code === 9) {
             setErrorfile(true);
             setErrorcode(false);
             setErroremail(false);
             setErrorphone(false);
             setErrorname(false);
-            setErrorfileMsg(result.message);
+            setErrorfileMsg(result.response.message);
             return false;
         }
-        if (result.status === '1') {
+        if (result.response.status === true) {
             navigate('/list-user');
         }
         // for (var pair of formData.entries()) {
@@ -147,6 +150,27 @@ export const AddUser = () => {
         setFileName(file?.name);
     },[file])
     
+    useEffect( () => {
+        async function fetchData() {
+            let resultStatus = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-status`, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            setUserStatus(resultStatus.response.statusDetails);
+            let resultRole = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list-role`, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            setUserRole(resultRole.response.data);
+        }
+        fetchData();
+        
+    }, [setUserStatus,setUserRole])
+
     return (
         <AdminLayout>
            
@@ -177,9 +201,14 @@ export const AddUser = () => {
                             <Form.Label>User Type</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Select aria-label="Floating label select example" value={state.userType} onChange={(e) => { setState({ ...state, userType: e.target.value }) }}>
                                 <option>Select Type</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
+                                {
+                                    userRole.map((item,index)=>{
+                                        if(item.created_by === JSON.parse(localStorage.getItem('user')).id ){
+                                            return <option key={item.id} value={item.role_name}>{item.role_name}</option>
+                                        }
+                                        return true;
+                                    })
+                                }
                             </Form.Select>
                             {error && !state.userType && <span style={invalidInput}>Select Type</span>}
                         </Col>
@@ -207,9 +236,12 @@ export const AddUser = () => {
                             <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Select aria-label="Floating label select example" value={state.status} onChange={(e) => { setState({ ...state, status: e.target.value }) }}>
                                 <option>Select Status</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
+                                {
+                                    userStatus.map((item,index)=>
+                                    <option key={item.id} value={item.status}>{item.status}</option>
+                                    )
+                                }
+                                
                             </Form.Select>
                             {error && !state.status && <span style={invalidInput}>Select Status</span>}
                         </Col>
@@ -236,7 +268,7 @@ export const AddUser = () => {
                         <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addUser} style={submitbuttonStyle}>Submit</Button>
+                        <Button onClick={addUser} style={submitbuttonStyle}>Add</Button>
                     </Col>
                 </Row>
             </Container>

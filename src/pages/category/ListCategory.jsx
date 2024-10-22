@@ -9,7 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 
-export const ListCvrMode = () => {
+export const ListCategory = () => {
 
     const [filterInput, setFilterInput] = useState('');
     const [showOptions, setShowOptions] = useState(null);
@@ -23,26 +23,26 @@ export const ListCvrMode = () => {
         navigate('/dashboard/' + item);
     };
     const handleEdit = (item) => {
-        navigate('/edit-cvr-mode/' + item);
+        navigate('/edit-category/' + item);
     };
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-cvr-mode/${item}`, {
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-category/${item}`, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
             }
         });
         if(result.success === true){
-            setModes((prevdata) => prevdata.filter(data => data.modeid !== item));
+            setApiData((prevdata) => prevdata.filter(data => data.dataid !== item));
         }
     };
-    const [modes, setModes] = useState([]);
+    const [apiData, setApiData] = useState([]);
     useEffect(() => {
         
-        getModes();
+        getApiDatas();
     }, [])
-    const getModes = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-cvr-mode`, {
+    const getApiDatas = async () => {
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-category`, {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,23 +52,23 @@ export const ListCvrMode = () => {
             const itemElements = [];
             result.response.data.map((item, index) => {
                 itemElements.push({
-                    modeid: item.id,
-                    cvrmode: item.mode_name,
+                    dataid: item.id,
+                    category: item.category_name,
                     status: item.status,
                 });
                 return itemElements;
             })
-            setModes(itemElements);
+            setApiData(itemElements);
         }
     }
     const data = React.useMemo(
-        () => modes,
-        [modes]
+        () => apiData,
+        [apiData]
     );
     const columns = React.useMemo(
         () => [
-            { Header: 'Id', accessor: 'id' },
-            { Header: 'Cvr Mode', accessor: 'cvrmode' },
+            { Header: 'Id', accessor: 'dataid' },
+            { Header: 'Category Name', accessor: 'category' },
             { Header: 'Status', accessor: 'status' },
         ],
         []
@@ -105,16 +105,16 @@ export const ListCvrMode = () => {
         setGlobalFilter(value);
     };
 
-    const addCvrMode = () => {
-        navigate('/add-cvr-mode');
+    const addCategory = () => {
+        navigate('/add-category');
     }
     return (
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "Mulish", marginTop: "20px" }}>List Cvr Mode</p></Col>
+                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "Mulish", marginTop: "20px" }}>List Category</p></Col>
                     <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "Mulish", marginTop: "25px" }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/list-cvr-mode" style={{ textDecoration: 'none' }}>List Cvr Mode</Link></p></Col>
+                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "Mulish", marginTop: "25px" }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/list-cvr-mode" style={{ textDecoration: 'none' }}>List Category</Link></p></Col>
                 </Row>
                 <div style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px', padding: '25px 20px 25px 25px' }}>
                     <Row style={tableHeaderStyle}>
@@ -169,15 +169,15 @@ export const ListCvrMode = () => {
                                 prepareRow(row);
                                 return (
                                     <tr {...row.getRowProps()}>
-                                        <td>{row.original.modeid}</td>
-                                        <td>{row.original.cvrmode}</td>
+                                        <td>{row.original.dataid}</td>
+                                        <td>{row.original.category}</td>
                                         <td>{(row.original.status === 1)?'Active':'Inactive'}</td>
                                         <td style={{ position: 'relative' }}><p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p></td>
                                         {showOptions === index &&
                                             <ul style={{ listStyle: 'none', right: '0px', position: 'absolute' }}>
-                                                <li onClick={() => handleView(row.original.modeid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEye} />View</li>
-                                                <li onClick={() => handleEdit(row.original.modeid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEdit} />Edit</li>
-                                                <li onClick={() => handleDelete(row.original.modeid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faTrash} />Delete</li>
+                                                <li onClick={() => handleView(row.original.dataid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEye} />View</li>
+                                                <li onClick={() => handleEdit(row.original.dataid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEdit} />Edit</li>
+                                                <li onClick={() => handleDelete(row.original.dataid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faTrash} />Delete</li>
                                             </ul>
                                         }
 
@@ -230,7 +230,7 @@ export const ListCvrMode = () => {
                         <Button style={clearbuttonStyle}>Export< ArrowDown /></Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addCvrMode} style={submitbuttonStyle}>Add Cvr Mode</Button>
+                        <Button onClick={addCategory} style={submitbuttonStyle}>Add Category</Button>
                     </Col>
                 </Row>
             </Container>

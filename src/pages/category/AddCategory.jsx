@@ -1,35 +1,41 @@
 import AdminLayout from '../../layout/AdminLayout';
-import React, { useState, useRef, useEffect } from "react";
-import { Container, Row, Col, Form, Button,InputGroup } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
+import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
+import fetchWithAuth from '../../fetchWithAuth';
 
-export const AddUserPlant = ()=>{
-
+export const AddCategory = ()=>{
+    const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [state, setState] = useState(
         {
-            plant: "",
+            category: "",
             status: "",
         }
     );
-    const addUserPlant = async () => {
-        if (!state.plant || !state.status ) {
+    const addCategory = async () => {
+        if (!state.category || !state.status ) {
             setError(true)
             return false;
         }
         
-        const formData = new FormData();
-        formData.append('status', state.status);
-        formData.append('plant', state.plant);
-
-        for (var pair of formData.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
+        const data = { category_name: state.category, status: state.status };
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-category`,{
+            method:'post',
+            body:JSON.stringify(data),
+            headers:{
+                "Content-Type": "application/json"
+            }
+        });
+        if (result.response.status === true) {
+            navigate('/list-category');
         }
     }
     const formClear = async (e) => {
         e.preventDefault();
         setState({
-            plant: "",
+            category: "",
             status: "",
         })
     }
@@ -38,24 +44,24 @@ export const AddUserPlant = ()=>{
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Add User Plant</p></Col>
+                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Add Category</p></Col>
                     <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/add-user-plant" style={{ textDecoration: 'none' }}>Add User Plant</Link></p></Col>
+                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/add-cvr-mode" style={{ textDecoration: 'none' }}>Add Category</Link></p></Col>
                 </Row>
                 <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
                 <Form style={{padding:'25px 20px 25px 25px'}}>
                     <Row className="g-2">
                         <Col md>
-                            <Form.Label>User Plant</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.plant} onChange={(e) => { setState({ ...state, plant: e.target.value }) }} type="text" />
-                            {error && !state.plant && <span style={invalidInput}>Enter Plant</span>}
+                            <Form.Label>Category</Form.Label><span style={asteriskStyle}> *</span>
+                            <Form.Control value={state.category} onChange={(e) => { setState({ ...state, category: e.target.value }) }} type="text" />
+                            {error && !state.category && <span style={invalidInput}>Enter Category</span>}
                         </Col>
                         <Col md>
                             <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Select aria-label="Floating label select example" value={state.status} onChange={(e) => { setState({ ...state, status: e.target.value }) }}>
-                                <option>Select Type</option>
+                                <option value="0">Select Status</option>
                                 <option value="1">Active</option>
-                                <option value="2">Inactive</option>
+                                <option value="0">Inactive</option>
                             </Form.Select>
                             {error && !state.status && <span style={invalidInput}>Select Status</span>}
                         </Col>
@@ -67,7 +73,7 @@ export const AddUserPlant = ()=>{
                         <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addUserPlant} style={submitbuttonStyle}>Submit</Button>
+                        <Button onClick={addCategory} style={submitbuttonStyle}>Add</Button>
                     </Col>
                 </Row>   
             </Container>    

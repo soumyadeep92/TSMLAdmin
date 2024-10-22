@@ -1,10 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import {Menu} from 'react-feather';
 import Header from '../component/Header';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import SideBar from '../component/SideBar';
 const AdminLayout = ({ children }) => {
     const isToggled = useSelector((state) => state.toggle.isToggled); 

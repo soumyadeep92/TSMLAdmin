@@ -2,9 +2,7 @@
 
 const isTokenExpired = (token) => {
     if (!token) return true; // No token, consider it expired
-
     const payload = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
-    console.log('payload',payload);
     const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
     return payload.exp < currentTime; 
 };
@@ -14,7 +12,6 @@ const fetchWithAuth = async (url, options = {}) => {
 
     // Check if the token is expired
     if (isTokenExpired(token)) {
-        console.log('Token expired. Logging out...');
         localStorage.clear(); // Remove the token
         window.location.href = '/'; // Redirect to login page
         return null; // Exit early
@@ -42,7 +39,6 @@ const fetchWithAuth = async (url, options = {}) => {
 
         return response.json(); // Parse and return response JSON
     } catch (error) {
-        console.error('Fetch error:', error);
         throw error; // Re-throw the error for handling in calling code
     }
 };

@@ -5,37 +5,38 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 
-export const AddCvrMode = ()=>{
+export const AddProduct = ()=>{
     const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [state, setState] = useState(
         {
-            mode: "",
+            product: "",
             status: "",
         }
     );
-    const addCvrMode = async () => {
-        if (!state.mode || !state.status ) {
+    const addProduct = async () => {
+        if (!state.product || !state.status ) {
             setError(true)
             return false;
         }
         
-        const data = { mode_name: state.mode, status: state.status };
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-cvr-mode`,{
+        const data = { product_name: state.product, status: state.status };
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-product`,{
             method:'post',
             body:JSON.stringify(data),
             headers:{
                 "Content-Type": "application/json"
             }
         });
+        console.log(result);
         if (result.response.status === true) {
-            navigate('/list-cvr-mode');
+            navigate('/list-product');
         }
     }
     const formClear = async (e) => {
         e.preventDefault();
         setState({
-            mode: "",
+            product: "",
             status: "",
         })
     }
@@ -44,17 +45,17 @@ export const AddCvrMode = ()=>{
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Add Cvr Mode</p></Col>
+                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Add Product</p></Col>
                     <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/add-cvr-mode" style={{ textDecoration: 'none' }}>Add Cvr Mode</Link></p></Col>
+                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/add-cvr-mode" style={{ textDecoration: 'none' }}>Add Product</Link></p></Col>
                 </Row>
                 <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
                 <Form style={{padding:'25px 20px 25px 25px'}}>
                     <Row className="g-2">
                         <Col md>
-                            <Form.Label>Cvr Mode</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.mode} onChange={(e) => { setState({ ...state, mode: e.target.value }) }} type="text" />
-                            {error && !state.mode && <span style={invalidInput}>Enter Type</span>}
+                            <Form.Label>Product</Form.Label><span style={asteriskStyle}> *</span>
+                            <Form.Control value={state.product} onChange={(e) => { setState({ ...state, product: e.target.value }) }} type="text" />
+                            {error && !state.product && <span style={invalidInput}>Enter Product</span>}
                         </Col>
                         <Col md>
                             <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
@@ -73,7 +74,7 @@ export const AddCvrMode = ()=>{
                         <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addCvrMode} style={submitbuttonStyle}>Add</Button>
+                        <Button onClick={addProduct} style={submitbuttonStyle}>Add</Button>
                     </Col>
                 </Row>   
             </Container>    

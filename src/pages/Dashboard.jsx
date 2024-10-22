@@ -1,17 +1,14 @@
-import React,{ useEffect } from 'react'
+import React from 'react'
 import AdminLayout from '../layout/AdminLayout'
-import * as dayjs from "dayjs";
-import * as moment from 'moment';
+//import * as dayjs from "dayjs";
+//import * as moment from 'moment';
 import { PieChart } from '../component/Chartjs/PieChart';
-import { LineChart } from "../component/Chartjs/LineChart";
 import { BarChart } from "../component/Chartjs/BarChart";
 import { Container, Row, Col, Form, InputGroup, Card, Dropdown } from 'react-bootstrap';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AreaChart } from '../component/Chartjs/AreaChart';
-import { useNavigate } from 'react-router-dom';
 const Dashboard = () => {
-    const navigate = useNavigate();
     
   return (
     <AdminLayout>

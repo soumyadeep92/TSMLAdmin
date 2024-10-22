@@ -6,13 +6,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { faSearch, faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowDown } from 'react-feather';
-import { BASE_URL, API_URL } from '../../constant';
+import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 
 
 export const ListUser = () => {
     const navigate = useNavigate();
-
+    
+    
     const [filterInput, setFilterInput] = useState('');
     // Table columns
     
@@ -22,66 +23,55 @@ export const ListUser = () => {
         setShowOptions((prev) => (prev === index ? null : index));
     };
     const handleView = (item) => {
-        console.log('view:', item);
-        navigate('/dashboard/' + item);
+        navigate('/view-user/' + item);
     };
     const handleEdit = (item) => {
-        console.log('Editing:', item);
+        navigate('/edit-user/' + item);
     };
-    const handleDelete = (item) => {
-        console.log('Deleting:', item);
-    };
-    //   const items = [1,2,3,4,5,6,7,8,9,10];
-    //   const itemElements = [];
-    //   for (let i = 1; i < items.length; i++) {
-    //     itemElements.push({
-    //       userid: i,
-    //       username: 'Alice',
-    //       usertype: 'CAM',
-    //       email: 'abc@gmail.com',
-    //       phone: '9385736257',
-    //       lastlogin: '2024-03-12',
-    //       location: 'kolkata',
-    //       status: 'Active',
-    //   });
-    //   }
-
-    const [users, setUsers] = useState([]);
-
-    useEffect(() => {
-        
-        getUser();
-    }, [])
-
-    const getUser = async () => {
-        let result = await fetchWithAuth(`${BASE_URL}${API_URL}list-user`, {
+    const handleDelete = async (item) => {
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}delete-user/${item}`, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
             }
         });
+        if(result.status === '1'){
+            setUsers((prevUsers) => prevUsers.filter(user => user.userid !== item));
+        }
+    };
+
+    
+    const [users, setUsers] = useState([]);
+    useEffect(() => {
+        
+        getUsers();
+    }, [])
+    const getUsers = async () => {
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list-user`, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
         //result = await result.json();
-        //console.log(result.data[0]);
-        if (result.status === '1') {
+        if (result.response.status === true && result.response.data) {
             const itemElements = [];
-            result.data.map((item, index) => {
+            result.response.data.map((item, index) => {
                 itemElements.push({
+                    userid: item.id,
                     usercode: item.user_code,
                     username: item.username,
-                    usertype: item.user_type_id,
+                    usertype: item.role.role_name,
                     email: item.email,
                     phone: item.phone,
                     location: item.location,
-                    status: item.status_id,
+                    status: item.user_status.status,
                 });
+                return itemElements;
             })
             setUsers(itemElements);
         }
     }
-
-    //console.warn('users', users);
-    
-    // Sample data
     const data = React.useMemo(
         () => users,
         [users]
@@ -102,7 +92,6 @@ export const ListUser = () => {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        rows,
         prepareRow,
         state,
         setGlobalFilter,
@@ -114,7 +103,7 @@ export const ListUser = () => {
         nextPage,
         previousPage,
         setPageSize,
-        state: { globalFilter },
+        // state: { globalFilter },
     } = useTable(
         {
             columns,
@@ -208,9 +197,9 @@ export const ListUser = () => {
                                         <td style={{ position: 'relative' }}><p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p></td>
                                         {showOptions === index &&
                                             <ul style={{ listStyle: 'none', right: '0px', position: 'absolute' }}>
-                                                <li onClick={() => handleView(row.original.userid)} style={{ display: 'flex' }}><FontAwesomeIcon icon={faEye} />View</li>
-                                                <li onClick={() => handleEdit(row.original.userid)} style={{ display: 'flex' }}><FontAwesomeIcon icon={faEdit} />Edit</li>
-                                                <li onClick={() => handleDelete(row.original.userid)} style={{ display: 'flex' }}><FontAwesomeIcon icon={faTrash} />Delete</li>
+                                                <li onClick={() => handleView(row.original.userid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEye} />View</li>
+                                                <li onClick={() => handleEdit(row.original.userid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEdit} />Edit</li>
+                                                <li onClick={() => handleDelete(row.original.userid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faTrash} />Delete</li>
                                             </ul>
                                         }
                                         {/* {showOptions === index && 
@@ -302,7 +291,7 @@ const submitbuttonStyle = {
 
 const tableHeaderStyle = {
     height: '70px',
-    boxShadow: '0px 7px 17px -12px black;'
+    boxShadow: '0px 7px 17px -12px black'
 }
 const tableFooterStyle = {
     paddingTop: '10px',

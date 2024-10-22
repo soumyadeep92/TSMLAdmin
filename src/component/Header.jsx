@@ -1,16 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Menu, Search, Mail, Bell } from 'react-feather';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { toggleState } from '../redux/slices/toggleSlice';
 import { Card, InputGroup, Form, Row, Col, Image } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ProfilePicture from '../assets/profileImage.png';
 
 const Header = () => {
-
-  const isToggled = useSelector((state) => state.toggle.isToggled); // Access toggle state
   const dispatch = useDispatch();
-  const isCount = useSelector((state) => state.increament)
   const handleToggle = () => {
     dispatch(toggleState()); // Dispatch the toggle action
   };
