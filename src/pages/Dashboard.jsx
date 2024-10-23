@@ -14,57 +14,57 @@ const Dashboard = () => {
     <AdminLayout>
         <Container fluid="true">
             <Row style={rowStyle}>
-                <Col>
+                <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
                     <Card style={cardStyle}>
                         <div style={shape}>
                             <Card.Img style={images} src="/images/hourglass-end.png" />
                         </div>
                         <div style={shapeSide}>
                             <p className='mb-0' style={opNumber}>200</p>
-                            <span style={openPoint}>Open Pints</span><br />
-                            <span style={lastMonth}><span style={lmNumber}>200</span> Last Month</span>
+                            <span style={openPoint}>Open Points</span><br />
+                            <span style={lastMonth}><span style={lmNumber}>50</span> Last Month</span>
                         </div>
                     </Card>
                 </Col>
-                <Col>
+                <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
                     <Card style={cardStyle}>
                         <div style={shape}>
                             <Card.Img style={images} src="/images/assept-document.png" />
                         </div>
                         <div style={shapeSide}>
-                            <p className='mb-0' style={opNumber}>200</p>
-                            <span style={openPoint}>Open Pints</span><br />
-                            <span style={lastMonth}><span style={lmNumber}>200</span> Last Month</span>
+                            <p className='mb-0' style={opNumber}>320</p>
+                            <span style={openPoint}>Open Points</span><br />
+                            <span style={lastMonth}><span style={lmNumber}>20</span> Last Month</span>
                         </div>
                     </Card>
                 </Col>
-                <Col>
+                <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
                     <Card style={cardStyle}>
                         <div style={shape}>
                             <Card.Img style={images} src="/images/file.png" />
                         </div>
                         <div style={shapeSide}>
-                            <p className='mb-0' style={opNumber}>200</p>
-                            <span style={openPoint}>Open Pints</span><br />
-                            <span style={lastMonth}><span style={lmNumber}>200</span> Last Month</span>
+                            <p className='mb-0' style={opNumber}>122</p>
+                            <span style={openPoint}>Open Points</span><br />
+                            <span style={lastMonth}><span style={lmNumber}>22</span> Last Month</span>
                         </div>
                     </Card>
                 </Col>
-                <Col>
+                <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
                     <Card style={cardStyle}>
                         <div style={shape}>
                             <Card.Img style={images} src="/images/meeting.png" />
                         </div>
                         <div style={shapeSide}>
-                            <p className='mb-0' style={opNumber}>200</p>
-                            <span style={openPoint}>Open Pints</span><br />
-                            <span style={lastMonth}><span style={lmNumber}>200</span> Last Month</span>
+                            <p className='mb-0' style={opNumber}>250</p>
+                            <span style={openPoint}>Open Points</span><br />
+                            <span style={lastMonth}><span style={lmNumber}>80</span> Last Month</span>
                         </div>
                     </Card>
                 </Col>
             </Row>
             <Row style={rowStyle}>
-                <Col sm={5}>
+                <Col xs={12} lg={5}>
                     <Card style={{ height: '100%' }}>
                         <Row style={{ margin: '10px' }}>
                             <Col sm={6}><span style={textStyle}>CAM Wise CVR</span></Col>
@@ -89,7 +89,7 @@ const Dashboard = () => {
                         </Row>
                     </Card>
                 </Col>
-                <Col sm={7} style={{ height: '100%' }}>
+                <Col xs={12} lg={7} style={{ height: '100%' }}>
                     <Card>
                         <Row style={{ margin: '10px' }}>
                             <Col sm={6}><span style={textStyle}>CVR</span></Col>
@@ -109,20 +109,23 @@ const Dashboard = () => {
                                 </Dropdown>
                             </Col>
                         </Row>
-                        <Row style={{ margin: '10px' }}>
-                            <AreaChart />
+                        <Row>
+                            <Col>
+                              <AreaChart />
+                            </Col>
+                            
                         </Row>
                     </Card>
                 </Col>
             </Row>
             <Row style={rowStyle}>
-                <Col >
+                <Col xs={12} >
                     <Card>
-                        <Row style={{ margin: '18px' }}>
-                            <Col sm={3}>
+                        <Row className='p-3'>
+                            <Col xs={12} lg={3}>
                             <span style={textStyle}>Customer Wise CVR</span>
                             </Col>       
-                            <Col sm={6} style={{paddingLeft:'280px'}}>
+                            <Col xs={12} lg={6}>
                                 <InputGroup className="mb-3">
                                     <Form.Control placeholder="Search Here" />
                                     <InputGroup.Text>
@@ -130,9 +133,10 @@ const Dashboard = () => {
                                     </InputGroup.Text>
                                 </InputGroup>
                             </Col>
-                            <Col sm={3} style={{textAlign:"right"}}>
+                            <Col xs={12} lg={3}>
                                 <Dropdown data-bs-theme="dark">
-                                    <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary">
+                                    <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary"
+                                    className='w-100'>
                                         Dropdown Button
                                     </Dropdown.Toggle>
 
@@ -146,7 +150,7 @@ const Dashboard = () => {
                                 </Dropdown>
                             </Col>
                         </Row>
-                        <Row style={{ margin: '10px' }}>
+                        <Row>
                             <BarChart />
                         </Row>
                     </Card>

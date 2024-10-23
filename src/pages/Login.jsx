@@ -27,9 +27,9 @@ export const Login = () => {
     const [showAlert, setShowAlert] = useState(false);
     const handleLogin = () => {
         setShowAlert(true);
-            setTimeout(() => {
-                navigate('/dashboard'); // Redirect after alert is shown
-            }, 2000);
+        setTimeout(() => {
+            navigate('/dashboard'); // Redirect after alert is shown
+        }, 2000);
     }
     const handleClose = () => {
         setShowAlert(false);
@@ -72,9 +72,9 @@ export const Login = () => {
                     }
                 });
                 result = await result.json();
-                
-                if( result.response.admin_login ){
-                
+
+                if (result.response.admin_login) {
+
                     if (result.success === false && result.response.message.message === 'Username is wrong') {
                         newErrors.username = 'Invalid Username';
                         setErrors(newErrors);
@@ -86,22 +86,22 @@ export const Login = () => {
                         return false;
                     }
                     const userInfo = {
-                        "id":result.response.userData.id,
-                        "username":result.response.userData.username,
-                        "phone":result.response.userData.phone,
-                        "user_code":result.response.userData.user_code,
-                        "email":result.response.userData.email,
-                        "profile_pic":result.response.userData.profile_pic,
-                        "user_role_id":result.response.userData.user_role_id,
-                        "user_status_id":result.response.userData.user_status_id,
+                        "id": result.response.userData.id,
+                        "username": result.response.userData.username,
+                        "phone": result.response.userData.phone,
+                        "user_code": result.response.userData.user_code,
+                        "email": result.response.userData.email,
+                        "profile_pic": result.response.userData.profile_pic,
+                        "user_role_id": result.response.userData.user_role_id,
+                        "user_status_id": result.response.userData.user_status_id,
                     };
                     localStorage.setItem('user', JSON.stringify(userInfo))
                     localStorage.setItem('token', result.response.access_token)
                     handleLogin();
-                }else{
+                } else {
                     handleShow1();
                     console.log("else");
-                }    
+                }
             } else {
                 newErrors.captcha = 'Invalid Captcha';
                 setErrors(newErrors);
@@ -135,7 +135,7 @@ export const Login = () => {
 
     return (
         <>
-        {show1 && (
+            {show1 && (
                 <SweetAlert
                     warning
                     title="Oops!"
@@ -163,59 +163,65 @@ export const Login = () => {
                         </div>
                     </Col>
                     <Col xs={12} lg={5} className="d-flex align-items-center justify-content-center px-0">
-                        <div className='login-wrap w-100'>
-                            <p style={textStyle}>Please login to your account</p>
-                            <Form onSubmit={handleSubmit}>
-                                <Form.Group className="mb-3" controlId="formGroupEmail">
-                                    <Form.Label>User Id/Mobile No</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Control
-                                        type="number"
-                                        name="username"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                        style={formStyle} required="required" />
-                                    {errors.username && <span style={error}>{errors.username}</span>}
-                                </Form.Group>
-                                <Form.Group className="mb-3" controlId="formGroupPassword">
-                                    <Form.Label>Password</Form.Label><span style={asteriskStyle}> *</span>
-                                    <div style={{display:'flex', alignItems:'center'}}>
-                                    <Form.Control
-                                        type={showPassword ? 'text' : 'password'}
-                                        name="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        style={formStyle} required="required" />
-                                    <span onClick={togglePasswordVisibility} style={{ background: 'none', border: 'none', cursor: 'pointer', position:'relative',right:'30px' }}>
-                                        {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
-                                    </span>
-                                    </div>
-                                    {errors.password && <span style={error}>{errors.password}</span>}
-                                </Form.Group>
-                                <Form.Group className="mb-3" controlId="formGroupValidCaptcha" style={formStyle}>
-                                    <InputGroup className="mb-3">
+                        <div className='login-wrap'>
+                            <div className='w-100'>
+                                <p style={textStyle}>Please login to your account</p>
+                                <Form onSubmit={handleSubmit}>
+                                    <Form.Group className="mb-3" controlId="formGroupEmail">
+                                        <Form.Label>User Id/Mobile No</Form.Label><span style={asteriskStyle}> *</span>
                                         <Form.Control
-                                            value={captchacode} style={captchaStyle} disabled />
-                                        <InputGroup.Text>
-                                            <FontAwesomeIcon onClick={refreshCaptcha} style={iconStyle} icon={faRefresh} />
-                                        </InputGroup.Text>
-                                    </InputGroup>
-                                </Form.Group>
-                                <Form.Group className="mb-3" controlId="formGroupCaptcha">
-                                    <Form.Label>Captcha</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Control
-                                        type="captcha"
-                                        value={captcha}
-                                        onChange={(e) => setCaptcha(e.target.value)}
-                                        style={formStyle} />
-                                    {errors.captcha && <span style={error}>{errors.captcha}</span>}
-                                </Form.Group>
-                                <a style={forgotPasswordStyle}>Forgot Password?</a>
-                                <Form.Check
-                                    label={`Remember Me`} style={remenberMeStyle}
-                                />
+                                            type="number"
+                                            name="username"
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value)}
+                                            style={formStyle} required="required" />
+                                        {errors.username && <span style={error}>{errors.username}</span>}
+                                    </Form.Group>
+                                    <Form.Group className="mb-3" controlId="formGroupPassword">
+                                        <Form.Label>Password</Form.Label><span style={asteriskStyle}> *</span>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <Form.Control
+                                                type={showPassword ? 'text' : 'password'}
+                                                name="password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                style={formStyle} required="required" />
+                                            <span onClick={togglePasswordVisibility} style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', right: '30px' }}>
+                                                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                                            </span>
+                                        </div>
+                                        {errors.password && <span style={error}>{errors.password}</span>}
+                                    </Form.Group>
+                                    <Form.Group className="mb-3" controlId="formGroupValidCaptcha" style={formStyle}>
+                                        <InputGroup className="mb-3">
+                                            <Form.Control
+                                                value={captchacode} style={captchaStyle} disabled />
+                                            <InputGroup.Text>
+                                                <FontAwesomeIcon onClick={refreshCaptcha} style={iconStyle} icon={faRefresh} />
+                                            </InputGroup.Text>
+                                        </InputGroup>
+                                    </Form.Group>
+                                    <Form.Group className="mb-3" controlId="formGroupCaptcha">
+                                        <Form.Label>Captcha</Form.Label><span style={asteriskStyle}> *</span>
+                                        <Form.Control
+                                            type="captcha"
+                                            value={captcha}
+                                            onChange={(e) => setCaptcha(e.target.value)}
+                                            style={formStyle} />
+                                        {errors.captcha && <span style={error}>{errors.captcha}</span>}
+                                    </Form.Group>
+                                    <div className='mb-3'>
+                                        <Form.Check
+                                            label={`Remember Me`} style={remenberMeStyle}
+                                        />
+                                        <a style={forgotPasswordStyle}>Forgot Password?</a>
+                                    </div>
 
-                                <Button type='submit' style={buttonStyle}>Sign In</Button>
-                            </Form>
+
+                                    <Button type='submit' style={buttonStyle}>Sign In</Button>
+                                </Form>
+                            </div>
+
                         </div>
                     </Col>
                 </Row>
@@ -230,7 +236,7 @@ const error = {
     marginTop: '5px',
 }
 const buttonStyle = {
-    width: "392px",
+    width: "100%",
     height: "50px",
     radius: "5px",
     backgroundColor: "#3A85E5",
@@ -240,17 +246,21 @@ const textStyle = {
     fontSize: "30px",
     fontWeight: "700",
     textAlign: "left",
-    fontFamily: "Mulish",
+    lineHeight: '33px'
+    
 }
 const formStyle = {
-    width: "392px",
+    width: "100%",
     height: "40px",
     radius: "5px"
 }
 const forgotPasswordStyle = {
-    float: "right",
-    paddingRight: "90px",
-    color: "#3A85E5"
+    // float: "right",
+    // paddingRight: "90px",
+    // color: "#3A85E5"
+    textAlign:'right',
+    width:'50%',
+    display:'inline-block'
 }
 const captchaStyle = {
     color: "#3A85E5",
@@ -261,7 +271,9 @@ const iconStyle = {
     color: "#3A85E5"
 }
 const remenberMeStyle = {
-    color: "#3A85E5"
+    color: "#3A85E5",
+    display:"inline-block",
+    width:'50%'
 }
 const asteriskStyle = {
     color: "red"

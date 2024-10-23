@@ -47,10 +47,25 @@ export const AreaChart = () => {
         },
         legend: {
         horizontalAlign: 'left'
-        }
+        },
+        responsive: [
+            {
+                breakpoint: 800,
+                options: {
+                    chart: {
+                        width: 300,
+                    },
+                    legend: {
+                        position: 'bottom',
+                    },
+                },
+                
+            },
+            
+        ],
     });
 
   return (
-    <Charts options={options} type="area" series={series} width={isToggled===true?640:540} height={height} />
+    <Charts options={options} type="area" series={series} height={height} />
   );
 }

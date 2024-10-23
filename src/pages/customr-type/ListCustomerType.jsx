@@ -9,7 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 
-export const ListCvrMode = () => {
+export const ListCustomerType = () => {
 
     const [filterInput, setFilterInput] = useState('');
     const [showOptions, setShowOptions] = useState(null);
@@ -23,26 +23,26 @@ export const ListCvrMode = () => {
         navigate('/dashboard/' + item);
     };
     const handleEdit = (item) => {
-        navigate('/edit-cvr-mode/' + item);
+        navigate('/edit-customer-type/' + item);
     };
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-cvr-mode/${item}`, {
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-customer-type/${item}`, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
             }
         });
         if(result.success === true){
-            setModes((prevdata) => prevdata.filter(data => data.dataid !== item));
+            setApiData((prevdata) => prevdata.filter(data => data.dataid !== item));
         }
     };
-    const [modes, setModes] = useState([]);
+    const [apiData, setApiData] = useState([]);
     useEffect(() => {
         
-        getModes();
+        getApiDatas();
     }, [])
-    const getModes = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-cvr-mode`, {
+    const getApiDatas = async () => {
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-customer-type`, {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -53,22 +53,22 @@ export const ListCvrMode = () => {
             result.response.data.map((item, index) => {
                 itemElements.push({
                     dataid: item.id,
-                    cvrmode: item.mode_name,
+                    customer_type: item.customer_type,
                     status: item.status,
                 });
                 return itemElements;
             })
-            setModes(itemElements);
+            setApiData(itemElements);
         }
     }
     const data = React.useMemo(
-        () => modes,
-        [modes]
+        () => apiData,
+        [apiData]
     );
     const columns = React.useMemo(
         () => [
-            { Header: 'Id', accessor: 'id' },
-            { Header: 'Cvr Mode', accessor: 'cvrmode' },
+            { Header: 'Id', accessor: 'dataid' },
+            { Header: 'Customer Type', accessor: 'customer_type' },
             { Header: 'Status', accessor: 'status' },
         ],
         []
@@ -105,16 +105,16 @@ export const ListCvrMode = () => {
         setGlobalFilter(value);
     };
 
-    const addCvrMode = () => {
-        navigate('/add-cvr-mode');
+    const addCustomerType = () => {
+        navigate('/add-customer-type');
     }
     return (
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "Mulish", marginTop: "20px" }}>List Cvr Mode</p></Col>
+                    <Col sm={3}><p style={{ fontSize: "27px", fontWeight: "bold", fontFamily: "Mulish", marginTop: "20px" }}>List Customer Type</p></Col>
                     <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "Mulish", marginTop: "25px" }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/list-cvr-mode" style={{ textDecoration: 'none' }}>List Cvr Mode</Link></p></Col>
+                    <Col sm={3}><p style={{ fontSize: "17px", fontFamily: "Mulish", marginTop: "25px" }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/list-customer-type" style={{ textDecoration: 'none' }}>List Customer Type</Link></p></Col>
                 </Row>
                 <div style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px', padding: '25px 20px 25px 25px' }}>
                     <Row style={tableHeaderStyle}>
@@ -170,7 +170,7 @@ export const ListCvrMode = () => {
                                 return (
                                     <tr {...row.getRowProps()}>
                                         <td>{row.original.dataid}</td>
-                                        <td>{row.original.cvrmode}</td>
+                                        <td>{row.original.customer_type}</td>
                                         <td>{(row.original.status === 1)?'Active':'Inactive'}</td>
                                         <td style={{ position: 'relative' }}>
                                             <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
@@ -232,7 +232,7 @@ export const ListCvrMode = () => {
                         <Button style={clearbuttonStyle}>Export< ArrowDown /></Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addCvrMode} style={submitbuttonStyle}>Add Cvr Mode</Button>
+                        <Button onClick={addCustomerType} style={submitbuttonStyle}>Add CustomerType</Button>
                     </Col>
                 </Row>
             </Container>

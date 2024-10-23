@@ -172,14 +172,16 @@ export const ListCategory = () => {
                                         <td>{row.original.dataid}</td>
                                         <td>{row.original.category}</td>
                                         <td>{(row.original.status === 1)?'Active':'Inactive'}</td>
-                                        <td style={{ position: 'relative' }}><p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p></td>
-                                        {showOptions === index &&
-                                            <ul style={{ listStyle: 'none', right: '0px', position: 'absolute' }}>
-                                                <li onClick={() => handleView(row.original.dataid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEye} />View</li>
-                                                <li onClick={() => handleEdit(row.original.dataid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEdit} />Edit</li>
-                                                <li onClick={() => handleDelete(row.original.dataid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faTrash} />Delete</li>
+                                        <td style={{ position: 'relative' }}>
+                                            <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
+                                            {showOptions === index &&
+                                            <ul className='dropdown-option'>
+                                                <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye}  className='mx-2'/>View</li>
+                                                <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2'/>Edit</li>
+                                                <li onClick={() => handleDelete(row.original.dataid)}className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2'/>Delete</li>
                                             </ul>
                                         }
+                                        </td>
 
                                     </tr>
                                 );

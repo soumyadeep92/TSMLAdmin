@@ -5,37 +5,38 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 
-export const AddReason = ()=>{
+export const AddCustomerType = ()=>{
     const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [state, setState] = useState(
         {
-            reason: "",
+            customer_type: "",
             status: "",
         }
     );
-    const addreason = async () => {
-        if (!state.reason || !state.status ) {
+    const addCustomerType = async () => {
+        if (!state.customer_type || !state.status ) {
             setError(true)
             return false;
         }
         
-        const data = { reason_name: state.reason, status: state.status };
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-reason`,{
+        const data = { customer_type: state.customer_type, status: state.status };
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-customer-type`,{
             method:'post',
             body:JSON.stringify(data),
             headers:{
                 "Content-Type": "application/json"
             }
         });
+        console.log(result);
         if (result.response.status === true) {
-            navigate('/list-reason');
+            navigate('/list-customer-type');
         }
     }
     const formClear = async (e) => {
         e.preventDefault();
         setState({
-            reason: "",
+            customer_type: "",
             status: "",
         })
     }
@@ -44,17 +45,17 @@ export const AddReason = ()=>{
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Add reason</p></Col>
+                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Add Customer Type</p></Col>
                     <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/add-cvr-mode" style={{ textDecoration: 'none' }}>Add reason</Link></p></Col>
+                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/add-cvr-mode" style={{ textDecoration: 'none' }}>Add Customer Type</Link></p></Col>
                 </Row>
                 <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
                 <Form style={{padding:'25px 20px 25px 25px'}}>
                     <Row className="g-2">
                         <Col md>
-                            <Form.Label>reason</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.reason} onChange={(e) => { setState({ ...state, reason: e.target.value }) }} type="text" />
-                            {error && !state.reason && <span style={invalidInput}>Enter reason</span>}
+                            <Form.Label>Customer Type</Form.Label><span style={asteriskStyle}> *</span>
+                            <Form.Control value={state.customer_type} onChange={(e) => { setState({ ...state, customer_type: e.target.value }) }} type="text" />
+                            {error && !state.customer_type && <span style={invalidInput}>Enter Customer Type</span>}
                         </Col>
                         <Col md>
                             <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
@@ -73,7 +74,7 @@ export const AddReason = ()=>{
                         <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addreason} style={submitbuttonStyle}>Add</Button>
+                        <Button onClick={addCustomerType} style={submitbuttonStyle}>Add</Button>
                     </Col>
                 </Row>   
             </Container>    

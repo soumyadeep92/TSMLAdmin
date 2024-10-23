@@ -14,8 +14,8 @@ const Header = () => {
   return (
       <Card className="header p-3">
         <Row>
-          <Col xs={12} lg={6}>
-            <div className='search-block'>
+          <Col xs={12} sm={6}>
+            <div className='search-block mb-20'>
               <Menu onClick={handleToggle} className='cursor-style mt-8' />
               <InputGroup>
                 <Form.Control placeholder="Search Here" />
@@ -25,7 +25,7 @@ const Header = () => {
               </InputGroup>
             </div>
           </Col>
-          <Col xs={12} lg={6}>
+          <Col xs={12} sm={6} className='mb-sm-3'>
             <div className='header-right'>
               <ul>
                 <li>

@@ -74,6 +74,6 @@ export const BarChart = () => {
     );
 
   return (
-    <Charts options={options} type="bar" series={series} width={isToggled===true?1140:960} height={height} />
+    <Charts options={options} type="bar" series={series} height={height} />
   );
 }

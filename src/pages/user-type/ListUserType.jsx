@@ -173,7 +173,7 @@ export const ListUserType = () => {
                                             <ul style={{ listStyle: 'none', right: '0px', position: 'absolute' }}>
                                                 <li onClick={() => handleView(row.original.roleid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEye} />View</li>
                                                 <li onClick={() => handleEdit(row.original.roleid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEdit} />Edit</li>
-                                                <li onClick={() => handleDelete(row.original.roleid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faTrash} />Delete</li>
+                                                {/* <li onClick={() => handleDelete(row.original.roleid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faTrash} />Delete</li> */}
                                             </ul>
                                         }
 

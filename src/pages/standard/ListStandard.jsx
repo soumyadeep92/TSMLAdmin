@@ -230,7 +230,7 @@ export const ListStandard = () => {
                         <Button style={clearbuttonStyle}>Export< ArrowDown /></Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addstandard} style={submitbuttonStyle}>Add standard</Button>
+                        <Button onClick={addstandard} style={submitbuttonStyle}>Add Standard</Button>
                     </Col>
                 </Row>
             </Container>

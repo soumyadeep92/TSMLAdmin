@@ -58,7 +58,7 @@ export const ListUser = () => {
             const itemElements = [];
             result.response.data.map((item, index) => {
                 itemElements.push({
-                    userid: item.id,
+                    dataid: item.id,
                     usercode: item.user_code,
                     username: item.username,
                     usertype: item.role.role_name,
@@ -194,14 +194,17 @@ export const ListUser = () => {
                                         <td>{row.original.phone}</td>
                                         <td>{row.original.location}</td>
                                         <td>{row.original.status}</td>
-                                        <td style={{ position: 'relative' }}><p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p></td>
-                                        {showOptions === index &&
-                                            <ul style={{ listStyle: 'none', right: '0px', position: 'absolute' }}>
-                                                <li onClick={() => handleView(row.original.userid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEye} />View</li>
-                                                <li onClick={() => handleEdit(row.original.userid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEdit} />Edit</li>
-                                                <li onClick={() => handleDelete(row.original.userid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faTrash} />Delete</li>
+                                        <td style={{ position: 'relative' }}>
+                                            <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
+                                            {showOptions === index &&
+                                            <ul className='dropdown-option'>
+                                                <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye}  className='mx-2'/>View</li>
+                                                <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2'/>Edit</li>
+                                                <li onClick={() => handleDelete(row.original.dataid)}className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2'/>Delete</li>
                                             </ul>
                                         }
+                                        </td>
+                                        
                                         {/* {showOptions === index && 
                                         <div style={{ position: 'absolute', background: 'white', border: '1px solid #ccc' }}>
                                             <button onClick={() => handleView(row.original.userid)}>

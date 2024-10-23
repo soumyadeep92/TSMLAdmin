@@ -28,6 +28,10 @@ import { EditReason } from '../pages/reason/EditReason'
 import { EditStandard } from '../pages/standard/EditStandard'
 import { AddStandard } from '../pages/standard/AddStandard'
 import { ListStandard } from '../pages/standard/ListStandard'
+import { ListCustomerType } from '../pages/customr-type/ListCustomerType'
+import { AddCustomerType } from '../pages/customr-type/AddCustomerType'
+import { EditCustomerType } from '../pages/customr-type/EditCustomerType'
+import { RolePermission } from '../pages/role-permission/RolePermission'
 
 const AppRoutes = () => {
   
@@ -47,6 +51,8 @@ const AppRoutes = () => {
                 <Route path = '/list-user-type' element ={<ListUserType/>}/>
                 <Route path = '/add-user-type' element ={<AddUserType/>}/>
                 <Route path = '/edit-user-type/:id' element ={<EditUserType/>}/>
+
+                <Route path = '/role-permission' element ={<RolePermission/>}/>
 
                 <Route path = '/list-cvr-mode' element ={<ListCvrMode/>}/>
                 <Route path = '/add-cvr-mode' element ={<AddCvrMode/>}/>
@@ -72,7 +78,9 @@ const AppRoutes = () => {
                 <Route path = '/add-standard' element ={<AddStandard/>}/>
                 <Route path = '/edit-standard/:id' element ={<EditStandard/>}/>
 
-                
+                <Route path = '/list-customer-type' element ={<ListCustomerType/>}/>
+                <Route path = '/add-customer-type' element ={<AddCustomerType/>}/>
+                <Route path = '/edit-customer-type/:id' element ={<EditCustomerType/>}/>
 
             </Route>
         </Routes>

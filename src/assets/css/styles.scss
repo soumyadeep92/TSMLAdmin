@@ -11,7 +11,7 @@ body{background-color: $lightGrey;}
   left: 0;             
   top: 0;               
   width: 270px;         
-  height: 100vh;        
+  height: 100%;        
   background-color: #333;
   color: white;
   padding: 20px 0;
@@ -104,7 +104,7 @@ body{background-color: $lightGrey;}
 }
 ////////////////////////Login page start///////////////////////////
 
-.login-wrap{padding:40px;}
+.login-wrap{padding:40px;display: flex; justify-content: center;width:90%; margin:0 auto;}
 
 
 .login-bg-wrap{ 
@@ -113,5 +113,30 @@ body{background-color: $lightGrey;}
     background-position: center;
     width: 100%;
     height: 100%;}
+.dropdown-option{list-style: none;
+    right: 0px;
+    position: absolute;
+    z-index: 99;
+    background: #f9f9f9;
+    padding:5px;
+    width:120px;}
+.dropdown-option li{padding:5px;}
+.listing-style{justify-content: flex-start;
+    align-content: center;
+    display: flex;
+    cursor: pointer;
+    flex-wrap: wrap;}
+
 ////////////////////////Login page end///////////////////////////
 
+@media (max-width: 991.98px){
+	.login-bg-wrap{height: 500px;}
+	.sidebar{width:200px;}
+	.content {margin-left:200px;}
+}
+@media (max-width: 575.98px){
+	.search-block .input-group {
+		width: 100%;
+	}
+	.mb-20{margin-bottom: 20px;}
+}
