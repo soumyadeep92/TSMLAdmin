@@ -4,26 +4,23 @@ import { Container, Row, Col, Form, Button,InputGroup, Image } from 'react-boots
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
-export const EditUser = () => {
-    const { id } = useParams();
+export const Profile = () => {
     const navigate = useNavigate();
     const inputFile = useRef(null);
+    const [authId, setAuthId] = useState(null);
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [error, setError] = useState(false);
     const [user, setUsers] = useState({});
-    const [userStatus, setUserStatus] = useState([]);
-    const [userRole, setUserRole] = useState([]);
     const [state, setState] = useState(
         {
             name: "",
             userId: "",
-            userType: "",
             phone: "",
             email: "",
             location: "",
-            status: "",
         }
     );
     const [erroremail, setErroremail] = useState(false);
@@ -38,8 +35,9 @@ export const EditUser = () => {
     const [errorfilemsg, setErrorfileMsg] = useState('');
 
     const [browsClick, setbrowsClick] = useState(false);
-    const addUser = async () => {
-        if (!state.name || !state.phone || !state.email || !state.location || !state.status || !state.userId || !state.userType) {
+
+    const profile = async () => {
+        if (!state.name || !state.phone || !state.email || !state.location || !state.userId ) {
             setError(true)
             return false;
         }
@@ -71,12 +69,9 @@ export const EditUser = () => {
         formData.append('phone', state.phone);
         formData.append('email', state.email);
         formData.append('location', state.location);
-        formData.append('status_id', state.status);
-        formData.append('user_type_id', state.userType);
-        formData.append('user_id', id);
-        formData.append('password', '123456');
+        formData.append('user_id', authId);
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}edit-user`,{
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}profile-update`,{
             method:'post',
             body:formData,
             headers:{}
@@ -128,7 +123,7 @@ export const EditUser = () => {
             return false;
         }
         if (result.response.code === 1) {
-            navigate('/list-user');
+            setSuccessAlert(true);
         }
         
     }
@@ -138,11 +133,9 @@ export const EditUser = () => {
         setState({
             name: "",
             userId: "",
-            userType: "",
             phone: "",
             email: "",
             location: "",
-            status: "",
         })
         setFile(null);
         setFileName('')
@@ -156,8 +149,14 @@ export const EditUser = () => {
         setFileName(file?.name);
     },[file])
 
+    useEffect(()=>{
+        const idd = JSON.parse(localStorage.getItem('user')).id;
+        
+        setAuthId(idd);
+    },[])
+    console.log('authId',authId);
     const getUser = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${id}`, {
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${authId}`, {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -168,12 +167,10 @@ export const EditUser = () => {
             itemElements = {
                 name: result.response.data.username,
                 usercode: result.response.data.user_code,
-                usertype: result.response.data.role.role_name,
                 email: result.response.data.email,
                 phone: result.response.data.phone,
                 location: result.response.data.location,
                 profile_pic: result.response.data.profile_pic,
-                status: result.response.data.user_status.status,
             };
             
             setUsers(itemElements);
@@ -186,47 +183,41 @@ export const EditUser = () => {
             {
                 name: user.name,
                 userId: user.usercode,
-                userType: user.usertype,
                 phone: user.phone,
                 email: user.email,
                 location: user.location,
-                status: user.status,
             }
         );
         setFile(user.profile_pic);
         setFileName(user.profile_pic);
-    },[user])
+    },[user.name,authId])
     
-    useEffect( () => {
-        async function fetchData() {
-            let resultStatus = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-status`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            setUserStatus(resultStatus.response.statusDetails);
-            let resultRole = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list-role`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            setUserRole(resultRole.response.data);
-        }
-        fetchData();
-        
-    }, [setUserStatus])
+    const [successAlert, setSuccessAlert] = useState(false);
+    const successClose = () => {
+        setSuccessAlert(false);
+    };
 
     return (
+        <>
+        {successAlert && (
+                <SweetAlert
+                    success
+                    title="Thank you"
+                    onConfirm={successClose}
+                    onCancel={successClose}
+                    confirmBtnBsStyle="success"
+                >
+                    Profile update successfully
+                </SweetAlert>
+            )}
         <AdminLayout>
            
             <Container fluid="true">
                 
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Edit User</p></Col>
+                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Profile</p></Col>
                     <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/edit-user" style={{ textDecoration: 'none' }}>Edit User</Link></p></Col>
+                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/profile" style={{ textDecoration: 'none' }}>EProfile</Link></p></Col>
                 </Row>
                 <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
                 <Form style={{padding:'25px 20px 25px 25px'}}>
@@ -244,29 +235,7 @@ export const EditUser = () => {
                             {errorcode && <span style={invalidInput}>{errorcodemsg}</span>}
                         </Col>
                     </Row>
-                    <Row className="g-2" style={row_style}>
-                        <Col md>
-                            <Form.Label>User Type</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Select aria-label="Floating label select example" value={state.userType} onChange={(e) => { setState({ ...state, userType: e.target.value }) }}>
-                                <option>Select Type</option>
-                                {
-                                    userRole.map((item,index)=>{
-                                        if(item.created_by === JSON.parse(localStorage.getItem('user')).id ){
-                                            return <option key={item.id} value={item.role_name}>{item.role_name}</option>
-                                        }
-                                        return true;
-                                    })
-                                }
-                            </Form.Select>
-                            {error && !state.userType && <span style={invalidInput}>Select Type</span>}
-                        </Col>
-                        <Col md>
-                            <Form.Label>Phone No.</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.phone} onChange={(e) => { setState({ ...state, phone: e.target.value }) }} type="text" />
-                            {error && !state.phone && <span style={invalidInput}>Enter Phne</span>}
-                            {errorphone && <span style={invalidInput}>{errorphonemsg}</span>}
-                        </Col>
-                    </Row>
+                   
                     <Row className="g-2" style={row_style}>
                         <Col md>
                             <Form.Label>Email</Form.Label><span style={asteriskStyle}> *</span>
@@ -281,22 +250,13 @@ export const EditUser = () => {
                     </Row>
                     <Row className="g-2" style={row_style}>
                         <Col md>
-                            <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Select aria-label="Floating label select example" value={state.status} onChange={(e) => { setState({ ...state, status: e.target.value }) }}>
-                                <option>Select Status</option>
-                                {
-                                    userStatus.map((item,index)=>
-                                    <option key={item.id} value={item.status}>{item.status}</option>
-                                    )
-                                }
-                            </Form.Select>
-                            {error && !state.status && <span style={invalidInput}>Select Status</span>}
+                            <Form.Label>Phone No.</Form.Label><span style={asteriskStyle}> *</span>
+                            <Form.Control value={state.phone} onChange={(e) => { setState({ ...state, phone: e.target.value }) }} type="text" />
+                            {error && !state.phone && <span style={invalidInput}>Enter Phne</span>}
+                            {errorphone && <span style={invalidInput}>{errorphonemsg}</span>}
                         </Col>
                         <Col md>
-                            {/* <Form.Label>Upload User Image</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control type="file" ref={inputFile} onChange={(e)=>{setState({...state,file: e.target.files[0]})}} />
-                            { error && !state.file && <span style={invalidInput}>Choose File</span>} */}
-                        
+                            
                             <Form.Label>Upload User Image</Form.Label><span style={asteriskStyle}> *</span>
                             <InputGroup>
                             <Form.Control style={{display:"none"}} type="file" ref={inputFile} onChange={(e)=>{setFile(e.target.files[0])}} />
@@ -323,12 +283,13 @@ export const EditUser = () => {
                         <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                     </Col>
                     <Col md>
-                        <Button onClick={addUser} style={submitbuttonStyle}>Update</Button>
+                        <Button onClick={profile} style={submitbuttonStyle}>Submit</Button>
                     </Col>
                 </Row>
             </Container>
             
         </AdminLayout>
+        </>
     )
 }
 const invalidInput = {

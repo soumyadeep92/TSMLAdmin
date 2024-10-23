@@ -32,6 +32,8 @@ import { ListCustomerType } from '../pages/customr-type/ListCustomerType'
 import { AddCustomerType } from '../pages/customr-type/AddCustomerType'
 import { EditCustomerType } from '../pages/customr-type/EditCustomerType'
 import { RolePermission } from '../pages/role-permission/RolePermission'
+import { ChangePassword } from '../pages/settings/ChangePassword'
+import { Profile } from '../pages/settings/Profile'
 
 const AppRoutes = () => {
   
@@ -81,6 +83,9 @@ const AppRoutes = () => {
                 <Route path = '/list-customer-type' element ={<ListCustomerType/>}/>
                 <Route path = '/add-customer-type' element ={<AddCustomerType/>}/>
                 <Route path = '/edit-customer-type/:id' element ={<EditCustomerType/>}/>
+
+                <Route path = '/change-password' element ={<ChangePassword/>}/>
+                <Route path = '/profile' element ={<Profile/>}/>
 
             </Route>
         </Routes>

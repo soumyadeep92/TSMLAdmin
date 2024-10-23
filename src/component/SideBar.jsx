@@ -14,6 +14,7 @@ const SideBar = () => {
   const [userDropdown, setUserDropdown] = useState(false);
   const [masterDropdown, setMasterDropdown] = useState(false);
   const [customerDropdown, setCustomerDropdown] = useState(false);
+  const [settingsDropdown, setSettingsDropdown] = useState(false);
 
   // Function to log out
   const logout = useCallback(() => {
@@ -28,29 +29,41 @@ const SideBar = () => {
   const handlemasterdropDown = useCallback(() => {
     setMasterDropdown((prev) => !prev);
   }, []);
-
   const handlecustomerdropDown = useCallback(() => {
     setCustomerDropdown((prev) => !prev);
+  }, []);
+  const handlesettingsdropDown = useCallback(() => {
+    setSettingsDropdown((prev) => !prev);
   }, []);
 
   useEffect(() => {
     const userManagementRoutes = ['/list-user', '/list-user-type', '/role-permission'];
     const masterManagementRoutes = ['/list-cvr-mode', '/list-category', '/list-material', '/list-product', '/list-reason', '/list-standard'];
     const customerManagementRoutes = ['/list-customer-type'];
+    const settingsManagementRoutes = ['/profile', '/change-password'];
     if (userManagementRoutes.includes(location.pathname)) {
       setUserDropdown(true);
       setMasterDropdown(false);
       setCustomerDropdown(false);
+      setSettingsDropdown(false);
     }
     if (masterManagementRoutes.includes(location.pathname)) {
       setUserDropdown(false); 
       setMasterDropdown(true);
       setCustomerDropdown(false);
+      setSettingsDropdown(false);
     }
     if (customerManagementRoutes.includes(location.pathname)) {
       setUserDropdown(false); 
       setMasterDropdown(false);
       setCustomerDropdown(true);
+      setSettingsDropdown(false);
+    }
+    if (settingsManagementRoutes.includes(location.pathname)) {
+      setUserDropdown(false); 
+      setMasterDropdown(false);
+      setCustomerDropdown(false);
+      setSettingsDropdown(true);
     }
   }, [location.pathname]);
 
@@ -115,6 +128,19 @@ const SideBar = () => {
         {!isToggled && customerDropdown && (
           <ul>
             <li><Link to="/list-customer-type">Type List</Link></li>
+          </ul>
+        )}
+        <li>
+          {isToggled ?
+            <Users />
+            :
+            <Link to="#" onClick={handlesettingsdropDown}>Settings</Link>
+          }
+        </li>
+        {!isToggled && settingsDropdown && (
+          <ul>
+            <li><Link to="/profile">Profile</Link></li>
+            <li><Link to="/change-password">Change Password</Link></li>
           </ul>
         )}
         <li>
