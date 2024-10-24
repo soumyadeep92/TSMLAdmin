@@ -69,12 +69,12 @@ export const AddUser = () => {
         formData.append('user_role_name', state.userType);
         formData.append('password', state.password);
 
-        // let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}add-user`,{
-        //     method:'post',
-        //     body:formData,
-        //     headers:{}
-        // });
-        let result = await addUsers(formData);
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}add-user`, {
+            method: 'post',
+            body: formData,
+            headers: {}
+        });
+
         //result = await result.json();
         console.log('resulthhh', result);
         if (result.response.status === false && result.response.code === 5) {
