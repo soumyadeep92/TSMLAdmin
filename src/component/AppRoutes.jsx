@@ -34,6 +34,8 @@ import { EditCustomerType } from '../pages/customr-type/EditCustomerType'
 import { RolePermission } from '../pages/role-permission/RolePermission'
 import { ChangePassword } from '../pages/settings/ChangePassword'
 import { Profile } from '../pages/settings/Profile'
+import { ForgotPassword } from '../pages/settings/ForgotPassword'
+import { ResetPassword } from '../pages/settings/ResetPassword'
 
 const AppRoutes = () => {
   
@@ -42,6 +44,8 @@ const AppRoutes = () => {
     <BrowserRouter>
         <Routes>
             <Route path ='/' element = {<Login/>}/>
+            <Route path = '/forgot-password' element ={<ForgotPassword/>}/>
+            <Route path = '/reset-password/:token' element ={<ResetPassword/>}/>
             <Route element={<PrivateComponent />}>
                 <Route path ='/dashboard' element = {<Dashboard/>}/>
 

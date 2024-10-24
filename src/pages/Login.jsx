@@ -133,6 +133,10 @@ export const Login = () => {
         setShowPassword((prev) => !prev);
     };
 
+    const forgotPassword = () =>{
+        navigate('/forgot-password');
+    }
+
     return (
         <>
             {show1 && (
@@ -214,7 +218,7 @@ export const Login = () => {
                                         <Form.Check
                                             label={`Remember Me`} style={remenberMeStyle}
                                         />
-                                        <a style={forgotPasswordStyle}>Forgot Password?</a>
+                                        <a style={forgotPasswordStyle} onClick={forgotPassword}>Forgot Password?</a>
                                     </div>
 
 
@@ -255,9 +259,8 @@ const formStyle = {
     radius: "5px"
 }
 const forgotPasswordStyle = {
-    // float: "right",
-    // paddingRight: "90px",
-    // color: "#3A85E5"
+    cursor: 'pointer',
+    color: "#3A85E5",
     textAlign:'right',
     width:'50%',
     display:'inline-block'
