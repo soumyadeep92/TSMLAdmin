@@ -12,11 +12,11 @@ import fetchWithAuth from '../../fetchWithAuth';
 
 export const ListUser = () => {
     const navigate = useNavigate();
-    
-    
+
+
     const [filterInput, setFilterInput] = useState('');
     // Table columns
-    
+
     const [showOptions, setShowOptions] = useState(null);
     const handleToggleOptions = (index) => {
         //setShowOptions(index);
@@ -35,15 +35,15 @@ export const ListUser = () => {
                 'Content-Type': 'application/json',
             }
         });
-        if(result.status === '1'){
+        if (result.status === '1') {
             setUsers((prevUsers) => prevUsers.filter(user => user.userid !== item));
         }
     };
 
-    
+
     const [users, setUsers] = useState([]);
     useEffect(() => {
-        
+
         getUsers();
     }, [])
     const getUsers = async () => {
@@ -170,10 +170,10 @@ export const ListUser = () => {
                     </Row>
                     <Table {...getTableProps()} style={{ width: '100%', marginTop: '20px' }} striped bordered hover >
                         <thead>
-                            {headerGroups.map(headerGroup => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map(column => (
-                                        <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                            {headerGroups.map((headerGroup,headKey) => (
+                                <tr {...headerGroup.getHeaderGroupProps()} key={headKey}>
+                                    {headerGroup.headers.map((column, key) => (
+                                        <th {...column.getHeaderProps()} key={key}>{column.render('Header')}</th>
                                     ))}
                                     <th>Action</th>
                                 </tr>
@@ -183,7 +183,7 @@ export const ListUser = () => {
                             {page.map((row, index) => {
                                 prepareRow(row);
                                 return (
-                                    <tr {...row.getRowProps()}>
+                                    <tr {...row.getRowProps()} key={index}>
                                         {/* {row.cells.map(cell => {
                                             //return <td {...cell.getCellProps()}>{cell.value}</td>;
                                         })} */}
@@ -197,14 +197,14 @@ export const ListUser = () => {
                                         <td style={{ position: 'relative' }}>
                                             <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
                                             {showOptions === index &&
-                                            <ul className='dropdown-option'>
-                                                <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye}  className='mx-2'/>View</li>
-                                                <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2'/>Edit</li>
-                                                <li onClick={() => handleDelete(row.original.dataid)}className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2'/>Delete</li>
-                                            </ul>
-                                        }
+                                                <ul className='dropdown-option'>
+                                                    <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
+                                                    <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
+                                                    <li onClick={() => handleDelete(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Delete</li>
+                                                </ul>
+                                            }
                                         </td>
-                                        
+
                                         {/* {showOptions === index && 
                                         <div style={{ position: 'absolute', background: 'white', border: '1px solid #ccc' }}>
                                             <button onClick={() => handleView(row.original.userid)}>

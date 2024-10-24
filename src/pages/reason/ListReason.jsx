@@ -155,10 +155,10 @@ export const ListReason = () => {
                     </Row>
                     <Table {...getTableProps()} style={{ width: '100%', marginTop: '20px' }} striped bordered hover >
                         <thead>
-                            {headerGroups.map(headerGroup => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map(column => (
-                                        <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                            {headerGroups.map((headerGroup,keyHead) => (
+                                <tr {...headerGroup.getHeaderGroupProps()} key={keyHead}>
+                                    {headerGroup.headers.map((column,key) => (
+                                        <th {...column.getHeaderProps()} key={key}>{column.render('Header')}</th>
                                     ))}
                                     <th>Action</th>
                                 </tr>
@@ -168,7 +168,7 @@ export const ListReason = () => {
                             {page.map((row, index) => {
                                 prepareRow(row);
                                 return (
-                                    <tr {...row.getRowProps()}>
+                                    <tr {...row.getRowProps()} key={index}>
                                         <td>{row.original.dataid}</td>
                                         <td>{row.original.reason}</td>
                                         <td>{(row.original.status === 1)?'Active':'Inactive'}</td>

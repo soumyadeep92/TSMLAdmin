@@ -1,6 +1,6 @@
 import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useRef, useEffect } from "react";
-import { Container, Row, Col, Form, Button,InputGroup, Image } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, InputGroup, Image } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
@@ -12,7 +12,14 @@ export const Profile = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [error, setError] = useState(false);
-    const [user, setUsers] = useState({});
+    const [user, setUsers] = useState({
+        name: '',
+        usercode: '',
+        email: '',
+        phone: '',
+        location: '',
+        profile_pic: ''
+    });
     const [state, setState] = useState(
         {
             name: "",
@@ -36,31 +43,31 @@ export const Profile = () => {
     const [browsClick, setbrowsClick] = useState(false);
 
     const profile = async () => {
-        if (!state.name || !state.phone || !state.email || !state.location || !state.userId ) {
+        if (!state.name || !state.phone || !state.email || !state.location || !state.userId) {
             setError(true)
             return false;
         }
 
-        if(browsClick && typeof file === 'object'){
-            if(file){
+        if (browsClick && typeof file === 'object') {
+            if (file) {
                 const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
                 const maxSize = 5 * 1024; // 5KB
                 if (!allowedTypes.includes(file.type)) {
                     setErrorfile(true);
                     setErrorfileMsg('Only JPEG, JPG, and PNG files are allowed!');
-                    return false; 
+                    return false;
                 }
                 if (file.size > maxSize) {
                     setErrorfile(true);
                     setErrorfileMsg('File size must be less than 5KB!');
-                    return false; 
+                    return false;
                 }
-                
-            }else{
+
+            } else {
                 setError(true)
-                return false; 
+                return false;
             }
-        }    
+        }
         const formData = new FormData();
         formData.append('profile_image', file);
         formData.append('username', state.name);
@@ -70,10 +77,10 @@ export const Profile = () => {
         formData.append('location', state.location);
         formData.append('user_id', authId);
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}profile-update`,{
-            method:'post',
-            body:formData,
-            headers:{}
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}profile-update`, {
+            method: 'post',
+            body: formData,
+            headers: {}
         });
 
         if (result.response.code === 5) {
@@ -124,7 +131,7 @@ export const Profile = () => {
         if (result.response.code === 1) {
             setSuccessAlert(true);
         }
-        
+
     }
 
     const formClear = async (e) => {
@@ -139,20 +146,20 @@ export const Profile = () => {
         setFile(null);
         setFileName('')
     }
-    const browserBtn = ()=>{
+    const browserBtn = () => {
         inputFile.current.click();
         setbrowsClick(true);
     }
-    
-    useEffect(()=>{
-        setFileName(file?.name);
-    },[file])
 
-    useEffect(()=>{
+    useEffect(() => {
+        setFileName(file?.name);
+    }, [file])
+
+    useEffect(() => {
         const idd = JSON.parse(localStorage.getItem('user')).id;
-        
+
         setAuthId(idd);
-    },[])
+    }, [])
 
     const getUser = async () => {
         let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${authId}`, {
@@ -161,7 +168,7 @@ export const Profile = () => {
                 'Content-Type': 'application/json',
             }
         });
-        if (result.success === true && result.response.data) {
+        if (result.success === true && result.response.data.username && result.response.data.user_code && result.response.data.email && result.response.data.phone && result.response.data.location && result.response.data.profile_pic) {
             let itemElements = {};
             itemElements = {
                 name: result.response.data.username,
@@ -171,12 +178,11 @@ export const Profile = () => {
                 location: result.response.data.location,
                 profile_pic: result.response.data.profile_pic,
             };
-            
             setUsers(itemElements);
-        } 
-    }    
-   
-    useEffect(()=>{
+        }
+    }
+
+    useEffect(() => {
         getUser();
         setState(
             {
@@ -189,8 +195,8 @@ export const Profile = () => {
         );
         setFile(user.profile_pic);
         setFileName(user.profile_pic);
-    },[user.name,authId])
-    
+    }, [user.name, authId])
+
     const [successAlert, setSuccessAlert] = useState(false);
     const successClose = () => {
         setSuccessAlert(false);
@@ -198,7 +204,7 @@ export const Profile = () => {
 
     return (
         <>
-        {successAlert && (
+            {successAlert && (
                 <SweetAlert
                     success
                     title="Thank you"
@@ -209,85 +215,85 @@ export const Profile = () => {
                     Profile update successfully
                 </SweetAlert>
             )}
-        <AdminLayout>
-           
-            <Container fluid="true">
-                
-                <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Profile</p></Col>
-                    <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/profile" style={{ textDecoration: 'none' }}>EProfile</Link></p></Col>
-                </Row>
-                <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
-                <Form style={{padding:'25px 20px 25px 25px'}}>
-                    <Row className="g-2">
-                        <Col md>
-                            <Form.Label>Name</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.name} onChange={(e) => { setState({ ...state, name: e.target.value }) }} type="text" />
-                            {error && !state.name && <span style={invalidInput}>Enter Name</span>}
-                            {errorname && <span style={invalidInput}>{errornamemsg}</span>}
-                        </Col>
-                        <Col md>
-                            <Form.Label>User Id</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.userId} onChange={(e) => { setState({ ...state, userId: e.target.value }) }} type="text" />
-                            {error && !state.userId && <span style={invalidInput}>Enter UserId</span>}
-                            {errorcode && <span style={invalidInput}>{errorcodemsg}</span>}
-                        </Col>
-                    </Row>
-                   
-                    <Row className="g-2" style={row_style}>
-                        <Col md>
-                            <Form.Label>Email</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.email} onChange={(e) => { setState({ ...state, email: e.target.value }) }} type="email" />
-                            {error && !state.email && <span style={invalidInput}>Enter Email</span>}
-                            {erroremail && <span style={invalidInput}>{erroremailmsg}</span>}
-                        </Col>
-                        <Col md>
-                            <Form.Label>Location</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.location} onChange={(e) => { setState({ ...state, location: e.target.value }) }} type="text" />{error && !state.location && <span style={invalidInput}>Enter Location</span>}
-                        </Col>
-                    </Row>
-                    <Row className="g-2" style={row_style}>
-                        <Col md>
-                            <Form.Label>Phone No.</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.phone} onChange={(e) => { setState({ ...state, phone: e.target.value }) }} type="text" />
-                            {error && !state.phone && <span style={invalidInput}>Enter Phne</span>}
-                            {errorphone && <span style={invalidInput}>{errorphonemsg}</span>}
-                        </Col>
-                        <Col md>
-                            
-                            <Form.Label>Upload User Image</Form.Label><span style={asteriskStyle}> *</span>
-                            <InputGroup>
-                            <Form.Control style={{display:"none"}} type="file" ref={inputFile} onChange={(e)=>{setFile(e.target.files[0])}} />
-                            <Form.Control  value={fileName} disabled/>
-                            <InputGroup.Text onClick={browserBtn} style={{cursor:"pointer"}}>Browser</InputGroup.Text>
-                            </InputGroup>
-                            { error && !file && <span style={invalidInput}>Choose File</span>}
-                            {errorfile && <span style={invalidInput}>{errorfilemsg}</span>}
+            <AdminLayout>
 
-                        </Col>
-                    </Row>
-                    { typeof file === 'string' &&
+                <Container fluid="true">
+
                     <Row>
-                        <Col lg="6"></Col>
-                        <Col lg="6" style={{textAlign:'center'}}>
-                            <Image style={{width:'80px'}} src={ADMIN_BACKEND_IMAGE_URL+file}/>
+                        <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Profile</p></Col>
+                        <Col sm={6}></Col>
+                        <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign: 'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/profile" style={{ textDecoration: 'none' }}>EProfile</Link></p></Col>
+                    </Row>
+                    <Row style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px' }}>
+                        <Form style={{ padding: '25px 20px 25px 25px' }}>
+                            <Row className="g-2">
+                                <Col md>
+                                    <Form.Label>Name</Form.Label><span style={asteriskStyle}> *</span>
+                                    {user.name && <Form.Control value={user.name} onChange={(e) => { setState({ ...state, name: e.target.value }) }} type="text" />}
+                                    {error && !state.name && <span style={invalidInput}>Enter Name</span>}
+                                    {errorname && <span style={invalidInput}>{errornamemsg}</span>}
+                                </Col>
+                                <Col md>
+                                    <Form.Label>User Id</Form.Label><span style={asteriskStyle}> *</span>
+                                    {user.usercode && <Form.Control value={user.usercode} onChange={(e) => { setState({ ...state, userId: e.target.value }) }} type="text" />}
+                                    {error && !state.userId && <span style={invalidInput}>Enter UserId</span>}
+                                    {errorcode && <span style={invalidInput}>{errorcodemsg}</span>}
+                                </Col>
+                            </Row>
+
+                            <Row className="g-2" style={row_style}>
+                                <Col md>
+                                    <Form.Label>Email</Form.Label><span style={asteriskStyle}> *</span>
+                                    {user.email && <Form.Control value={user.email} onChange={(e) => { setState({ ...state, email: e.target.value }) }} type="email" />}
+                                    {error && !state.email && <span style={invalidInput}>Enter Email</span>}
+                                    {erroremail && <span style={invalidInput}>{erroremailmsg}</span>}
+                                </Col>
+                                <Col md>
+                                    <Form.Label>Location</Form.Label><span style={asteriskStyle}> *</span>
+                                    {user.location && <Form.Control value={user.location} onChange={(e) => { setState({ ...state, location: e.target.value }) }} type="text" />}{error && !state.location && <span style={invalidInput}>Enter Location</span>}
+                                </Col>
+                            </Row>
+                            <Row className="g-2" style={row_style}>
+                                <Col md>
+                                    <Form.Label>Phone No.</Form.Label><span style={asteriskStyle}> *</span>
+                                    {user.phone && <Form.Control value={user.phone} onChange={(e) => { setState({ ...state, phone: e.target.value }) }} type="text" />}
+                                    {error && !state.phone && <span style={invalidInput}>Enter Phne</span>}
+                                    {errorphone && <span style={invalidInput}>{errorphonemsg}</span>}
+                                </Col>
+                                <Col md>
+
+                                    <Form.Label>Upload User Image</Form.Label><span style={asteriskStyle}> *</span>
+                                    <InputGroup>
+                                    <Form.Control style={{ display: "none" }} type="file" ref={inputFile} onChange={(e) => { setFile(e.target.files[0]) }} />
+                                        {user.profile_pic && <Form.Control value={user.profile_pic} disabled />}
+                                        <InputGroup.Text onClick={browserBtn} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                    </InputGroup>
+                                    {error && !file && <span style={invalidInput}>Choose File</span>}
+                                    {errorfile && <span style={invalidInput}>{errorfilemsg}</span>}
+
+                                </Col>
+                            </Row>
+                            {typeof file === 'string' &&
+                                <Row>
+                                    <Col lg="6"></Col>
+                                    <Col lg="6" style={{ textAlign: 'center' }}>
+                                        <Image style={{ width: '80px' }} src={ADMIN_BACKEND_IMAGE_URL + file} />
+                                    </Col>
+                                </Row>
+                            }
+                        </Form>
+                    </Row>
+                    <Row className="g-2" style={{ marginLeft: "629px" }}>
+                        <Col md style={{ textAlign: "right" }}>
+                            <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
+                        </Col>
+                        <Col md>
+                            <Button onClick={profile} style={submitbuttonStyle}>Submit</Button>
                         </Col>
                     </Row>
-                    }
-                </Form>
-                </Row>
-                <Row className="g-2" style={{ marginLeft: "629px" }}>
-                    <Col md style={{ textAlign: "right" }}>
-                        <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
-                    </Col>
-                    <Col md>
-                        <Button onClick={profile} style={submitbuttonStyle}>Submit</Button>
-                    </Col>
-                </Row>
-            </Container>
-            
-        </AdminLayout>
+                </Container>
+
+            </AdminLayout>
         </>
     )
 }
