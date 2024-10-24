@@ -62,7 +62,7 @@ export const ListUserType = () => {
     );
     const columns = React.useMemo(
         () => [
-            { Header: 'Id', accessor: 'id' },
+            { Header: 'Id', accessor: 'dataid' },
             { Header: 'User Type', accessor: 'usertype' },
             { Header: 'Status', accessor: 'status' },
         ],
@@ -165,17 +165,19 @@ export const ListUserType = () => {
                                 return (
                                     <tr {...row.getRowProps()}>
                                         
-                                        <td>{row.original.roleid}</td>
+                                        <td>{row.original.dataid}</td>
                                         <td>{row.original.usertype}</td>
                                         <td>{(row.original.status === 1)?'Active':'Inactive'}</td>
-                                        <td style={{ position: 'relative' }}><p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p></td>
-                                        {showOptions === index &&
-                                            <ul style={{ listStyle: 'none', right: '0px', position: 'absolute' }}>
-                                                <li onClick={() => handleView(row.original.roleid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEye} />View</li>
-                                                <li onClick={() => handleEdit(row.original.roleid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faEdit} />Edit</li>
-                                                {/* <li onClick={() => handleDelete(row.original.roleid)} style={{ display: 'flex', cursor:'pointer' }}><FontAwesomeIcon icon={faTrash} />Delete</li> */}
+                                        <td style={{ position: 'relative' }}>
+                                            <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
+                                            {showOptions === index &&
+                                            <ul className='dropdown-option'>
+                                                <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye}  className='mx-2'/>View</li>
+                                                <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2'/>Edit</li>
+                                                {/* <li onClick={() => handleDelete(row.original.dataid)}className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2'/>Delete</li> */}
                                             </ul>
                                         }
+                                        </td>
 
                                     </tr>
                                 );

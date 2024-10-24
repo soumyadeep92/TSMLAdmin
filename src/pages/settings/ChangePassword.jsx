@@ -8,7 +8,6 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 
 export const ChangePassword = ()=>{
 
-    const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [state, setState] = useState(
         {
@@ -17,8 +16,9 @@ export const ChangePassword = ()=>{
         }
     );
     const changePassword = async () => {
-        if (!state.old_password || !state.new_password ) {
+        if (!state.old_password || !state.new_password || state.new_password.length<6 || state.old_password.length<6 ) {
             setError(true)
+            console.log("llll");
             return false;
         }
         
@@ -92,11 +92,13 @@ export const ChangePassword = ()=>{
                             <Form.Label>Old Password</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Control value={state.old_password} onChange={(e) => { setState({ ...state, old_password: e.target.value }) }} type="text" />
                             {error && !state.old_password && <span style={invalidInput}>Enter Old password</span>}
+                            {error && state.old_password.length>0 && state.old_password.length<6 && <span style={invalidInput}> Password must be at least 6 characters</span>}
                         </Col>
                         <Col md>
                             <Form.Label>New Password</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Control value={state.new_password} onChange={(e) => { setState({ ...state, new_password: e.target.value }) }} type="text" />
                             {error && !state.new_password && <span style={invalidInput}>Enter New Password</span>}
+                            {error && state.new_password.length>0 && state.new_password.length<6 && <span style={invalidInput}> Password must be at least 6 characters</span>}
                         </Col>
                     </Row>
                 </Form>

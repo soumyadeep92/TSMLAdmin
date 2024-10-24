@@ -37,10 +37,11 @@ const SideBar = () => {
   }, []);
 
   useEffect(() => {
-    const userManagementRoutes = ['/list-user', '/list-user-type', '/role-permission'];
+    const userManagementRoutes = ['/list-user', '/list-user-type', '/role-permission','/edit-user/17'];
     const masterManagementRoutes = ['/list-cvr-mode', '/list-category', '/list-material', '/list-product', '/list-reason', '/list-standard'];
     const customerManagementRoutes = ['/list-customer-type'];
     const settingsManagementRoutes = ['/profile', '/change-password'];
+    console.log("location",location.pathname);
     if (userManagementRoutes.includes(location.pathname)) {
       setUserDropdown(true);
       setMasterDropdown(false);

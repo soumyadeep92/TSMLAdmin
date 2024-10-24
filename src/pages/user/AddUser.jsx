@@ -22,6 +22,7 @@ export const AddUser = () => {
             email: "",
             location: "",
             status: "",
+            password: "",
         }
     );
     const [erroremail, setErroremail] = useState(false);
@@ -35,7 +36,7 @@ export const AddUser = () => {
     const [errorfile, setErrorfile] = useState(false);
     const [errorfilemsg, setErrorfileMsg] = useState('');
     const addUser = async () => {
-        if (!state.name || !state.phone || !state.email || !state.location || !state.status || !state.userId || !state.userType) {
+        if (!state.name || !state.phone || !state.email || !state.location || !state.status || !state.userId || !state.userType || !state.password || state.password.length<6) {
             setError(true)
             return false;
         }
@@ -65,7 +66,7 @@ export const AddUser = () => {
         formData.append('location', state.location);
         formData.append('user_status_name', state.status);
         formData.append('user_role_name', state.userType);
-        formData.append('password', '123456');
+        formData.append('password', state.password);
 
         let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}add-user`,{
             method:'post',
@@ -138,6 +139,7 @@ export const AddUser = () => {
             email: "",
             location: "",
             status: "",
+            password: "",
         })
         setFile(null);
         setFileName('')
@@ -246,6 +248,15 @@ export const AddUser = () => {
                             {error && !state.status && <span style={invalidInput}>Select Status</span>}
                         </Col>
                         <Col md>
+                            <Form.Label>Password</Form.Label><span style={asteriskStyle}> *</span>
+                            <Form.Control value={state.password} onChange={(e) => { setState({ ...state, password: e.target.value }) }} type="text" />
+                            {error && !state.password && <span style={invalidInput}>Enter password</span>}
+                            {error && state.password.length>0 && state.password.length<6 && <span style={invalidInput}> Password must be at least 6 characters</span>}
+                        </Col>
+                        
+                    </Row>
+                    <Row className="g-2" style={row_style}>
+                    <Col md>
                             {/* <Form.Label>Upload User Image</Form.Label><span style={asteriskStyle}> *</span>
                             <Form.Control type="file" ref={inputFile} onChange={(e)=>{setState({...state,file: e.target.files[0]})}} />
                             { error && !state.file && <span style={invalidInput}>Choose File</span>} */}
@@ -260,7 +271,9 @@ export const AddUser = () => {
                             {errorfile && <span style={invalidInput}>{errorfilemsg}</span>}
 
                         </Col>
-                    </Row>
+                        <Col md>
+                        </Col>
+                    </Row>    
                 </Form>
                 </Row>
                 <Row className="g-2" style={{ marginLeft: "629px" }}>

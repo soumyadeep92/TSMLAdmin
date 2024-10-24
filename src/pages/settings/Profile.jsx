@@ -154,7 +154,7 @@ export const Profile = () => {
         
         setAuthId(idd);
     },[])
-    console.log('authId',authId);
+
     const getUser = async () => {
         let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${authId}`, {
             method: 'get',
