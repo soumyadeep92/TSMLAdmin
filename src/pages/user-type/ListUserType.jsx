@@ -33,7 +33,7 @@ export const ListUserType = () => {
 
     const [roles, setRoles] = useState([]);
     useEffect(() => {
-        
+
         getRoles();
     }, [])
     const getRoles = async () => {
@@ -150,10 +150,10 @@ export const ListUserType = () => {
                     </Row>
                     <Table {...getTableProps()} style={{ width: '100%', marginTop: '20px' }} striped bordered hover >
                         <thead>
-                            {headerGroups.map(headerGroup => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map(column => (
-                                        <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                            {headerGroups.map((headerGroup, keyHead) => (
+                                <tr {...headerGroup.getHeaderGroupProps()} key={keyHead}>
+                                    {headerGroup.headers.map((column, key) => (
+                                        <th {...column.getHeaderProps()} key={key}>{column.render('Header')}</th>
                                     ))}
                                     <th>Action</th>
                                 </tr>
@@ -163,20 +163,20 @@ export const ListUserType = () => {
                             {page.map((row, index) => {
                                 prepareRow(row);
                                 return (
-                                    <tr {...row.getRowProps()}>
-                                        
+                                    <tr {...row.getRowProps()} key={index}>
+
                                         <td>{row.original.dataid}</td>
                                         <td>{row.original.usertype}</td>
-                                        <td>{(row.original.status === 1)?'Active':'Inactive'}</td>
+                                        <td>{(row.original.status === 1) ? 'Active' : 'Inactive'}</td>
                                         <td style={{ position: 'relative' }}>
                                             <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
                                             {showOptions === index &&
-                                            <ul className='dropdown-option'>
-                                                <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye}  className='mx-2'/>View</li>
-                                                <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2'/>Edit</li>
-                                                {/* <li onClick={() => handleDelete(row.original.dataid)}className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2'/>Delete</li> */}
-                                            </ul>
-                                        }
+                                                <ul className='dropdown-option'>
+                                                    <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
+                                                    <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
+                                                    {/* <li onClick={() => handleDelete(row.original.dataid)}className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2'/>Delete</li> */}
+                                                </ul>
+                                            }
                                         </td>
 
                                     </tr>

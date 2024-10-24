@@ -14,10 +14,10 @@ export const Login = () => {
 
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
-    const [username, setUsername] = useState(null);
-    const [password, setPassword] = useState(null);
-    const [captcha, setCaptcha] = useState(null);
-    const [captchacode, setCaptchacode] = useState(null);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [captcha, setCaptcha] = useState('');
+    const [captchacode, setCaptchacode] = useState('');
     const [errors, setErrors] = useState({});
 
     const [show1, setShow1] = useState(false);
