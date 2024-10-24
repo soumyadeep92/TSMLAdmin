@@ -183,14 +183,14 @@ export const Login = () => {
                                     </Form.Group>
                                     <Form.Group className="mb-3" controlId="formGroupPassword">
                                         <Form.Label>Password</Form.Label><span style={asteriskStyle}> *</span>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <div style={{ position: 'relative' }}>
                                             <Form.Control
                                                 type={showPassword ? 'text' : 'password'}
                                                 name="password"
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 style={formStyle} required="required" />
-                                            <span onClick={togglePasswordVisibility} style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', right: '30px' }}>
+                                            <span onClick={togglePasswordVisibility} style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'absolute', right: '10px', top: '8px' }}>
                                                 {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                                             </span>
                                         </div>

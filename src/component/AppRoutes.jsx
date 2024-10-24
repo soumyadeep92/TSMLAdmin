@@ -36,6 +36,7 @@ import { ChangePassword } from '../pages/settings/ChangePassword'
 import { Profile } from '../pages/settings/Profile'
 import { ForgotPassword } from '../pages/settings/ForgotPassword'
 import { ResetPassword } from '../pages/settings/ResetPassword'
+import { PageNotFound } from '../pages/PageNotFound'
 
 const AppRoutes = () => {
   
@@ -43,6 +44,7 @@ const AppRoutes = () => {
     <>
     <BrowserRouter>
         <Routes>
+            <Route path ='/*' element = {<PageNotFound/>}/>
             <Route path ='/' element = {<Login/>}/>
             <Route path = '/forgot-password' element ={<ForgotPassword/>}/>
             <Route path = '/reset-password/:token' element ={<ResetPassword/>}/>

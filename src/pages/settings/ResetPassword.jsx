@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import LoginImg from '../../assets/Login.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_AUTH_API_URL } from '../../constant';
-import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 export const ResetPassword = () => {
 
+    const navigate = useNavigate();
     const { token } = useParams();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -20,6 +20,29 @@ export const ResetPassword = () => {
             confirm_password: "",
         }
     );
+    const [tokenAlert, setTokenAlert] = useState(false);
+    const tokenClose = () => {
+        setTokenAlert(false);
+    };
+    useEffect(() => {
+        if (token) {
+            const parts = token.split('.');
+            if( parts.length === 3 ){
+
+                const payload = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
+                const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+                if (payload.exp < currentTime) {
+                    setTokenAlert(true);
+                    setTimeout(() => {
+                        navigate('/'); // Redirect after alert is shown
+                    }, 1000);
+                }
+            }else{
+                navigate('/');
+            }
+        }
+    }, [])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!state.password || !state.confirm_password || state.password.length < 6 || state.confirm_password.length < 6) {
@@ -27,7 +50,7 @@ export const ResetPassword = () => {
             console.log("llll");
             return false;
         }
-        if( state.password === state.confirm_password ){
+        if (state.password === state.confirm_password) {
             const data = { newPassword: state.password };
             let result = await fetch(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_AUTH_API_URL}reset-password/${token}`, {
                 method: 'post',
@@ -42,9 +65,9 @@ export const ResetPassword = () => {
             } else {
                 setWarningAlert(true);
             }
-        }else{
+        } else {
             setWarningAlert(true);
-        }    
+        }
     }
 
     const togglePasswordVisibility = () => {
@@ -83,6 +106,17 @@ export const ResetPassword = () => {
                     confirmBtnBsStyle="warning"
                 >
                     Password not change
+                </SweetAlert>
+            )}
+            {tokenAlert && (
+                <SweetAlert
+                    warning
+                    title="Oops!"
+                    onConfirm={tokenClose}
+                    onCancel={tokenClose}
+                    confirmBtnBsStyle="warning"
+                >
+                    Token Expire!
                 </SweetAlert>
             )}
             <Container fluid className="vh-100">
@@ -129,7 +163,7 @@ export const ResetPassword = () => {
                                         {error && !state.confirm_password && <span style={invalidInput}>Enter New Password</span>}
                                         {error && state.confirm_password.length > 0 && state.confirm_password.length < 6 && <span style={invalidInput}> Password must be at least 6 characters</span>}
                                     </Form.Group>
-                                    
+
                                     <Button type='submit' style={buttonStyle}>Submit</Button>
                                 </Form>
                             </div>
