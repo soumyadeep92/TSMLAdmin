@@ -37,6 +37,7 @@ import { Profile } from '../pages/settings/Profile'
 import { ForgotPassword } from '../pages/settings/ForgotPassword'
 import { ResetPassword } from '../pages/settings/ResetPassword'
 import { PageNotFound } from '../pages/PageNotFound'
+import { CvrTimeSchedule } from '../pages/settings/CvrTimeSchedule'
 
 const AppRoutes = () => {
   
@@ -48,6 +49,7 @@ const AppRoutes = () => {
             <Route path ='/' element = {<Login/>}/>
             <Route path = '/forgot-password' element ={<ForgotPassword/>}/>
             <Route path = '/reset-password/:token' element ={<ResetPassword/>}/>
+            <Route path = '/cvr-time-schedule' element ={<CvrTimeSchedule/>}/>
             <Route element={<PrivateComponent />}>
                 <Route path ='/dashboard' element = {<Dashboard/>}/>
 
@@ -92,6 +94,8 @@ const AppRoutes = () => {
 
                 <Route path = '/change-password' element ={<ChangePassword/>}/>
                 <Route path = '/profile' element ={<Profile/>}/>
+
+                
 
             </Route>
         </Routes>

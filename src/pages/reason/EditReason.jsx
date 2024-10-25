@@ -79,9 +79,9 @@ export const EditReason = ()=>{
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Edit Reason</p></Col>
-                    <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/edit-category" style={{ textDecoration: 'none' }}>Edit Reason</Link></p></Col>
+                    <Col sm={3}><p className='page_left_panel'>Edit Reason</p></Col>
+                    <Col sm={5}></Col>
+                    <Col sm={4}><p className='page_right_panel'>Dashboard / Edit Reason</p></Col>
                 </Row>
                 <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
                 <Form style={{padding:'25px 20px 25px 25px'}}>

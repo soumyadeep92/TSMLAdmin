@@ -127,9 +127,9 @@ export const ListUser = () => {
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "Mulish", marginTop: "20px" }}>List User</p></Col>
-                    <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "Mulish", marginTop: "25px" }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/list-user" style={{ textDecoration: 'none' }}>Users List</Link></p></Col>
+                    <Col sm={3}><p className='page_left_panel'>List User</p></Col>
+                    <Col sm={5}></Col>
+                    <Col sm={4}><p className='page_right_panel'>Dashboard / List User</p></Col>
                 </Row>
                 <div style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px', padding: '25px 20px 25px 25px' }}>
                     <Row style={tableHeaderStyle}>

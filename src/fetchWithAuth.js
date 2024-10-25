@@ -11,11 +11,11 @@ const fetchWithAuth = async (url, options = {}) => {
     const token = localStorage.getItem('token');
 
     // Check if the token is expired
-    if (isTokenExpired(token)) {
-        localStorage.clear(); // Remove the token
-        window.location.href = '/'; // Redirect to login page
-        return null; // Exit early
-    }
+    // if (isTokenExpired(token)) {
+    //     localStorage.clear(); // Remove the token
+    //     window.location.href = '/'; // Redirect to login page
+    //     return null; // Exit early
+    // }
 
     // If token exists, add it to the Authorization header
     if (token) {
@@ -29,13 +29,13 @@ const fetchWithAuth = async (url, options = {}) => {
         const response = await fetch(url, options);
         
         // Handle non-OK responses
-        if (!response.ok) {
-            if (response.status === 401) {
-                localStorage.clear();
-                window.location.href = '/'; 
-            }
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        // if (!response.ok) {
+        //     if (response.status === 401) {
+        //         localStorage.clear();
+        //         window.location.href = '/'; 
+        //     }
+        //     throw new Error(`HTTP error! Status: ${response.status}`);
+        // }
 
         return response.json(); // Parse and return response JSON
     } catch (error) {

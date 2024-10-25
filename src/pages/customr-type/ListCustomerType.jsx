@@ -112,9 +112,9 @@ export const ListCustomerType = () => {
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "27px", fontWeight: "bold", fontFamily: "Mulish", marginTop: "20px" }}>List Customer Type</p></Col>
-                    <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "17px", fontFamily: "Mulish", marginTop: "25px" }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/list-customer-type" style={{ textDecoration: 'none' }}>List Customer Type</Link></p></Col>
+                    <Col sm={3}><p className='page_left_panel'>List Customer Type</p></Col>
+                    <Col sm={5}></Col>
+                    <Col sm={4}><p className='page_right_panel'>Dashboard / List Customer Type</p></Col>
                 </Row>
                 <div style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px', padding: '25px 20px 25px 25px' }}>
                     <Row style={tableHeaderStyle}>

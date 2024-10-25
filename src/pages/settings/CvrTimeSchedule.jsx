@@ -2,47 +2,19 @@ import AdminLayout from '../../layout/AdminLayout'
 import React, { useState, useEffect } from 'react';
 import { useTable, usePagination, useGlobalFilter } from 'react-table';
 import { Container, Col, Row, Table, Form, InputGroup, Button } from 'react-bootstrap';
-import { Link, useNavigate } from "react-router-dom";
-import { faSearch, faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from "react-router-dom";
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ArrowDown } from 'react-feather';
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
+import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 
-export const ListMaterial = () => {
+export const CvrTimeSchedule = () => {
 
-    const [filterInput, setFilterInput] = useState('');
-    const [showOptions, setShowOptions] = useState(null);
-    const handleToggleOptions = (index) => {
-        //setShowOptions(index);
-        setShowOptions((prev) => (prev === index ? null : index));
-    };
     const navigate = useNavigate();
-    const handleView = (item) => {
-        console.log('view:', item);
-        navigate('/dashboard/' + item);
-    };
-    const handleEdit = (item) => {
-        navigate('/edit-material/' + item);
-    };
-    const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-material/${item}`, {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        if(result.success === true){
-            setApiData((prevdata) => prevdata.filter(data => data.dataid !== item));
-        }
-    };
+    const [filterInput, setFilterInput] = useState('');
     const [apiData, setApiData] = useState([]);
-    useEffect(() => {
-        
-        getApiDatas();
-    }, [])
     const getApiDatas = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-material`, {
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/users/cvrs`, {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -53,23 +25,29 @@ export const ListMaterial = () => {
             result.response.data.map((item, index) => {
                 itemElements.push({
                     dataid: item.id,
-                    material: item.material_name,
-                    status: item.status,
+                    cvrcode: item.cvr_code,
+                    usercode: item.user.user_code,
+                    username: item.user.username,
                 });
                 return itemElements;
             })
             setApiData(itemElements);
         }
     }
+    useEffect(() => {
+
+        getApiDatas();
+    }, [])
+
     const data = React.useMemo(
         () => apiData,
         [apiData]
     );
     const columns = React.useMemo(
         () => [
-            { Header: 'Id', accessor: 'dataid' },
-            { Header: 'Material Name', accessor: 'material' },
-            { Header: 'Status', accessor: 'status' },
+            { Header: 'User Code', accessor: 'usercode' },
+            { Header: 'User Name', accessor: 'username' },
+            { Header: 'CVR Code', accessor: 'cvrcode' },
         ],
         []
     );
@@ -105,16 +83,21 @@ export const ListMaterial = () => {
         setGlobalFilter(value);
     };
 
-    const addMaterial = () => {
-        navigate('/add-material');
-    }
+    const [values, setValues] = useState([]);
+    useEffect(() => {
+        for (let i = 0; i < apiData.length; i++) {
+            setValues(prevItems => [...prevItems, 0]);
+        }
+
+    }, [apiData])
+
     return (
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p className='page_left_panel'>List Material</p></Col>
+                    <Col sm={3}><p className='page_left_panel'>CVR Schedule</p></Col>
                     <Col sm={5}></Col>
-                    <Col sm={4}><p className='page_right_panel'>Dashboard / List Material</p></Col>
+                    <Col sm={4}><p className='page_right_panel'>Dashboard / CVR Schedule</p></Col>
                 </Row>
                 <div style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px', padding: '25px 20px 25px 25px' }}>
                     <Row style={tableHeaderStyle}>
@@ -155,34 +138,68 @@ export const ListMaterial = () => {
                     </Row>
                     <Table {...getTableProps()} style={{ width: '100%', marginTop: '20px' }} striped bordered hover >
                         <thead>
-                            {headerGroups.map((headerGroup,keyHead) => (
+                            {headerGroups.map((headerGroup, keyHead) => (
                                 <tr {...headerGroup.getHeaderGroupProps()} key={keyHead}>
-                                    {headerGroup.headers.map((column,key) => (
+                                    {headerGroup.headers.map((column, key) => (
                                         <th {...column.getHeaderProps()} key={key}>{column.render('Header')}</th>
                                     ))}
+                                    <th>Time</th>
                                     <th>Action</th>
                                 </tr>
                             ))}
                         </thead>
                         <tbody {...getTableBodyProps()}>
                             {page.map((row, index) => {
+                                const increment = (index) => {
+                                    setValues((prevCounts) => {
+                                        const newCounts = [...prevCounts];
+                                        newCounts[index] += 12;
+                                        return newCounts;
+                                    });
+                                };
+
+                                const decrement = (index) => {
+                                    setValues((prevCounts) => {
+                                        const newCounts = [...prevCounts];
+                                        newCounts[index] = Math.max(newCounts[index] - 12, 0);
+                                        return newCounts;
+                                    });
+                                };
+
+                                const handleChange = (index, e) => {
+                                    const value = Number(e.target.value);
+                                    if (!isNaN(value)) {
+                                        setValues((prevCounts) => {
+                                            const newCounts = [...prevCounts];
+                                            newCounts[index] = value;
+                                            return newCounts;
+                                        });
+                                    }
+                                };
                                 prepareRow(row);
                                 return (
                                     <tr {...row.getRowProps()} key={index}>
-                                        <td>{row.original.dataid}</td>
-                                        <td>{row.original.material}</td>
-                                        <td>{(row.original.status === 1)?'Active':'Inactive'}</td>
-                                        <td style={{ position: 'relative' }}>
-                                            <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
-                                            {showOptions === index &&
-                                            <ul className='dropdown-option'>
-                                                <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye}  className='mx-2'/>View</li>
-                                                <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2'/>Edit</li>
-                                                <li onClick={() => handleDelete(row.original.dataid)}className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2'/>Delete</li>
-                                            </ul>
-                                        }
-                                        </td>
 
+                                        <td>{row.original.usercode}</td>
+                                        <td>{row.original.username}</td>
+                                        <td>{row.original.cvrcode}</td>
+                                        <td>
+                                            <div>
+                                                <div key={index} style={{ marginBottom: '10px' }}>
+                                                    <button onClick={() => decrement(index)}>↓</button>
+                                                    <input
+                                                        type="number"
+                                                        value={values[index]}
+                                                        onChange={(e) => handleChange(index, e)}
+                                                        style={{ width: '50px', textAlign: 'center' }}
+                                                    />
+                                                    <button onClick={() => increment(index)}>↑</button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <Button>Update</Button>
+                                        </td>
                                     </tr>
                                 );
                             })}
@@ -227,14 +244,6 @@ export const ListMaterial = () => {
                         </Col>
                     </Row>
                 </div>
-                <Row className="g-2" style={{ marginLeft: "629px" }}>
-                    <Col md style={{ textAlign: "right" }}>
-                        <Button style={clearbuttonStyle}>Export< ArrowDown /></Button>
-                    </Col>
-                    <Col md>
-                        <Button onClick={addMaterial} style={submitbuttonStyle}>Add Material</Button>
-                    </Col>
-                </Row>
             </Container>
         </AdminLayout>
     )

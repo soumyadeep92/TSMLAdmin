@@ -44,9 +44,9 @@ export const AddCategory = ()=>{
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>Add Category</p></Col>
-                    <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/add-cvr-mode" style={{ textDecoration: 'none' }}>Add Category</Link></p></Col>
+                    <Col sm={3}><p className='page_left_panel'>Add Category</p></Col>
+                    <Col sm={5}></Col>
+                    <Col sm={4}><p className='page_right_panel'>Dashboard / Add Category</p></Col>
                 </Row>
                 <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
                 <Form style={{padding:'25px 20px 25px 25px'}}>
@@ -80,6 +80,7 @@ export const AddCategory = ()=>{
         </AdminLayout>
     );
 }
+
 const clearbuttonStyle = {
     width: "180px",
     height: "39px",

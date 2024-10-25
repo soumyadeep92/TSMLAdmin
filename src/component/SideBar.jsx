@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 import Logo from '../assets/mj-logo.png';
 import LogoSmall from '../assets/mj-small-logo.png';
-import { Home, Power, Users } from 'react-feather';
+import { Home, Power, Users, Settings, Sliders, User } from 'react-feather';
 import { useNavigate } from 'react-router';
 
 const SideBar = () => {
@@ -103,7 +103,7 @@ const SideBar = () => {
         )}
         <li>
           {isToggled ?
-            <Users />
+            <Sliders />
             :
             <Link to="#" onClick={handlemasterdropDown}>Master Management</Link>
           }
@@ -121,7 +121,7 @@ const SideBar = () => {
         )}
         <li>
           {isToggled ?
-            <Users />
+            <User />
             :
             <Link to="#" onClick={handlecustomerdropDown}>Customer Management</Link>
           }
@@ -133,7 +133,7 @@ const SideBar = () => {
         )}
         <li>
           {isToggled ?
-            <Users />
+            <Settings />
             :
             <Link to="#" onClick={handlesettingsdropDown}>Settings</Link>
           }
@@ -142,6 +142,7 @@ const SideBar = () => {
           <ul>
             <li><Link to="/profile">Profile</Link></li>
             <li><Link to="/change-password">Change Password</Link></li>
+            <li><Link to="/cvr-time-schedule">CVR Schedule</Link></li>
           </ul>
         )}
         <li>

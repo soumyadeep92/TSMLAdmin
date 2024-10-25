@@ -19,7 +19,6 @@ export const ForgotPassword = () => {
             setError(true)
             return false;
         }
-        console.log("lilili");
         const data = { email: state.email };
         let result = await fetch(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_AUTH_API_URL}forgot-password`, {
             method: 'post',

@@ -64,9 +64,9 @@ export const ViewUser = ()=>{
         <AdminLayout>
             <Container fluid="true" style={{padding:'25px 20px 25px 25px'}}>
                 <Row>
-                    <Col sm={3}><p style={{ fontSize: "30px", fontWeight: "bold", fontFamily: "auto", marginTop: "20px" }}>View User</p></Col>
-                    <Col sm={6}></Col>
-                    <Col sm={3}><p style={{ fontSize: "20px", fontFamily: "auto", marginTop: "25px", textAlign:'right' }}><Link to="/dashboard" style={{ textDecoration: 'none' }}>Dashboard</Link> / <Link to="/view-user" style={{ textDecoration: 'none' }}>View User</Link></p></Col>
+                    <Col sm={3}><p className='page_left_panel'>View User</p></Col>
+                    <Col sm={5}></Col>
+                    <Col sm={4}><p className='page_right_panel'>Dashboard / View User</p></Col>
                 </Row>
                 <div style={{backgroundColor:'white'}}>
                 <Row className="g-2" style={rowStyle}>

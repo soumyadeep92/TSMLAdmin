@@ -130,6 +130,20 @@ body{background-color: $lightGrey;}
     cursor: pointer;
     flex-wrap: wrap;}
 
+.page_left_panel{
+	font-size: 30px;
+	font-weight: bold; 
+	font-family: auto; 
+	margin-top: 20px;
+	color:green;
+}
+.page_right_panel{
+	font-size: 20px;
+	font-family: auto;
+	margin-top: 25px;
+	text-align:right; 
+	color: green;
+}
 ////////////////////////Login page end///////////////////////////
 
 @media (max-width: 991.98px){
