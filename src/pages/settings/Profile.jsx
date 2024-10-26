@@ -133,19 +133,6 @@ export const Profile = () => {
         }
 
     }
-
-    const formClear = async (e) => {
-        e.preventDefault();
-        setState({
-            name: "",
-            userId: "",
-            phone: "",
-            email: "",
-            location: "",
-        })
-        setFile(null);
-        setFileName('')
-    }
     const browserBtn = () => {
         inputFile.current.click();
         setbrowsClick(true);
@@ -284,10 +271,9 @@ export const Profile = () => {
                     </Row>
                     <Row className="g-2" style={{ marginLeft: "629px" }}>
                         <Col md style={{ textAlign: "right" }}>
-                            <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                         </Col>
                         <Col md>
-                            <Button onClick={profile} style={submitbuttonStyle}>Submit</Button>
+                            <Button onClick={profile} style={submitbuttonStyle}>Update</Button>
                         </Col>
                     </Row>
                 </Container>
