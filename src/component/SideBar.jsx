@@ -37,30 +37,57 @@ const SideBar = () => {
   }, []);
 
   useEffect(() => {
-    const userManagementRoutes = ['/list-user', '/list-user-type', '/role-permission','/edit-user/17'];
-    const masterManagementRoutes = ['/list-cvr-mode', '/list-category', '/list-material', '/list-product', '/list-reason', '/list-standard'];
-    const customerManagementRoutes = ['/list-customer-type'];
-    const settingsManagementRoutes = ['/profile', '/change-password'];
-    console.log("location",location.pathname);
-    if (userManagementRoutes.includes(location.pathname)) {
+    const userManagementRoutes = [
+      'list-user',
+      'add-user',
+      'edit-user',
+      'view-user',
+      'list-user-type',
+      'add-user-type',
+      'edit-user-type',
+      'role-permission'
+    ];
+    const masterManagementRoutes = [
+      'add-cvr-mode',
+      'edit-cvr-mode',
+      'list-cvr-mode',
+      'add-category',
+      'edit-category',
+      'list-category',
+      'add-material',
+      'edit-material',
+      'list-material',
+      'add-product',
+      'edit-product',
+      'list-product',
+      'add-reason',
+      'edit-reason',
+      'list-reason',
+      'add-standard',
+      'edit-standard',
+      'list-standard'
+    ];
+    const customerManagementRoutes = ['list-customer-type'];
+    const settingsManagementRoutes = ['profile', 'change-password', 'cvr-time-schedule'];
+    if (userManagementRoutes.includes(location.pathname.split('/')[1])) {
       setUserDropdown(true);
       setMasterDropdown(false);
       setCustomerDropdown(false);
       setSettingsDropdown(false);
     }
-    if (masterManagementRoutes.includes(location.pathname)) {
+    if (masterManagementRoutes.includes(location.pathname.split('/')[1])) {
       setUserDropdown(false); 
       setMasterDropdown(true);
       setCustomerDropdown(false);
       setSettingsDropdown(false);
     }
-    if (customerManagementRoutes.includes(location.pathname)) {
+    if (customerManagementRoutes.includes(location.pathname.split('/')[1])) {
       setUserDropdown(false); 
       setMasterDropdown(false);
       setCustomerDropdown(true);
       setSettingsDropdown(false);
     }
-    if (settingsManagementRoutes.includes(location.pathname)) {
+    if (settingsManagementRoutes.includes(location.pathname.split('/')[1])) {
       setUserDropdown(false); 
       setMasterDropdown(false);
       setCustomerDropdown(false);

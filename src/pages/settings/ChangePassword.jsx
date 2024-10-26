@@ -18,7 +18,6 @@ export const ChangePassword = ()=>{
     const changePassword = async () => {
         if (!state.old_password || !state.new_password || state.new_password.length<6 || state.old_password.length<6 ) {
             setError(true)
-            console.log("llll");
             return false;
         }
         

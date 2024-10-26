@@ -7,6 +7,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 export const CvrTimeSchedule = () => {
 
@@ -25,6 +26,7 @@ export const CvrTimeSchedule = () => {
             result.response.data.map((item, index) => {
                 itemElements.push({
                     dataid: item.id,
+                    userid: item.user_id,
                     cvrcode: item.cvr_code,
                     usercode: item.user.user_code,
                     username: item.user.username,
@@ -91,7 +93,57 @@ export const CvrTimeSchedule = () => {
 
     }, [apiData])
 
+    const cvrShedule = async (cvrid,time) => {
+        
+        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}update/notifications/time/${cvrid}`,{
+            method:'post',
+            body:JSON.stringify({time:time}),
+            headers:{
+                "Content-Type": "application/json"
+            }
+        });
+        if (result.response.status === true) {
+            setSuccessAlert(true);
+            setAlertMessage(result.response.message);
+        }else{
+            setWarningAlert(true);
+            setAlertMessage(result.response.message);
+        }
+
+    }
+    const [alertMessage, setAlertMessage] = useState('Something went wrong');
+    const [successAlert, setSuccessAlert] = useState(false);
+    const [warningAlert, setWarningAlert] = useState(false);
+    const successClose = () => {
+        setSuccessAlert(false);
+    };
+    const warningClose = () => {
+        setWarningAlert(false);
+    };
     return (
+        <>
+        {successAlert && (
+                <SweetAlert
+                    success
+                    title="Thank you"
+                    onConfirm={successClose}
+                    onCancel={successClose}
+                    confirmBtnBsStyle="success"
+                >
+                    {alertMessage}
+                </SweetAlert>
+            )}
+            {warningAlert && (
+                <SweetAlert
+                    warning
+                    title="Oops!"
+                    onConfirm={warningClose}
+                    onCancel={warningClose}
+                    confirmBtnBsStyle="warning"
+                >
+                    {alertMessage}
+                </SweetAlert>
+            )}
         <AdminLayout>
             <Container fluid="true">
                 <Row>
@@ -198,7 +250,7 @@ export const CvrTimeSchedule = () => {
                                             </div>
                                         </td>
                                         <td>
-                                            <Button>Update</Button>
+                                            <Button onClick={()=>cvrShedule(row.original.dataid,values[index])}>Update</Button>
                                         </td>
                                     </tr>
                                 );
@@ -246,6 +298,7 @@ export const CvrTimeSchedule = () => {
                 </div>
             </Container>
         </AdminLayout>
+        </>
     )
 }
 

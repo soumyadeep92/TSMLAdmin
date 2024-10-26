@@ -131,9 +131,10 @@ const colStyle = {
     fontSize:'20px'
 }
 const divLevel = {
-    fontSize:'25px',
-    fontFamily:'sans-serif'
+    fontSize:'18px',
+    fontWeight:'600'
 }
 const divText = {
     paddingTop:'5px',
+    fontSize:'16px',
 }
