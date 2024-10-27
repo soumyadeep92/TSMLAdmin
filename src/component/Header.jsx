@@ -5,14 +5,17 @@ import { toggleState } from '../redux/slices/toggleSlice';
 import { Card, InputGroup, Form, Row, Col, Image } from 'react-bootstrap';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../constant';
 import fetchWithAuth from '../fetchWithAuth';
+import { useNavigate } from "react-router-dom";
+import Toast from 'react-bootstrap/Toast';
 
 const Header = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const handleToggle = () => {
         dispatch(toggleState()); // Dispatch the toggle action
     };
     const [user, setUser] = useState({});
-    const [notifications, setNotifications] = useState({});
+    const [notifications, setNotifications] = useState([]);
     const userId = JSON.parse(localStorage.getItem('user')).id;
     const getUser = async () => {
         let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${userId}`, {
@@ -40,8 +43,8 @@ const Header = () => {
         });
         if (result.success === true && result.response.data) {
             let itemElements = [];
-            result.response.data.map((item,index)=>{
-                if( item.status === 'unread' ){
+            result.response.data.map((item, index) => {
+                if (item.status === 'unread') {
                     itemElements.push({
                         id: item.id,
                         user_id: item.user_id,
@@ -50,60 +53,96 @@ const Header = () => {
                         os_type: item.os_type,
                     });
                     setNotifications(itemElements);
-                } 
-            })    
+                }
+            })
+        } else {
+            setNotifications([]);
         }
     }
     useEffect(() => {
         getUser();
         getNotification();
-    }, [user.id,notifications.id])
+    }, [user.id, notifications.id])
 
-    const handleNotification = async () =>{
-        console.log('notifications',notifications);
-    }
+    // const handleNotification = async () =>{
+
+    //     let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}update/all/notifications/status`,{
+    //         method:'post',
+    //         headers:{
+    //             "Content-Type": "application/json"
+    //         }
+    //     });
+    //     if (result.response.status === true) {
+    //         navigate('/cvr-time-schedule');
+    //     }
+    // }
+
+    const [showA, setShowA] = useState(false);
+    
     return (
-        <Card className="header p-3">
-            <Row>
-                <Col xs={12} sm={6}>
-                    <div className='search-block mb-20'>
-                        <Menu onClick={handleToggle} className='cursor-style mt-8' />
-                        <InputGroup>
-                            <Form.Control placeholder="Search Here" />
-                            <InputGroup.Text>
-                                <Search />
-                            </InputGroup.Text>
-                        </InputGroup>
-                    </div>
-                </Col>
-                <Col xs={12} sm={6} className='mb-sm-3'>
-                    <div className='header-right'>
-                        <ul>
-                            <li>
-                                <Mail />
-                                <span className="notification">19</span>
-                            </li>
-                            <li>
-                                <Bell />
-                                <span className="notification" style={{cursor:'pointer'}} onClick={handleNotification}>{notifications.length}</span>
-                            </li>
-                            <li>
-                                <div className='pro-img-block'>
-                                    <div>
-                                        <Image src={ADMIN_BACKEND_IMAGE_URL + user.profile_pic} />
+        <>
+            <Card className="header p-3">
+                <Row>
+                    <Col xs={12} sm={6}>
+                        <div className='search-block mb-20'>
+                            <Menu onClick={handleToggle} className='cursor-style mt-8' />
+                            <InputGroup>
+                                <Form.Control placeholder="Search Here" />
+                                <InputGroup.Text>
+                                    <Search />
+                                </InputGroup.Text>
+                            </InputGroup>
+                        </div>
+                    </Col>
+                    <Col xs={12} sm={6} className='mb-sm-3'>
+                        <div className='header-right'>
+                            <ul>
+                                <li>
+                                    <Mail />
+                                    <span className="notification">19</span>
+                                </li>
+                                <li>
+                                    <Bell />
+                                    <span className="notification" style={{ cursor: 'pointer' }} onClick={()=>setShowA(!showA)}>{(notifications.length > 0) ? notifications.length : 0}</span>
+                                    <div style={toastStyle}>
+                                        {
+                                            notifications.map((item, index) => (
+                                                <Toast show={showA}>
+                                                    <Toast.Header>
+                                                        <strong className="me-auto">Notification</strong>
+                                                        <small>11 mins ago</small>
+                                                    </Toast.Header>
+                                                    <Toast.Body>{item.topic}</Toast.Body>
+                                                </Toast>
+                                            ))
+                                        }    
                                     </div>
-                                    <div className='ml-10'>
-                                        <span className='user-name'>{user.name}</span>
-                                        <span className='user-role'>{user.usertype}</span>
+                                </li>
+
+                                <li>
+                                    <div className='pro-img-block'>
+                                        <div>
+                                            <Image src={ADMIN_BACKEND_IMAGE_URL + user.profile_pic} />
+                                        </div>
+                                        <div className='ml-10'>
+                                            <span className='user-name'>{user.name}</span>
+                                            <span className='user-role'>{user.usertype}</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </Col>
-            </Row>
-        </Card>
+                                </li>
+                            </ul>
+                        </div>
+                    </Col>
+                </Row>
+            </Card>
+        </>
     )
 }
 
 export default Header
+
+const toastStyle = {
+    position: 'absolute',
+    right: '0',
+    zIndex: '9',
+}

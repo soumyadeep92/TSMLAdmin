@@ -1,7 +1,6 @@
 import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button, InputGroup, Image } from 'react-bootstrap';
-import { Link } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -10,7 +9,6 @@ export const Profile = () => {
     const inputFile = useRef(null);
     const [authId, setAuthId] = useState(null);
     const [file, setFile] = useState(null);
-    const [fileName, setFileName] = useState('');
     const [error, setError] = useState(false);
     const [user, setUsers] = useState({
         name: '',
@@ -139,10 +137,6 @@ export const Profile = () => {
     }
 
     useEffect(() => {
-        setFileName(file?.name);
-    }, [file])
-
-    useEffect(() => {
         const idd = JSON.parse(localStorage.getItem('user')).id;
 
         setAuthId(idd);
@@ -181,7 +175,6 @@ export const Profile = () => {
             }
         );
         setFile(user.profile_pic);
-        setFileName(user.profile_pic);
     }, [user.name, authId])
 
     const [successAlert, setSuccessAlert] = useState(false);

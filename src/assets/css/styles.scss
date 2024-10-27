@@ -144,7 +144,12 @@ body{background-color: $lightGrey;}
 	text-align:right; 
 	color: #6464bd;
 }
-
+.btn-close{
+	display: none;
+}
+.toast-body{
+	text-align: justify;
+}
 ////////////////////////Login page end///////////////////////////
 
 @media (max-width: 991.98px){

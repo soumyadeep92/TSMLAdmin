@@ -1,7 +1,7 @@
 import AdminLayout from '../../layout/AdminLayout';
 import React, { useState,useEffect } from "react";
 import { Container, Row, Col, Form, Table } from 'react-bootstrap';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 

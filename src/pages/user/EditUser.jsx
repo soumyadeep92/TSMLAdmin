@@ -317,17 +317,13 @@ export const EditUser = () => {
                             {errorfile && <span style={invalidInput}>{errorfilemsg}</span>}
 
                         </Col>
-                        <Col md>
-                        </Col>
-                    </Row>
-                    { typeof file === 'string' &&
-                    <Row>
-                        <Col lg="6"></Col>
-                        <Col lg="6" style={{textAlign:'center'}}>
+                        { typeof file === 'string' &&
+                            <Col lg="6" style={{textAlign:'left'}}>
                             <Image style={{width:'80px'}} src={ADMIN_BACKEND_IMAGE_URL+file}/>
                         </Col>
+                        }
                     </Row>
-                    }
+                    
                 </Form>
                 </Row>
                 <Row className="g-2" style={{ marginLeft: "629px" }}>

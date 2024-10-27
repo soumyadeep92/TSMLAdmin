@@ -2,7 +2,6 @@ import AdminLayout from '../../layout/AdminLayout'
 import React, { useState, useEffect } from 'react';
 import { useTable, usePagination, useGlobalFilter } from 'react-table';
 import { Container, Col, Row, Table, Form, InputGroup, Button } from 'react-bootstrap';
-import { useNavigate } from "react-router-dom";
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
@@ -11,7 +10,6 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 
 export const CvrTimeSchedule = () => {
 
-    const navigate = useNavigate();
     const [filterInput, setFilterInput] = useState('');
     const [apiData, setApiData] = useState([]);
     const getApiDatas = async () => {
@@ -300,22 +298,6 @@ export const CvrTimeSchedule = () => {
         </AdminLayout>
         </>
     )
-}
-
-const clearbuttonStyle = {
-    width: "180px",
-    height: "39px",
-    backgroundColor: "#FFF",
-    color: "#3A85E5",
-    border: "1px solid #3A85E5",
-    marginTop: "10px",
-}
-const submitbuttonStyle = {
-    width: "180px",
-    height: "39px",
-    radius: "5px",
-    backgroundColor: "#3A85E5",
-    marginTop: "10px",
 }
 
 const tableHeaderStyle = {
