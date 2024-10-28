@@ -38,69 +38,75 @@ import { ForgotPassword } from '../pages/settings/ForgotPassword'
 import { ResetPassword } from '../pages/settings/ResetPassword'
 import { PageNotFound } from '../pages/PageNotFound'
 import { CvrTimeSchedule } from '../pages/settings/CvrTimeSchedule'
+import { AddCompany } from '../pages/company/AddCompany'
 
 const AppRoutes = () => {
-  
+
   return (
     <>
-    <BrowserRouter>
+      <BrowserRouter>
         <Routes>
-            <Route path ='/*' element = {<PageNotFound/>}/>
-            <Route path ='/' element = {<Login/>}/>
-            <Route path = '/forgot-password' element ={<ForgotPassword/>}/>
-            <Route path = '/reset-password/:token' element ={<ResetPassword/>}/>
-    
-            <Route element={<PrivateComponent />}>
-                <Route path ='/dashboard' element = {<Dashboard/>}/>
+          <Route path='/*' element={<PageNotFound />} />
+          <Route path='/' element={<Login />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password/:token' element={<ResetPassword />} />
 
-                <Route path = '/list-user' element ={<ListUser/>}/>
-                <Route path = '/add-user' element ={<AddUser/>}/>
-                <Route path = '/edit-user/:id' element ={<EditUser/>}/>
-                <Route path = '/view-user/:id' element ={<ViewUser/>}/>
+          <Route element={<PrivateComponent />}>
+            <Route path='/dashboard' element={<Dashboard />} />
 
-                <Route path = '/list-user-type' element ={<ListUserType/>}/>
-                <Route path = '/add-user-type' element ={<AddUserType/>}/>
-                <Route path = '/edit-user-type/:id' element ={<EditUserType/>}/>
+            <Route path='/list-user' element={<ListUser />} />
+            <Route path='/add-user' element={<AddUser />} />
+            <Route path='/edit-user/:id' element={<EditUser />} />
+            <Route path='/view-user/:id' element={<ViewUser />} />
 
-                <Route path = '/role-permission' element ={<RolePermission/>}/>
+            {/* {JSON.parse(localStorage.getItem('user')).user_role_id != 1 ? */}
+              <>
+                <Route path='/list-user-type' element={<ListUserType />} />
+                <Route path='/add-user-type' element={<AddUserType />} />
+                <Route path='/edit-user-type/:id' element={<EditUserType />} />
 
-                <Route path = '/list-cvr-mode' element ={<ListCvrMode/>}/>
-                <Route path = '/add-cvr-mode' element ={<AddCvrMode/>}/>
-                <Route path = '/edit-cvr-mode/:id' element ={<EditCvrMode/>}/>
+                <Route path='/role-permission' element={<RolePermission />} />
 
-                <Route path = '/list-category' element ={<ListCategory/>}/>
-                <Route path = '/add-category' element ={<AddCategory/>}/>
-                <Route path = '/edit-category/:id' element ={<EditCategory/>}/>
+                <Route path='/list-cvr-mode' element={<ListCvrMode />} />
+                <Route path='/add-cvr-mode' element={<AddCvrMode />} />
+                <Route path='/edit-cvr-mode/:id' element={<EditCvrMode />} />
 
-                <Route path = '/list-material' element ={<ListMaterial/>}/>
-                <Route path = '/add-material' element ={<AddMaterial/>}/>
-                <Route path = '/edit-material/:id' element ={<EditMaterial/>}/>
+                <Route path='/list-category' element={<ListCategory />} />
+                <Route path='/add-category' element={<AddCategory />} />
+                <Route path='/edit-category/:id' element={<EditCategory />} />
 
-                <Route path = '/list-product' element ={<ListProduct/>}/>
-                <Route path = '/add-product' element ={<AddProduct/>}/>
-                <Route path = '/edit-product/:id' element ={<EditProduct/>}/>
+                <Route path='/list-material' element={<ListMaterial />} />
+                <Route path='/add-material' element={<AddMaterial />} />
+                <Route path='/edit-material/:id' element={<EditMaterial />} />
 
-                <Route path = '/list-reason' element ={<ListReason/>}/>
-                <Route path = '/add-reason' element ={<AddReason/>}/>
-                <Route path = '/edit-reason/:id' element ={<EditReason/>}/>
+                <Route path='/list-product' element={<ListProduct />} />
+                <Route path='/add-product' element={<AddProduct />} />
+                <Route path='/edit-product/:id' element={<EditProduct />} />
 
-                <Route path = '/list-standard' element ={<ListStandard/>}/>
-                <Route path = '/add-standard' element ={<AddStandard/>}/>
-                <Route path = '/edit-standard/:id' element ={<EditStandard/>}/>
+                <Route path='/list-reason' element={<ListReason />} />
+                <Route path='/add-reason' element={<AddReason />} />
+                <Route path='/edit-reason/:id' element={<EditReason />} />
 
-                <Route path = '/list-customer-type' element ={<ListCustomerType/>}/>
-                <Route path = '/add-customer-type' element ={<AddCustomerType/>}/>
-                <Route path = '/edit-customer-type/:id' element ={<EditCustomerType/>}/>
+                <Route path='/list-standard' element={<ListStandard />} />
+                <Route path='/add-standard' element={<AddStandard />} />
+                <Route path='/edit-standard/:id' element={<EditStandard />} />
 
-                <Route path = '/change-password' element ={<ChangePassword/>}/>
-                <Route path = '/profile' element ={<Profile/>}/>
+                <Route path='/list-customer-type' element={<ListCustomerType />} />
+                <Route path='/add-customer-type' element={<AddCustomerType />} />
+                <Route path='/edit-customer-type/:id' element={<EditCustomerType />} />
+              {/* </>  <> */}
+                <Route path='/add-company' element={<AddCompany />} />
+              </>
+            {/* } */}
+            <Route path='/change-password' element={<ChangePassword />} />
+            <Route path='/profile' element={<Profile />} />
 
-                <Route path = '/cvr-time-schedule' element ={<CvrTimeSchedule/>}/>
+            <Route path='/cvr-time-schedule' element={<CvrTimeSchedule />} />
 
-            </Route>
+          </Route>
         </Routes>
-    </BrowserRouter>
-    
+      </BrowserRouter>
+
     </>
   )
 }

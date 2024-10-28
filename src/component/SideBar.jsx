@@ -37,38 +37,53 @@ const SideBar = () => {
   }, []);
 
   useEffect(() => {
-    const userManagementRoutes = [
-      'list-user',
-      'add-user',
-      'edit-user',
-      'view-user',
-      'list-user-type',
-      'add-user-type',
-      'edit-user-type',
-      'role-permission'
-    ];
-    const masterManagementRoutes = [
-      'add-cvr-mode',
-      'edit-cvr-mode',
-      'list-cvr-mode',
-      'add-category',
-      'edit-category',
-      'list-category',
-      'add-material',
-      'edit-material',
-      'list-material',
-      'add-product',
-      'edit-product',
-      'list-product',
-      'add-reason',
-      'edit-reason',
-      'list-reason',
-      'add-standard',
-      'edit-standard',
-      'list-standard'
-    ];
-    const customerManagementRoutes = ['list-customer-type'];
-    const settingsManagementRoutes = ['profile', 'change-password', 'cvr-time-schedule'];
+    const roleId = JSON.parse(localStorage.getItem('user')).user_role_id;
+    let userManagementRoutes = [];
+    let masterManagementRoutes = [];
+    let customerManagementRoutes = [];
+    let settingsManagementRoutes = [];
+    if (roleId != 1) {
+      userManagementRoutes = [
+        'list-user',
+        'add-user',
+        'edit-user',
+        'view-user',
+        'list-user-type',
+        'add-user-type',
+        'edit-user-type',
+        'role-permission'
+      ];
+      masterManagementRoutes = [
+        'add-cvr-mode',
+        'edit-cvr-mode',
+        'list-cvr-mode',
+        'add-category',
+        'edit-category',
+        'list-category',
+        'add-material',
+        'edit-material',
+        'list-material',
+        'add-product',
+        'edit-product',
+        'list-product',
+        'add-reason',
+        'edit-reason',
+        'list-reason',
+        'add-standard',
+        'edit-standard',
+        'list-standard'
+      ];
+      customerManagementRoutes = ['list-customer-type'];
+      settingsManagementRoutes = ['profile', 'change-password', 'cvr-time-schedule'];
+    } else {
+      userManagementRoutes = [
+        'list-user',
+        'add-user',
+        'edit-user',
+        'view-user'
+      ];
+      settingsManagementRoutes = ['profile', 'change-password', 'cvr-time-schedule'];
+    }
     if (userManagementRoutes.includes(location.pathname.split('/')[1])) {
       setUserDropdown(true);
       setMasterDropdown(false);
@@ -76,19 +91,19 @@ const SideBar = () => {
       setSettingsDropdown(false);
     }
     if (masterManagementRoutes.includes(location.pathname.split('/')[1])) {
-      setUserDropdown(false); 
+      setUserDropdown(false);
       setMasterDropdown(true);
       setCustomerDropdown(false);
       setSettingsDropdown(false);
     }
     if (customerManagementRoutes.includes(location.pathname.split('/')[1])) {
-      setUserDropdown(false); 
+      setUserDropdown(false);
       setMasterDropdown(false);
       setCustomerDropdown(true);
       setSettingsDropdown(false);
     }
     if (settingsManagementRoutes.includes(location.pathname.split('/')[1])) {
-      setUserDropdown(false); 
+      setUserDropdown(false);
       setMasterDropdown(false);
       setCustomerDropdown(false);
       setSettingsDropdown(true);
@@ -97,16 +112,16 @@ const SideBar = () => {
 
   return (
     <div className={`sidebar ${isToggled ? 'collapsedBlock' : 'expandBlock'}`}
-    style={{
-      height: '100vh',
-      overflowY: 'auto',
-    }}>
+      style={{
+        height: '100vh',
+        overflowY: 'auto',
+      }}>
       {isToggled ? (
         <div className="text-center logo-block"><Image src={LogoSmall} /></div>
       ) : (
         <div className="text-center logo-block"><Image src={Logo} /></div>
       )}
-      <ul className="left-sidebar-menu">
+      {JSON.parse(localStorage.getItem('user')).user_role_id != 1 ? <ul className="left-sidebar-menu">
         <li>
           {isToggled ? (
             <Home />
@@ -135,7 +150,7 @@ const SideBar = () => {
             <Link to="#" onClick={handlemasterdropDown}>Master Management</Link>
           }
         </li>
-        {!isToggled && masterDropdown && (
+        {!isToggled && JSON.parse(localStorage.getItem('user')).user_role_id != 1 && masterDropdown && (
           <ul>
             <li><Link to="/list-cvr-mode">CVR Mode</Link></li>
             <li><Link to="/list-category">Category</Link></li>
@@ -147,13 +162,13 @@ const SideBar = () => {
           </ul>
         )}
         <li>
-          {isToggled ?
+          {isToggled && JSON.parse(localStorage.getItem('user')).user_role_id != 1 ?
             <User />
             :
             <Link to="#" onClick={handlecustomerdropDown}>Customer Management</Link>
           }
         </li>
-        {!isToggled && customerDropdown && (
+        {!isToggled && customerDropdown && JSON.parse(localStorage.getItem('user')).user_role_id != 1 && (
           <ul>
             <li><Link to="/list-customer-type">Type List</Link></li>
           </ul>
@@ -179,7 +194,81 @@ const SideBar = () => {
             <Link onClick={logout} to={'/'}>Logout</Link>
           )}
         </li>
-      </ul>
+      </ul> :
+        <ul className="left-sidebar-menu">
+          <li>
+            {isToggled ? (
+              <Home />
+            ) : (
+              <Link to="/dashboard">Dashboard</Link>
+            )}
+          </li>
+          <li>
+            {isToggled ? (
+              <Users />
+            ) : (
+              <Link to="#" onClick={handleuserdropDown}>User Management</Link>
+            )}
+          </li>
+          {!isToggled && userDropdown && (
+            <ul>
+              <li><Link to="/list-user">User List</Link></li>
+              {/* <li>{<Link to="/list-user-type">User Type</Link>}</li>
+            <li><Link to="/role-permission">Role Permission</Link></li> */}
+            </ul>
+          )}
+          {/* <li>
+          {isToggled ?
+            <Sliders />
+            :
+            <Link to="#" onClick={handlemasterdropDown}>Master Management</Link>
+          }
+        </li> */}
+          {/* {!isToggled && JSON.parse(localStorage.getItem('user')).user_role_id != 1 && masterDropdown && (
+          <ul>
+            <li><Link to="/list-cvr-mode">CVR Mode</Link></li>
+            <li><Link to="/list-category">Category</Link></li>
+            <li><Link to="/list-material">Material</Link></li>
+            <li><Link to="/list-product">Product</Link></li>
+            <li><Link to="/list-reason">Reason</Link></li>
+            <li><Link to="/list-standard">Standard</Link></li>
+
+          </ul>
+        )}
+        <li>
+          {isToggled && JSON.parse(localStorage.getItem('user')).user_role_id != 1 ?
+            <User />
+            :
+            <Link to="#" onClick={handlecustomerdropDown}>Customer Management</Link>
+          }
+        </li>
+        {!isToggled && customerDropdown && JSON.parse(localStorage.getItem('user')).user_role_id != 1 && (
+          <ul>
+            <li><Link to="/list-customer-type">Type List</Link></li>
+          </ul>
+        )} */}
+          <li>
+            {isToggled ?
+              <Settings />
+              :
+              <Link to="#" onClick={handlesettingsdropDown}>Settings</Link>
+            }
+          </li>
+          {!isToggled && settingsDropdown && (
+            <ul>
+              <li><Link to="/profile">Profile</Link></li>
+              <li><Link to="/change-password">Change Password</Link></li>
+              <li><Link to="/cvr-time-schedule">CVR Schedule</Link></li>
+            </ul>
+          )}
+          <li>
+            {isToggled ? (
+              <Power />
+            ) : (
+              <Link onClick={logout} to={'/'}>Logout</Link>
+            )}
+          </li>
+        </ul>}
     </div>
   );
 };

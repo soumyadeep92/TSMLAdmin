@@ -13,6 +13,7 @@ export const AddUser = () => {
     const [fileName, setFileName] = useState('');
     const [userStatus, setUserStatus] = useState([]);
     const [userRole, setUserRole] = useState([]);
+    const [company, setCompany] = useState([]);
     const [error, setError] = useState(false);
     const [state, setState] = useState(
         {
@@ -22,6 +23,7 @@ export const AddUser = () => {
             phone: "",
             email: "",
             location: "",
+            companies_name: "",
             status: "",
             password: "",
         }
@@ -37,7 +39,7 @@ export const AddUser = () => {
     const [errorfile, setErrorfile] = useState(false);
     const [errorfilemsg, setErrorfileMsg] = useState('');
     const addUser = async () => {
-        if (!state.name || !state.phone || !state.email || !state.location || !state.status || !state.userId || !state.userType || !state.password || state.password.length < 6) {
+        if (!state.name || !state.phone || !state.email || !state.location || !state.status || !state.userId || !state.userType || !state.password || !state.companies_name || state.password.length < 6) {
             setError(true)
             return false;
         }
@@ -65,6 +67,7 @@ export const AddUser = () => {
         formData.append('phone', state.phone);
         formData.append('email', state.email);
         formData.append('location', state.location);
+        formData.append('companies_name', state.companies_name);
         formData.append('user_status_name', state.status);
         formData.append('user_role_name', state.userType);
         formData.append('password', state.password);
@@ -140,6 +143,7 @@ export const AddUser = () => {
             phone: "",
             email: "",
             location: "",
+            companies_name: "",
             status: "",
             password: "",
         })
@@ -163,6 +167,7 @@ export const AddUser = () => {
                 }
             });
             setUserStatus(resultStatus.response.statusDetails);
+            console.log(resultStatus.response.statusDetails)
             let resultRole = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list-role`, {
                 method: 'get',
                 headers: {
@@ -170,11 +175,16 @@ export const AddUser = () => {
                 }
             });
             setUserRole(resultRole.response.data);
+            let resultCompany = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/companies`, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            setCompany(resultCompany.response.companyDetails);
         }
         fetchData();
-
     }, [setUserStatus, setUserRole])
-
     return (
         <AdminLayout>
 
@@ -255,25 +265,29 @@ export const AddUser = () => {
                                 {error && !state.password && <span style={invalidInput}>Enter password</span>}
                                 {error && state.password.length > 0 && state.password.length < 6 && <span style={invalidInput}> Password must be at least 6 characters</span>}
                             </Col>
-
                         </Row>
                         <Row className="g-2" style={row_style}>
+                            {JSON.parse(localStorage.getItem('user')).user_role_id == 1 && <Col md>
+                                <Form.Label>Company Name</Form.Label><span style={asteriskStyle}> *</span>
+                                <Form.Select aria-label="Floating label select example" value={state.companies_name} onChange={(e) => { setState({ ...state, companies_name: e.target.value }) }}>
+                                    <option>Select Company Name</option>
+                                    {
+                                        company.map((item, index) =>
+                                            <option key={item.id} value={item.company_name}>{item.company_name}</option>
+                                        )
+                                    }
+                                </Form.Select>
+                                {error && !state.companies_name && <span style={invalidInput}>Enter Company Name</span>}
+                            </Col>}
                             <Col md>
-                                {/* <Form.Label>Upload User Image</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control type="file" ref={inputFile} onChange={(e)=>{setState({...state,file: e.target.files[0]})}} />
-                            { error && !state.file && <span style={invalidInput}>Choose File</span>} */}
-
                                 <Form.Label>Upload User Image</Form.Label><span style={asteriskStyle}> *</span>
                                 <InputGroup>
                                     <Form.Control style={{ display: "none" }} type="file" ref={inputFile} onChange={(e) => { setFile(e.target.files[0]) }} />
                                     <Form.Control value={fileName} disabled />
-                                    <InputGroup.Text onClick={browserBtn} style={{ cursor: "pointer" }}>Browser</InputGroup.Text>
+                                    <InputGroup.Text onClick={browserBtn} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                 </InputGroup>
                                 {error && !file && <span style={invalidInput}>Choose File</span>}
                                 {errorfile && <span style={invalidInput}>{errorfilemsg}</span>}
-
-                            </Col>
-                            <Col md>
                             </Col>
                         </Row>
                     </Form>
