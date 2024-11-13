@@ -90,10 +90,12 @@ export const Login = () => {
                         "username": result.response.userData.username,
                         "phone": result.response.userData.phone,
                         "user_code": result.response.userData.user_code,
+                        "user_companies_id": result.response.userData.user_companies_id,
                         "email": result.response.userData.email,
                         "profile_pic": result.response.userData.profile_pic,
                         "user_role_id": result.response.userData.user_role_id,
                         "user_status_id": result.response.userData.user_status_id,
+                        "status": result.response.userData.status
                     };
                     localStorage.setItem('user', JSON.stringify(userInfo))
                     localStorage.setItem('token', result.response.access_token)
@@ -105,11 +107,11 @@ export const Login = () => {
             } else {
                 newErrors.captcha = 'Invalid Captcha';
                 setErrors(newErrors);
+                return false;
             }
-            // Reset form
-            setUsername('');
-            setPassword('');
-            setCaptcha('');
+            // setUsername('');
+            // setPassword('');
+            // setCaptcha('');
             setErrors({});
         } else {
             setErrors(validationErrors);
@@ -117,23 +119,29 @@ export const Login = () => {
     };
 
     //generate chapcha
-    const generateCaptcha = () => {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-    };
+    // const generateCaptcha = () => {
+    //     // return Math.floor(100000 + Math.random() * 900000).toString();
+    //     return Math.random().toString(6).slice(2)
+    // };
+    function generateCaptcha(length, chars) {
+        var result = '';
+        for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+        return result;
+    }
 
     useEffect(() => {
-        setCaptchacode(generateCaptcha());
+        setCaptchacode(generateCaptcha(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'));
     }, [setCaptchacode]);
 
     const refreshCaptcha = () => {
-        setCaptchacode(generateCaptcha());
+        setCaptchacode(generateCaptcha(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'));
     };
 
     const togglePasswordVisibility = () => {
         setShowPassword((prev) => !prev);
     };
 
-    const forgotPassword = () =>{
+    const forgotPassword = () => {
         navigate('/forgot-password');
     }
 
@@ -172,9 +180,9 @@ export const Login = () => {
                                 <p style={textStyle}>Please login to your account</p>
                                 <Form onSubmit={handleSubmit}>
                                     <Form.Group className="mb-3" controlId="formGroupEmail">
-                                        <Form.Label>User Id/Mobile No</Form.Label><span style={asteriskStyle}> *</span>
+                                        <Form.Label>User Id/Email Id</Form.Label><span style={asteriskStyle}> *</span>
                                         <Form.Control
-                                            type="number"
+                                            type="text"
                                             name="username"
                                             value={username}
                                             onChange={(e) => setUsername(e.target.value)}
@@ -251,7 +259,7 @@ const textStyle = {
     fontWeight: "700",
     textAlign: "left",
     lineHeight: '33px'
-    
+
 }
 const formStyle = {
     width: "100%",
@@ -261,9 +269,9 @@ const formStyle = {
 const forgotPasswordStyle = {
     cursor: 'pointer',
     color: "#3A85E5",
-    textAlign:'right',
-    width:'50%',
-    display:'inline-block'
+    textAlign: 'right',
+    width: '50%',
+    display: 'inline-block'
 }
 const captchaStyle = {
     color: "#3A85E5",
@@ -275,8 +283,8 @@ const iconStyle = {
 }
 const remenberMeStyle = {
     color: "#3A85E5",
-    display:"inline-block",
-    width:'50%'
+    display: "inline-block",
+    width: '50%'
 }
 const asteriskStyle = {
     color: "red"

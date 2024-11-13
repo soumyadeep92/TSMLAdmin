@@ -22,8 +22,8 @@ const Dashboard = () => {
                             </div>
                             <div style={shapeSide}>
                                 <p className='mb-0' style={opNumber}>200</p>
-                                <span style={openPoint}>Open Points</span><br />
-                                <span style={lastMonth}><span style={lmNumber}>50</span> Last Month</span>
+                                <span style={openPoint}>Customers</span><br />
+                                {/* <span style={lastMonth}><span style={lmNumber}>50</span> Last Month</span> */}
                             </div>
                         </Card>
                     </Col>
@@ -34,8 +34,8 @@ const Dashboard = () => {
                             </div>
                             <div style={shapeSide}>
                                 <p className='mb-0' style={opNumber}>320</p>
-                                <span style={openPoint}>Open Points</span><br />
-                                <span style={lastMonth}><span style={lmNumber}>20</span> Last Month</span>
+                                <span style={openPoint}>CVRs</span><br />
+                                {/* <span style={lastMonth}><span style={lmNumber}>20</span> Last Month</span> */}
                             </div>
                         </Card>
                     </Col>
@@ -46,8 +46,8 @@ const Dashboard = () => {
                             </div>
                             <div style={shapeSide}>
                                 <p className='mb-0' style={opNumber}>122</p>
-                                <span style={openPoint}>Open Points</span><br />
-                                <span style={lastMonth}><span style={lmNumber}>22</span> Last Month</span>
+                                <span style={openPoint}>Users</span><br />
+                                {/* <span style={lastMonth}><span style={lmNumber}>22</span> Last Month</span> */}
                             </div>
                         </Card>
                     </Col>
@@ -58,8 +58,8 @@ const Dashboard = () => {
                             </div>
                             <div style={shapeSide}>
                                 <p className='mb-0' style={opNumber}>250</p>
-                                <span style={openPoint}>Open Points</span><br />
-                                <span style={lastMonth}><span style={lmNumber}>80</span> Last Month</span>
+                                <span style={openPoint}>CVRs WIP</span><br />
+                                {/* <span style={lastMonth}><span style={lmNumber}>80</span> Last Month</span> */}
                             </div>
                         </Card>
                     </Col>

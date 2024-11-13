@@ -8,9 +8,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 export const ListProduct = () => {
-
+    const [showAlert, setShowAlert] = useState(false);
+    const [show1, setShow1] = useState(false);
+    const handleClose = () => {
+        setShowAlert(false);
+    };
+    const handleClose1 = () => setShow1(false);
     const [filterInput, setFilterInput] = useState('');
     const [showOptions, setShowOptions] = useState(null);
     const handleToggleOptions = (index) => {
@@ -20,20 +26,23 @@ export const ListProduct = () => {
     const navigate = useNavigate();
     const handleView = (item) => {
         console.log('view:', item);
-        navigate('/dashboard/' + item);
+        navigate('/view-product/' + item);
     };
     const handleEdit = (item) => {
         navigate('/edit-product/' + item);
     };
     const handleDelete = async (item) => {
         let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-product/${item}`, {
-            method: 'post',
+            method: 'put',
             headers: {
                 'Content-Type': 'application/json',
             }
         });
         if(result.success === true){
-            setApiData((prevdata) => prevdata.filter(data => data.dataid !== item));
+            setShowAlert(true);
+            getApiDatas();
+        } else {
+            setShow1(true);
         }
     };
     const [apiData, setApiData] = useState([]);
@@ -59,6 +68,7 @@ export const ListProduct = () => {
                 return itemElements;
             })
             setApiData(itemElements);
+        } else {
         }
     }
     const data = React.useMemo(
@@ -108,13 +118,38 @@ export const ListProduct = () => {
     const addproduct = () => {
         navigate('/add-product');
     }
+    const handleNavigate = () => {
+        navigate('/dashboard')
+    }
     return (
+        <>
+            {show1 && (
+                <SweetAlert
+                    warning
+                    title="Oops!"
+                    onConfirm={handleClose1}
+                    onCancel={handleClose1}
+                    confirmBtnBsStyle="success"
+                >
+                    Product not deleted
+                </SweetAlert>
+            )}
+            {showAlert && (
+                <SweetAlert
+                    success
+                    title="Product Deleted!"
+                    onConfirm={handleClose}
+                    confirmBtnBsStyle="success"
+                >
+                    Product deleted successfully
+                </SweetAlert>
+            )}
         <AdminLayout>
             <Container fluid="true">
                 <Row>
                     <Col sm={3}><p className='page_left_panel'>List Product</p></Col>
                     <Col sm={5}></Col>
-                    <Col sm={4}><p className='page_right_panel'>Dashboard / List Product</p></Col>
+                    <Col sm={4}><p className='page_right_panel'><span style={{ cursor: 'pointer' }} onClick={handleNavigate}>Dashboard</span> / List Product</p></Col>
                 </Row>
                 <div style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px', padding: '25px 20px 25px 25px' }}>
                     <Row style={tableHeaderStyle}>
@@ -237,6 +272,7 @@ export const ListProduct = () => {
                 </Row>
             </Container>
         </AdminLayout>
+        </>
     )
 }
 

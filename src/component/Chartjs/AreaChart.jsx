@@ -1,71 +1,37 @@
-import React, { useState } from 'react';
-import { Charts } from './Charts';
-//import * as dayjs from "dayjs";
-//import * as moment from 'moment';
-import { useSelector } from 'react-redux';
+import React from 'react';
+import ReactApexChart from 'react-apexcharts';
 
 export const AreaChart = () => {
-
-    const isToggled = useSelector((state) => state.toggle.isToggled);
-
-    const [height] = useState(350);
-
-    const [series] = useState([{
-        name: "CVR",
-        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-    }]);
-    const [options] = useState({
+    const options = {
         chart: {
             height: 350,
-            type: 'area',
-            zoom: {
-                enabled: false
-            }
+            type: 'area'
         },
         dataLabels: {
             enabled: false
         },
         stroke: {
-            curve: 'straight'
+            curve: 'smooth'
         },
-        // title: {
-        //     text: 'CVR',
-        //     align: 'left'
-        // },
-        grid: {
-            row: {
-                colors: ['#f3f3f3', 'transparent'],
-                opacity: 0.5
-            },
-        },
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
         xaxis: {
-            type: 'string',
+            type: 'datetime',
+            categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
         },
-        yaxis: {
-            opposite: true
-        },
-        legend: {
-        horizontalAlign: 'left'
-        },
-        responsive: [
-            {
-                breakpoint: 800,
-                options: {
-                    chart: {
-                        width: 300,
-                    },
-                    legend: {
-                        position: 'bottom',
-                    },
-                },
-                
+        tooltip: {
+            x: {
+                format: 'dd/MM/yy HH:mm'
             },
-            
-        ],
-    });
+        },
+    };
 
-  return (
-    <Charts options={options} type="area" series={series} height={height} />
-  );
-}
+    const series = [{
+        name: 'series1',
+        data: [31, 40, 28, 51, 42, 109, 100]
+    }];
+
+    return (
+        <div id="chart">
+            <ReactApexChart options={options} series={series} type="area" height={350} />
+        </div>
+    );
+};

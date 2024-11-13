@@ -3,12 +3,15 @@ import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button, InputGroup, Image } from 'react-bootstrap';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
+import { Link, useNavigate } from "react-router-dom";
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 export const Profile = () => {
     const inputFile = useRef(null);
+    const navigate = useNavigate();
     const [authId, setAuthId] = useState(null);
     const [file, setFile] = useState(null);
+    const [fileName, setFileName] = useState('');
     const [error, setError] = useState(false);
     const [user, setUsers] = useState({
         name: '',
@@ -21,10 +24,11 @@ export const Profile = () => {
     const [state, setState] = useState(
         {
             name: "",
-            userId: "",
+            usercode: "",
             phone: "",
             email: "",
             location: "",
+            profile_pic: ""
         }
     );
     const [erroremail, setErroremail] = useState(false);
@@ -41,7 +45,7 @@ export const Profile = () => {
     const [browsClick, setbrowsClick] = useState(false);
 
     const profile = async () => {
-        if (!state.name || !state.phone || !state.email || !state.location || !state.userId) {
+        if (!state.name || !state.phone || !state.email || !state.location || !state.usercode) {
             setError(true)
             return false;
         }
@@ -49,7 +53,7 @@ export const Profile = () => {
         if (browsClick && typeof file === 'object') {
             if (file) {
                 const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-                const maxSize = 5 * 1024; // 5KB
+                const maxSize = 5 * 1024 * 1024; // 5KB
                 if (!allowedTypes.includes(file.type)) {
                     setErrorfile(true);
                     setErrorfileMsg('Only JPEG, JPG, and PNG files are allowed!');
@@ -57,7 +61,7 @@ export const Profile = () => {
                 }
                 if (file.size > maxSize) {
                     setErrorfile(true);
-                    setErrorfileMsg('File size must be less than 5KB!');
+                    setErrorfileMsg('File size must be less than 5MB!');
                     return false;
                 }
 
@@ -67,9 +71,11 @@ export const Profile = () => {
             }
         }
         const formData = new FormData();
-        formData.append('profile_image', file);
+        if (typeof file == 'object') {
+            formData.append('profile_image', file);
+        }
         formData.append('username', state.name);
-        formData.append('user_code', state.userId);
+        formData.append('user_code', state.usercode);
         formData.append('phone', state.phone);
         formData.append('email', state.email);
         formData.append('location', state.location);
@@ -80,8 +86,8 @@ export const Profile = () => {
             body: formData,
             headers: {}
         });
-
-        if (result.response.code === 5) {
+        console.log(232323,result)
+        if (result.response.status === false && result.response.code === 5) {
             setErroremail(true);
             setErrorphone(false);
             setErrorname(false);
@@ -90,7 +96,7 @@ export const Profile = () => {
             setErroremailMsg(result.response.message);
             return false;
         }
-        if (result.response.code === 6) {
+        if (result.response.status === false && result.response.code === 6) {
             setErrorphone(true);
             setErroremail(false);
             setErrorname(false);
@@ -99,7 +105,7 @@ export const Profile = () => {
             setErrorphoneMsg(result.response.message);
             return false;
         }
-        if (result.response.code === 7) {
+        if (result.response.status === false && result.response.code === 7) {
             setErrorname(true);
             setErroremail(false);
             setErrorphone(false);
@@ -108,7 +114,7 @@ export const Profile = () => {
             setErrornameMsg(result.response.message);
             return false;
         }
-        if (result.response.code === 8) {
+        if (result.response.status === false && result.response.code === 8) {
             setErrorcode(true);
             setErroremail(false);
             setErrorphone(false);
@@ -126,8 +132,11 @@ export const Profile = () => {
             setErrorfileMsg(result.response.message);
             return false;
         }
-        if (result.response.code === 1) {
+        if (result.response.status === true) {
             setSuccessAlert(true);
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 2000);
         }
 
     }
@@ -141,41 +150,64 @@ export const Profile = () => {
 
         setAuthId(idd);
     }, [])
+    useEffect(() => {
+        setFileName(file?.name);
+        console.log(1111111, fileName)
+    }, [file])
+    // const getUser = async () => {
+    //     let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${authId}`, {
+    //         method: 'get',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         }
+    //     });
+    //     if (result.success === true && result.response.data.username && result.response.data.user_code && result.response.data.email && result.response.data.phone && result.response.data.location && result.response.data.profile_pic) {
+    //         let itemElements = {
+    //             name: result.response.data.username,
+    //             usercode: result.response.data.user_code,
+    //             email: result.response.data.email,
+    //             phone: result.response.data.phone,
+    //             location: result.response.data.location,
+    //             profile_pic: result.response.data.profile_pic,
+    //         };
+    //         setUsers(itemElements);
+    //     }
+    // }
 
-    const getUser = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${authId}`, {
+    useEffect(() => {
+        // getUser();
+        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${authId}`, {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
             }
-        });
-        if (result.success === true && result.response.data.username && result.response.data.user_code && result.response.data.email && result.response.data.phone && result.response.data.location && result.response.data.profile_pic) {
-            let itemElements = {};
-            itemElements = {
-                name: result.response.data.username,
-                usercode: result.response.data.user_code,
-                email: result.response.data.email,
-                phone: result.response.data.phone,
-                location: result.response.data.location,
-                profile_pic: result.response.data.profile_pic,
-            };
-            setUsers(itemElements);
-        }
-    }
-
-    useEffect(() => {
-        getUser();
-        setState(
-            {
-                name: user.name,
-                userId: user.usercode,
-                phone: user.phone,
-                email: user.email,
-                location: user.location,
+        }).then(result => {
+            if (result.success === true && result.response.data) {
+                setState({
+                    name: result.response.data.username,
+                    usercode: result.response.data.user_code,
+                    email: result.response.data.email,
+                    phone: result.response.data.phone,
+                    location: result.response.data.location,
+                    profile_pic: result.response.data.profile_pic
+                })
+                setFile(result.response.data.profile_pic);
             }
-        );
-        setFile(user.profile_pic);
-    }, [user.name, authId])
+            console.log(1111, state)
+        }).catch(err => {
+
+        });
+        // setState(
+        //     {
+        //         name: user.name,
+        //         userId: user.usercode,
+        //         phone: user.phone,
+        //         email: user.email,
+        //         location: user.location,
+        //     }
+        // );
+        // setFile(user.profile_pic);
+    }, [state.name])
 
     const [successAlert, setSuccessAlert] = useState(false);
     const successClose = () => {
@@ -192,7 +224,7 @@ export const Profile = () => {
                     onCancel={successClose}
                     confirmBtnBsStyle="success"
                 >
-                    Profile update successfully
+                    Profile updated successfully
                 </SweetAlert>
             )}
             <AdminLayout>
@@ -208,14 +240,14 @@ export const Profile = () => {
                             <Row className="g-2">
                                 <Col md>
                                     <Form.Label>Name</Form.Label><span style={asteriskStyle}> *</span>
-                                    {user.name && <Form.Control value={user.name} onChange={(e) => { setState({ ...state, name: e.target.value }) }} type="text" />}
+                                    <Form.Control value={state.name} onChange={(e) => { setState({ ...state, name: e.target.value }) }} type="text" />
                                     {error && !state.name && <span style={invalidInput}>Enter Name</span>}
                                     {errorname && <span style={invalidInput}>{errornamemsg}</span>}
                                 </Col>
                                 <Col md>
                                     <Form.Label>User Id</Form.Label><span style={asteriskStyle}> *</span>
-                                    {user.usercode && <Form.Control value={user.usercode} onChange={(e) => { setState({ ...state, userId: e.target.value }) }} type="text" />}
-                                    {error && !state.userId && <span style={invalidInput}>Enter UserId</span>}
+                                    <Form.Control value={state.usercode} onChange={(e) => { setState({ ...state, usercode: e.target.value }) }} type="text" />
+                                    {error && !state.usercode && <span style={invalidInput}>Enter UserId</span>}
                                     {errorcode && <span style={invalidInput}>{errorcodemsg}</span>}
                                 </Col>
                             </Row>
@@ -223,19 +255,20 @@ export const Profile = () => {
                             <Row className="g-2" style={row_style}>
                                 <Col md>
                                     <Form.Label>Email</Form.Label><span style={asteriskStyle}> *</span>
-                                    {user.email && <Form.Control value={user.email} onChange={(e) => { setState({ ...state, email: e.target.value }) }} type="email" />}
+                                    <Form.Control value={state.email} onChange={(e) => { setState({ ...state, email: e.target.value }) }} type="email" />
                                     {error && !state.email && <span style={invalidInput}>Enter Email</span>}
                                     {erroremail && <span style={invalidInput}>{erroremailmsg}</span>}
                                 </Col>
                                 <Col md>
                                     <Form.Label>Location</Form.Label><span style={asteriskStyle}> *</span>
-                                    {user.location && <Form.Control value={user.location} onChange={(e) => { setState({ ...state, location: e.target.value }) }} type="text" />}{error && !state.location && <span style={invalidInput}>Enter Location</span>}
+                                    <Form.Control value={state.location} onChange={(e) => { setState({ ...state, location: e.target.value }) }} type="text" />
+                                    {error && !state.location && <span style={invalidInput}>Enter Location</span>}
                                 </Col>
                             </Row>
                             <Row className="g-2" style={row_style}>
                                 <Col md>
                                     <Form.Label>Phone No.</Form.Label><span style={asteriskStyle}> *</span>
-                                    {user.phone && <Form.Control value={user.phone} onChange={(e) => { setState({ ...state, phone: e.target.value }) }} type="text" />}
+                                    <Form.Control value={state.phone} onChange={(e) => { setState({ ...state, phone: e.target.value }) }} type="text" />
                                     {error && !state.phone && <span style={invalidInput}>Enter Phne</span>}
                                     {errorphone && <span style={invalidInput}>{errorphonemsg}</span>}
                                 </Col>
@@ -243,8 +276,8 @@ export const Profile = () => {
 
                                     <Form.Label>Upload User Image</Form.Label><span style={asteriskStyle}> *</span>
                                     <InputGroup>
-                                    <Form.Control style={{ display: "none" }} type="file" ref={inputFile} onChange={(e) => { setFile(e.target.files[0]) }} />
-                                        {user.profile_pic && <Form.Control value={user.profile_pic} disabled />}
+                                        <Form.Control style={{ display: "none" }} type="file" ref={inputFile} onChange={(e) => { setFile(e.target.files[0]) }} />
+                                        <Form.Control value={fileName ? fileName : state.profile_pic} disabled />
                                         <InputGroup.Text onClick={browserBtn} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                     </InputGroup>
                                     {error && !file && <span style={invalidInput}>Choose File</span>}
@@ -254,9 +287,9 @@ export const Profile = () => {
                             </Row>
                             {typeof file === 'string' &&
                                 <Row>
-                                    <Col lg="6"></Col>
-                                    <Col lg="6" style={{ textAlign: 'center' }}>
-                                        <Image style={{ width: '80px' }} src={ADMIN_BACKEND_IMAGE_URL + file} />
+                                    <Col md></Col>
+                                    <Col md style={{ textAlign: 'left' }}>
+                                        <Image style={{ width: '80px' }} src={ADMIN_BACKEND_BASE_URL + file} />
                                     </Col>
                                 </Row>
                             }
