@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { addCompany, getCompanyByName } from '../../apis/apis'
 
 export const AddCompany = () => {
     const navigate = useNavigate();
@@ -49,13 +50,7 @@ export const AddCompany = () => {
             return false;
         }
         let company = { company_name: state.company_name };
-        let companies = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-company-by-name`, {
-            method: 'post',
-            body: JSON.stringify(company),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let companies = await getCompanyByName(company)
         if (companies.response.status == false) {
             if (file) {
                 const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -111,11 +106,7 @@ export const AddCompany = () => {
             if (file1) {
                 formData.append('company_small_logo', file1);
             }
-            let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}add/company`, {
-                method: 'post',
-                body: formData,
-                headers: {}
-            })
+            let result = await addCompany(formData)
             if (result.response.status === false && result.response.code === 5) {
                 setErroremail(true);
                 setErrorContactemail(false);

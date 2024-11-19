@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { addCvrMode, getCvrModeByName } from '../../apis/apis'
 
 export const AddCvrMode = () => {
     const navigate = useNavigate();
@@ -31,23 +32,11 @@ export const AddCvrMode = () => {
             return false;
         }
         let cvr = { cvr_mode_name: state.mode };
-        let cvr_modes = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-cvr-mode-by-name`, {
-            method: 'post',
-            body: JSON.stringify(cvr),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let cvr_modes = await getCvrModeByName(cvr)
         if (cvr_modes.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { mode_name: state.mode, company_id: companies_id, status: state.status };
-            let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-cvr-mode`, {
-                method: 'post',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            let result = await addCvrMode(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {

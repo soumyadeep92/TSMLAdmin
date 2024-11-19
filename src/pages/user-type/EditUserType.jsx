@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { editRole, permissions, getRoleById, getRolePermissions } from '../../apis/apis'
 
 export const EditUserType = () => {
     const { id } = useParams();
@@ -39,13 +40,7 @@ export const EditUserType = () => {
         }
 
         const data = { 'role_name': state.type, 'status': state.status };
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}edit-role/${id}`, {
-            method: 'put',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await editRole(id, data)
         if (result.response.status === true) {
             if (users) {
                 const role_id = users['role_id'] ? users['role_id'] : state.id;
@@ -57,13 +52,7 @@ export const EditUserType = () => {
                     can_view: (users.can_view === true || users.can_view === 1) ? 1 : 0,
                     status: state.status
                 };
-                let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}permissions`, {
-                    method: 'post',
-                    body: JSON.stringify(data),
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
+                await permissions(data)
             }
             setShowAlert(true);
             setTimeout(() => {
@@ -84,12 +73,7 @@ export const EditUserType = () => {
     }
 
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-role-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        getRoleById(id).then(result => {
             if (result.success === true && result.response.data) {
                 let itemElements = {
                     id: result.response.data.id,
@@ -105,12 +89,7 @@ export const EditUserType = () => {
                     }
                 );
             }
-            fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-role-permission/${result.response.data.id}`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }).then(res => {
+            getRolePermissions(result.response.data.id).then(res => {
                 setUsers(res.response.permissionDetails);
             }).catch(err => {
 
@@ -158,12 +137,12 @@ export const EditUserType = () => {
                             <Row className="g-2">
                                 <Col md>
                                     <Form.Label>User Type</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Control value={state.type} onChange={(e) => { setState({ ...state, type: e.target.value }) }} type="text" />
+                                    <Form.Control value={state.type ? state.type : ''} onChange={(e) => { setState({ ...state, type: e.target.value }) }} type="text" />
                                     {error && !state.type && <span style={invalidInput}>Enter Type</span>}
                                 </Col>
                                 <Col md>
                                     <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Select aria-label="Floating label select example" value={state.status} onChange={(e) => { setState({ ...state, status: e.target.value }) }}>
+                                    <Form.Select aria-label="Floating label select example" value={state.status ? state.status : ''} onChange={(e) => { setState({ ...state, status: e.target.value }) }}>
                                         <option value="2">Select Status</option>
                                         <option value="1">Active</option>
                                         <option value="0">Inactive</option>
@@ -187,28 +166,28 @@ export const EditUserType = () => {
                                         <tbody>
                                             {/* {users.length > 0 && users.map((user, index) => ( */}
                                             <tr>
-                                                <td>{state.type}</td>
+                                                <td>{state.type ? state.type : ''}</td>
                                                 <td>
                                                     <input name="can_add" type="checkbox"
-                                                        checked={checked?.can_add}
+                                                        checked={checked.can_add ? checked.can_add : ''}
                                                         onChange={() => handleChange('can_add')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input name="can_edit" type="checkbox"
-                                                        checked={checked?.can_edit}
+                                                        checked={checked.can_edit ? checked.can_edit : ''}
                                                         onChange={() => handleChange('can_edit')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input name="can_delete" type="checkbox"
-                                                        checked={checked?.can_delete}
+                                                        checked={checked.can_delete ? checked.can_delete : ''}
                                                         onChange={() => handleChange('can_delete')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input name="can_view" type="checkbox"
-                                                        checked={checked?.can_view}
+                                                        checked={checked.can_view ? checked.can_view : ''}
                                                         onChange={() => handleChange('can_view')}
                                                     />
                                                 </td>

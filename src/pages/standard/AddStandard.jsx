@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { getStandardByName, addStandard } from '../../apis/apis'
 
 export const AddStandard = () => {
     const navigate = useNavigate();
@@ -31,23 +32,11 @@ export const AddStandard = () => {
             return false;
         }
         let standard = { standard_name: state.standard };
-        let standards = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-standard-by-name`, {
-            method: 'post',
-            body: JSON.stringify(standard),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let standards = await getStandardByName(standard)
         if (standards.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { standard_name: state.standard, company_id: companies_id, status: state.status };
-            let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-standard`, {
-                method: 'post',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            let result = await addStandard(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {

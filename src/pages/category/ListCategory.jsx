@@ -9,6 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { listCategories, deleteCategories } from '../../apis/apis'
 
 export const ListCategory = () => {
 
@@ -33,12 +34,7 @@ export const ListCategory = () => {
         navigate('/edit-category/' + item);
     };
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-category/${item}`, {
-            method: 'put',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await deleteCategories(item)
         if (result.success === true) {
             setShowAlert(true);
             getApiDatas();
@@ -52,12 +48,7 @@ export const ListCategory = () => {
         getApiDatas();
     }, [])
     const getApiDatas = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-category`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await listCategories()
         if (result.response.status === true && result.response.data) {
             const itemElements = [];
             result.response.data.map((item, index) => {

@@ -9,6 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { deleteCompanyById, listCompanies } from '../../apis/apis'
 
 export const ListCompany = () => {
 
@@ -34,12 +35,7 @@ export const ListCompany = () => {
         navigate('/edit-company/' + item);
     };
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}delete/company/${item}`, {
-            method: 'put',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await deleteCompanyById(item)
         if (result.success === true) {
             setShowAlert(true);
             getApiDatas();
@@ -52,12 +48,7 @@ export const ListCompany = () => {
         getApiDatas();
     }, [])
     const getApiDatas = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/companies`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await listCompanies()
         if (result.response.status === true && result.response.companyDetails
         ) {
             const itemElements = [];

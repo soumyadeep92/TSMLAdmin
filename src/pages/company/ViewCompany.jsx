@@ -4,6 +4,7 @@ import { Container, Row, Col, Form, Button, InputGroup, Image } from "react-boot
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
+import {getCompanyById} from '../../apis/apis'
 
 export const ViewCompany = () => {
     const navigate = useNavigate();
@@ -17,12 +18,7 @@ export const ViewCompany = () => {
         }
     );
     const getApiDatas = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/company/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await getCompanyById(id)
         if (result.success === true && result.response.companyDetails) {
             let itemElements = {};
             itemElements = {
@@ -91,73 +87,73 @@ export const ViewCompany = () => {
                         <Row className="g-2" style={row_style}>
                             <Col md>
                                 <Form.Label>Name</Form.Label>
-                                <Form.Control value={state.company_name} type="text" />
+                                <Form.Control defaultValue={state.company_name} type="text" />
                             </Col>
                             <Col md>
                                 <Form.Label>Address</Form.Label>
-                                <Form.Control value={state.address} type="text" />
+                                <Form.Control defaultValue={state.address} type="text" />
                             </Col>
                         </Row>
                         <Row className="g-2" style={row_style}>
                             <Col md>
                                 <Form.Label>Email</Form.Label>
-                                <Form.Control value={state.email} type="text" />
+                                <Form.Control defaultValue={state.email} type="text" />
                             </Col>
                             <Col md>
                                 <Form.Label>PAN Number</Form.Label>
-                                <Form.Control value={state.pan_number} type="text" />
+                                <Form.Control defaultValue={state.pan_number} type="text" />
                             </Col>
                         </Row>
                         <Row className="g-2" style={row_style}>
                             <Col md>
                                 <Form.Label>GSTN</Form.Label>
-                                <Form.Control value={state.GSTN} type="text" />
+                                <Form.Control defaultValue={state.GSTN} type="text" />
                             </Col>
                             <Col md>
                                 <Form.Label>Business Nature</Form.Label>
-                                <Form.Control value={state.business_nature} type="text" />
+                                <Form.Control defaultValue={state.business_nature} type="text" />
                             </Col>
                         </Row>
                         <Row className="g-2" style={row_style}>
                             <Col md>
                                 <Form.Label>City</Form.Label>
-                                <Form.Control value={state.city} type="text" />
+                                <Form.Control defaultValue={state.city} type="text" />
                             </Col>
                             <Col md>
                                 <Form.Label>State</Form.Label>
-                                <Form.Control value={state.state} type="text" />
+                                <Form.Control defaultValue={state.state} type="text" />
                             </Col>
                         </Row>
                         <Row className="g-2" style={row_style}>
                             <Col md>
                                 <Form.Label>Pin Code</Form.Label>
-                                <Form.Control value={state.pin_code} type="text" />
+                                <Form.Control defaultValue={state.pin_code} type="text" />
                             </Col>
                             <Col md>
                                 <Form.Label>Contact Person Name</Form.Label>
-                                <Form.Control value={state.contact_person_name} type="text" />
+                                <Form.Control defaultValue={state.contact_person_name} type="text" />
                             </Col>
                         </Row>
                         <Row className="g-2" style={row_style}>
                             <Col md>
                                 <Form.Label>Contact Person Address</Form.Label>
-                                <Form.Control value={state.contact_person_address} type="text" />
+                                <Form.Control defaultValue={state.contact_person_address} type="text" />
                             </Col>
                             <Col md>
                                 <Form.Label>Contact Person Email</Form.Label>
-                                <Form.Control value={state.contact_person_email} type="text" />
+                                <Form.Control defaultValue={state.contact_person_email} type="text" />
                             </Col>
                         </Row>
                         <Row className="g-2" style={row_style}>
                             <Col md>
                                 <Form.Label>Contact Person Phone</Form.Label>
-                                <Form.Control value={state.contact_person_phone} type="text" />
+                                <Form.Control defaultValue={state.contact_person_phone} type="text" />
                             </Col>
                             <Col md>
                                 <Form.Label>Upload Company Large Logo</Form.Label>
                                 <InputGroup>
                                     <Form.Control style={{ display: "none" }} type="file" />
-                                    <Form.Control value={state.large_logo} disabled />
+                                    <Form.Control defaultValue={state.large_logo} disabled />
                                 </InputGroup>
                             </Col>
                         </Row>
@@ -174,7 +170,7 @@ export const ViewCompany = () => {
                                 <Form.Label>Upload Company Small Logo</Form.Label>
                                 <InputGroup>
                                     <Form.Control style={{ display: "none" }} type="file" />
-                                    <Form.Control value={state.small_logo} disabled />
+                                    <Form.Control defaultValue={state.small_logo} disabled />
                                 </InputGroup>
                             </Col>
                             <Col md></Col>

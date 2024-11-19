@@ -22,13 +22,7 @@ export const ChangePassword = ()=>{
         }
         
         const data = { old_password: state.old_password, new_password: state.new_password };
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}change-password`,{
-            method:'post',
-            body:JSON.stringify(data),
-            headers:{
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await changePassword(data)
         if (result.response.status === true) {
             setSuccessAlert(true);
             formClear();

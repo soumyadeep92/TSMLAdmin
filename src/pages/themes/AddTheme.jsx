@@ -4,8 +4,8 @@ import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
-import { getStatusUsers, addUsers } from '../../apis/users';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import {addThemes,listAllCompanies} from '../../apis/apis'
 
 export const AddTheme = () => {
     const navigate = useNavigate();
@@ -123,11 +123,7 @@ export const AddTheme = () => {
         formData.append('company_id', state.company_id);
         formData.append('background_color', state.background_color);
         formData.append('page_name', state.page_name);
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}create-themes`, {
-            method: 'post',
-            body: formData,
-            headers: {}
-        });
+        let result = await addThemes(formData)
 
         if (result.response.status === true) {
             setShowAlert(true);
@@ -176,12 +172,7 @@ export const AddTheme = () => {
 
     useEffect(() => {
         async function fetchData() {
-            let resultCompany = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/companies?status=1`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+            let resultCompany = await listAllCompanies()
             setCompany(resultCompany.response.companyDetails);
         }
         fetchData();
@@ -261,14 +252,14 @@ export const AddTheme = () => {
                                     <Form.Label>Page Name</Form.Label><span style={asteriskStyle}> *</span>
                                     <Form.Select aria-label="Floating label select example" value={state.page_name} onChange={(e) => { setState({ ...state, page_name: e.target.value }) }}>
                                         <option value="0">Select OS Type</option>
-                                        <option value="Generalbuttoncolor">General Button Color</option>
-                                        <option value="Splashscreen">Splash Screen</option>
+                                        <option value="General Button Color">General Button Color</option>
+                                        <option value="Splash Screen">Splash Screen</option>
                                         <option value="Login">Login</option>
-                                        <option value="ForgotPassword">Forgot Password</option>
+                                        <option value="Forgot Password">Forgot Password</option>
                                         <option value="Sidebar">Sidebar</option>
                                         <option value="Dashboard">Dashboard</option>
                                         <option value="Footer">Footer</option>
-                                        <option value="StatusbarHeader">Statusbar Header</option>
+                                        <option value="Statusbar Header">Statusbar Header</option>
                                     </Form.Select>
                                     {error && !state.page_name && <span style={invalidInput}>Enter Page Name</span>}
                                 </Col>

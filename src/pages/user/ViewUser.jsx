@@ -4,6 +4,7 @@ import { Container, Row, Col, Form, Button, InputGroup, Image } from "react-boot
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
+import {getUserById} from '../../apis/apis'
 
 export const ViewUser = () => {
     const navigate = useNavigate();
@@ -22,12 +23,7 @@ export const ViewUser = () => {
         }
     );
     const getUser = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await getUserById(id)
         if (result.success === true && result.response.data) {
             let itemElements = {};
             itemElements = {
@@ -119,7 +115,7 @@ export const ViewUser = () => {
                             <Row className="g-2" style={rowStyle}>
                                 <Col md></Col>
                                 <Col lg="6" style={{ textAlign: 'left' }}>
-                                    <Image style={{ width: '80px', height: '80px' }} src={ADMIN_BACKEND_BASE_URL + file} />
+                                    <Image style={{ width: '80px', height: '80px' }} src={file} />
                                 </Col>
                             </Row>
                         }

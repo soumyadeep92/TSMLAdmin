@@ -9,6 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { deleteNoticeById, listNotices } from '../../apis/apis'
 
 export const ListNotice = () => {
     const [showAlert, setShowAlert] = useState(false);
@@ -32,12 +33,7 @@ export const ListNotice = () => {
         navigate('/edit-notice/' + item);
     };
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete/notice/${item}`, {
-            method: 'put',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await deleteNoticeById(item);
         if (result.success === true) {
             setShowAlert(true);
             getApiDatas();
@@ -59,12 +55,7 @@ export const ListNotice = () => {
         getApiDatas();
     }, [])
     const getApiDatas = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list/notice`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await listNotices();
         if (result.response.status === true && result.response.noticeDetails) {
             const itemElements = [];
             result.response.noticeDetails.map((item, index) => {

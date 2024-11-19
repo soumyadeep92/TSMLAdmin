@@ -10,6 +10,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import './comments.css';
 import { CvrTimeSchedule } from '../settings/CvrTimeSchedule';
+import { addComments, listCommentsById } from '../../apis/apis'
 
 export const Comments = () => {
     const navigate = useNavigate();
@@ -29,12 +30,7 @@ export const Comments = () => {
     };
 
     async function getApiData() {
-        await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}/list/comments/${id}`, {
-            method: 'get',
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(res => {
+        await listCommentsById(id).then(res => {
             setMessages(res.response.commentDetails);
             setInput("");
         }).catch(err => {
@@ -51,13 +47,7 @@ export const Comments = () => {
             cvr_id: id,
             comment: input,
         }
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add/comment`, {
-            method: 'post',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await addComments(data)
         if (result.response.status === true) {
             getApiData()
         } else {
@@ -128,6 +118,6 @@ const tableHeaderStyle = {
 const fontFamilyStyle = {
     fontFamily: 'math'
 }
-const cvrStyle={
+const cvrStyle = {
     fontSize: '1.5rem',
 }

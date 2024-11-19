@@ -4,6 +4,7 @@ import LoginImg from '../../assets/Login.png';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_AUTH_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { forgotPassword } from '../../apis/apis'
 
 export const ForgotPassword = () => {
 
@@ -20,19 +21,13 @@ export const ForgotPassword = () => {
             return false;
         }
         const data = { email: state.email };
-        let result = await fetch(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_AUTH_API_URL}forgot-password`, {
-            method: 'post',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await forgotPassword(data)
         result = await result.json();
         if (result.response.status === true) {
             setSuccessAlert(true);
         } else {
             setWarningAlert(true);
-        }  
+        }
     }
 
     const [successAlert, setSuccessAlert] = useState(false);
@@ -88,11 +83,11 @@ export const ForgotPassword = () => {
                                                 value={state.email}
                                                 onChange={(e) => { setState({ ...state, email: e.target.value }) }}
                                                 style={formStyle} required="required" />
-                                
+
                                         </div>
                                         {error && !state.email && <span style={invalidInput}>Enter Email</span>}
                                     </Form.Group>
-                                       
+
                                 </Form>
                                 <Button onClick={handleSubmit} style={buttonStyle}>Submit</Button>
                             </div>

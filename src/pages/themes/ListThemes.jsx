@@ -9,7 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
-
+import { listThemes, deleteThemeById } from '../../apis/apis'
 
 export const ListThemes = () => {
     const navigate = useNavigate();
@@ -33,12 +33,7 @@ export const ListThemes = () => {
         navigate('/edit-theme/' + item);
     };
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}delete-theme-by-id/${item}`, {
-            method: 'put',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await deleteThemeById(item)
         if (result.response.status === true) {
             setShowAlert(true);
             getThemes();
@@ -55,12 +50,7 @@ export const ListThemes = () => {
         getThemes();
     }, [])
     const getThemes = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-all-themes`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await listThemes()
         //result = await result.json();
         if (result.response.status === true && result.response.themeDetails) {
             const itemElements = [];
@@ -137,7 +127,7 @@ export const ListThemes = () => {
     }
     return (
         <>
-        {show1 && (
+            {show1 && (
                 <SweetAlert
                     warning
                     title="Oops!"

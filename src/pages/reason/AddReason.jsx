@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { getReasonByName, addReason } from '../../apis/apis'
 
 export const AddReason = () => {
     const navigate = useNavigate();
@@ -31,23 +32,11 @@ export const AddReason = () => {
             return false;
         }
         let reason = { reason_name: state.reason };
-        let reasons = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-reason-by-name`, {
-            method: 'post',
-            body: JSON.stringify(reason),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let reasons = await getReasonByName(reason)
         if (reasons.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { reason_name: state.reason, company_id: companies_id, status: state.status };
-            let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-reason`, {
-                method: 'post',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            let result = await addReason(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {

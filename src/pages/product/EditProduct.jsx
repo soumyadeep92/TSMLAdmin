@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { editProduct, getProductById } from '../../apis/apis'
 
 export const EditProduct = () => {
     const { id } = useParams();
@@ -31,13 +32,7 @@ export const EditProduct = () => {
         }
 
         const data = { 'product_name': state.product, 'status': state.status };
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}edit-product/${id}`, {
-            method: 'put',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await editProduct(id, data)
         if (result.response.status === true) {
             setShowAlert(true);
             setTimeout(() => {
@@ -57,12 +52,7 @@ export const EditProduct = () => {
     }
 
     const getApiDatas = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-product-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await getProductById(id)
         if (result.success === true && result.response.data) {
             let itemElements = {};
             itemElements = {

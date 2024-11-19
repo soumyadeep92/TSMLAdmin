@@ -9,6 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { listAllRoles, deleteRoleById } from '../../apis/apis'
 
 export const ListUserType = () => {
 
@@ -39,12 +40,7 @@ export const ListUserType = () => {
         getRoles();
     }, [])
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}delete-role/${item}`, {
-            method: 'put',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await deleteRoleById(item)
         if (result.success === true) {
             setShowAlert(true);
             getRoles();
@@ -53,12 +49,7 @@ export const ListUserType = () => {
         }
     };
     const getRoles = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list-role`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await listAllRoles()
         if (result.response.status === true && result.response.data) {
             const itemElements = [];
             result.response.data.map((item, index) => {
@@ -70,7 +61,7 @@ export const ListUserType = () => {
                 return itemElements;
             })
             setRoles(itemElements);
-            
+
         } else {
         }
     }
@@ -125,7 +116,7 @@ export const ListUserType = () => {
     }
     return (
         <>
-        {show1 && (
+            {show1 && (
                 <SweetAlert
                     warning
                     title="Oops!"

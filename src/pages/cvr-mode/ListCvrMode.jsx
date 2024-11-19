@@ -9,6 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { deleteCvrModeById, listCvrModes } from '../../apis/apis'
 
 export const ListCvrMode = () => {
     const [showAlert, setShowAlert] = useState(false);
@@ -33,12 +34,7 @@ export const ListCvrMode = () => {
         navigate('/edit-cvr-mode/' + item);
     };
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-cvr-mode/${item}`, {
-            method: 'put',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await deleteCvrModeById(item)
         if (result.success === true) {
             setShowAlert(true);
             getModes()
@@ -55,12 +51,7 @@ export const ListCvrMode = () => {
         getModes();
     }, [])
     const getModes = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-cvr-mode`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await listCvrModes()
         if (result.response.status === true && result.response.data) {
             const itemElements = [];
             result.response.data.map((item, index) => {

@@ -5,6 +5,7 @@ import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL 
 import fetchWithAuth from '../../fetchWithAuth';
 import { Link, useNavigate } from "react-router-dom";
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { updateProfile, getUserById } from '../../apis/apis'
 
 export const Profile = () => {
     const inputFile = useRef(null);
@@ -81,12 +82,7 @@ export const Profile = () => {
         formData.append('location', state.location);
         formData.append('user_id', authId);
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}profile-update`, {
-            method: 'post',
-            body: formData,
-            headers: {}
-        });
-        console.log(232323,result)
+        let result = await updateProfile(formData)
         if (result.response.status === false && result.response.code === 5) {
             setErroremail(true);
             setErrorphone(false);
@@ -152,36 +148,11 @@ export const Profile = () => {
     }, [])
     useEffect(() => {
         setFileName(file?.name);
-        console.log(1111111, fileName)
     }, [file])
-    // const getUser = async () => {
-    //     let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${authId}`, {
-    //         method: 'get',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         }
-    //     });
-    //     if (result.success === true && result.response.data.username && result.response.data.user_code && result.response.data.email && result.response.data.phone && result.response.data.location && result.response.data.profile_pic) {
-    //         let itemElements = {
-    //             name: result.response.data.username,
-    //             usercode: result.response.data.user_code,
-    //             email: result.response.data.email,
-    //             phone: result.response.data.phone,
-    //             location: result.response.data.location,
-    //             profile_pic: result.response.data.profile_pic,
-    //         };
-    //         setUsers(itemElements);
-    //     }
-    // }
 
     useEffect(() => {
         // getUser();
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${authId}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        getUserById(authId).then(result => {
             if (result.success === true && result.response.data) {
                 setState({
                     name: result.response.data.username,
@@ -193,27 +164,18 @@ export const Profile = () => {
                 })
                 setFile(result.response.data.profile_pic);
             }
-            console.log(1111, state)
         }).catch(err => {
 
         });
-        // setState(
-        //     {
-        //         name: user.name,
-        //         userId: user.usercode,
-        //         phone: user.phone,
-        //         email: user.email,
-        //         location: user.location,
-        //     }
-        // );
-        // setFile(user.profile_pic);
     }, [state.name])
 
     const [successAlert, setSuccessAlert] = useState(false);
     const successClose = () => {
         setSuccessAlert(false);
     };
-
+    const handleNavigate = () => {
+        navigate('/dashboard')
+    }
     return (
         <>
             {successAlert && (
@@ -233,20 +195,20 @@ export const Profile = () => {
                     <Row>
                         <Col sm={3}><p className='page_left_panel'>Profile</p></Col>
                         <Col sm={5}></Col>
-                        <Col sm={4}><p className='page_right_panel'>Dashboard / Profile</p></Col>
+                        <Col sm={4}><p className='page_right_panel'><span style={{ cursor: 'pointer' }} onClick={handleNavigate}>Dashboard</span> / Profile</p></Col>
                     </Row>
                     <Row style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px' }}>
                         <Form style={{ padding: '25px 20px 25px 25px' }}>
                             <Row className="g-2">
                                 <Col md>
                                     <Form.Label>Name</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Control value={state.name} onChange={(e) => { setState({ ...state, name: e.target.value }) }} type="text" />
+                                    <Form.Control value={state.name ? state.name : ''} onChange={(e) => { setState({ ...state, name: e.target.value }) }} type="text" />
                                     {error && !state.name && <span style={invalidInput}>Enter Name</span>}
                                     {errorname && <span style={invalidInput}>{errornamemsg}</span>}
                                 </Col>
                                 <Col md>
                                     <Form.Label>User Id</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Control value={state.usercode} onChange={(e) => { setState({ ...state, usercode: e.target.value }) }} type="text" />
+                                    <Form.Control value={state.usercode ? state.usercode : ''} onChange={(e) => { setState({ ...state, usercode: e.target.value }) }} type="text" />
                                     {error && !state.usercode && <span style={invalidInput}>Enter UserId</span>}
                                     {errorcode && <span style={invalidInput}>{errorcodemsg}</span>}
                                 </Col>
@@ -255,29 +217,28 @@ export const Profile = () => {
                             <Row className="g-2" style={row_style}>
                                 <Col md>
                                     <Form.Label>Email</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Control value={state.email} onChange={(e) => { setState({ ...state, email: e.target.value }) }} type="email" />
+                                    <Form.Control value={state.email ? state.email : ''} onChange={(e) => { setState({ ...state, email: e.target.value }) }} type="email" />
                                     {error && !state.email && <span style={invalidInput}>Enter Email</span>}
                                     {erroremail && <span style={invalidInput}>{erroremailmsg}</span>}
                                 </Col>
                                 <Col md>
                                     <Form.Label>Location</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Control value={state.location} onChange={(e) => { setState({ ...state, location: e.target.value }) }} type="text" />
+                                    <Form.Control value={state.location ? state.location : ''} onChange={(e) => { setState({ ...state, location: e.target.value }) }} type="text" />
                                     {error && !state.location && <span style={invalidInput}>Enter Location</span>}
                                 </Col>
                             </Row>
                             <Row className="g-2" style={row_style}>
                                 <Col md>
                                     <Form.Label>Phone No.</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Control value={state.phone} onChange={(e) => { setState({ ...state, phone: e.target.value }) }} type="text" />
+                                    <Form.Control value={state.phone ? state.phone : ''} onChange={(e) => { setState({ ...state, phone: e.target.value }) }} type="text" />
                                     {error && !state.phone && <span style={invalidInput}>Enter Phne</span>}
                                     {errorphone && <span style={invalidInput}>{errorphonemsg}</span>}
                                 </Col>
                                 <Col md>
-
                                     <Form.Label>Upload User Image</Form.Label><span style={asteriskStyle}> *</span>
                                     <InputGroup>
                                         <Form.Control style={{ display: "none" }} type="file" ref={inputFile} onChange={(e) => { setFile(e.target.files[0]) }} />
-                                        <Form.Control value={fileName ? fileName : state.profile_pic} disabled />
+                                        <Form.Control value={fileName ? fileName : state.profile_pic ? state.profile_pic : ''} disabled />
                                         <InputGroup.Text onClick={browserBtn} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                     </InputGroup>
                                     {error && !file && <span style={invalidInput}>Choose File</span>}
@@ -289,7 +250,7 @@ export const Profile = () => {
                                 <Row>
                                     <Col md></Col>
                                     <Col md style={{ textAlign: 'left' }}>
-                                        <Image style={{ width: '80px' }} src={ADMIN_BACKEND_BASE_URL + file} />
+                                        <Image style={{ width: '80px' }} src={file} />
                                     </Col>
                                 </Row>
                             }

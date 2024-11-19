@@ -95,7 +95,9 @@ export const Login = () => {
                         "profile_pic": result.response.userData.profile_pic,
                         "user_role_id": result.response.userData.user_role_id,
                         "user_status_id": result.response.userData.user_status_id,
-                        "status": result.response.userData.status
+                        "status": result.response.userData.status,
+                        "large_logo": result.response.companyDetails ? result.response.companyDetails.large_logo : '',
+                        "small_logo": result.response.companyDetails ? result.response.companyDetails.small_logo : ''
                     };
                     localStorage.setItem('user', JSON.stringify(userInfo))
                     localStorage.setItem('token', result.response.access_token)

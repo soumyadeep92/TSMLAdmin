@@ -8,18 +8,14 @@ import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Link, useNavigate } from "react-router-dom";
+import { listCvrs, updateNotificationsTime } from '../../apis/apis'
 
 export const CvrTimeSchedule = () => {
     const navigate = useNavigate();
     const [filterInput, setFilterInput] = useState('');
     const [apiData, setApiData] = useState([]);
     const getApiDatas = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/users/cvrs`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await listCvrs()
         if (result.response.status === true && result.response.data) {
             const itemElements = [];
             result.response.data.map((item, index) => {
@@ -110,13 +106,7 @@ export const CvrTimeSchedule = () => {
 
     const cvrShedule = async (cvrid, time) => {
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}update/notifications/time/${cvrid}`, {
-            method: 'post',
-            body: JSON.stringify({ time: time }),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await updateNotificationsTime(cvrid, time)
         if (result.response.status === true) {
             setSuccessAlert(true);
             setAlertMessage(result.response.message);
@@ -255,12 +245,12 @@ export const CvrTimeSchedule = () => {
                                     return (
                                         <tr {...row.getRowProps()} key={index}>
 
-                                            <td>{row.original.usercode}</td>
-                                            <td>{row.original.username}</td>
-                                            <td>{row.original.cvrcode}</td>
+                                            <td>{row.original.usercode ? row.original.usercode : ''}</td>
+                                            <td>{row.original.username ? row.original.username : ''}</td>
+                                            <td>{row.original.cvrcode ? row.original.cvrcode : ''}</td>
                                             {/* <td>{row.original.cvrstatus}</td> */}
-                                            <td>{modifyTime(row.original.cvrstartdate)}</td>
-                                            <td>{modifyTime(row.original.cvrenddate)}</td>
+                                            <td>{modifyTime(row.original.cvrstartdate ? row.original.cvrstartdate : '')}</td>
+                                            <td>{modifyTime(row.original.cvrenddate ? row.original.cvrenddate : '')}</td>
                                             {/* <td>{row.original.cvrmode}</td> */}
                                             <td>
                                                 <div>
@@ -268,7 +258,7 @@ export const CvrTimeSchedule = () => {
                                                         <button onClick={() => decrement(index)}>-</button>
                                                         <input
                                                             type="text"
-                                                            value={values[index]}
+                                                            value={values[index] ? values[index] : 0}
                                                             onChange={(e) => handleChange(index, e)}
                                                             style={{ width: '30px', textAlign: 'center' }}
                                                         />

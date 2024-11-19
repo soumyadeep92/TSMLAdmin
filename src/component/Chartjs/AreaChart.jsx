@@ -1,33 +1,94 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
-export const AreaChart = () => {
-    const options = {
-        chart: {
-            height: 350,
-            type: 'area'
-        },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-        xaxis: {
-            type: 'datetime',
-            categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-        },
-        tooltip: {
-            x: {
-                format: 'dd/MM/yy HH:mm'
-            },
-        },
-    };
+export const AreaChart = ({ resultsArea, resultsAreaLabels, chartType = "monthly" }) => {
+    const options = useMemo(() => {
+        let dateFormat = 'MMM yyyy';
+        let categories = resultsAreaLabels;
 
-    const series = [{
-        name: 'series1',
-        data: [31, 40, 28, 51, 42, 109, 100]
-    }];
+        if (chartType === 'weekly') {
+            dateFormat = 'MMM dd, yyyy';
+            categories = resultsAreaLabels.map(date => {
+                const currentDate = new Date(date);
+                return `${currentDate.toLocaleString('default', { month: 'long' })} ${currentDate.getDate()}, ${currentDate.getFullYear()}`;
+            });
+        }
+
+        if (chartType === 'daily') {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            const filteredData = resultsAreaLabels.reduce((acc, date, index) => {
+                const currentDate = new Date(date);
+                if (currentDate.getMonth() === currentMonth && currentDate.getFullYear() === currentYear) {
+                    acc.push({
+                        date: date,
+                        value: resultsArea[index],
+                    });
+                }
+                return acc;
+            }, []);
+
+            categories = filteredData.map(item => item.date);
+            resultsArea = filteredData.map(item => item.value);
+        }
+        let xaxisLabels = [];
+
+        if (chartType === 'quarterly') {
+            dateFormat = 'Q# yyyy';
+            categories = resultsAreaLabels.map(date => {
+                const currentDate = new Date(date);
+                const quarter = Math.floor(currentDate.getMonth() / 3) + 1;
+                return `Q${quarter} ${currentDate.getFullYear()}`;
+            });
+
+            categories = [...new Set(categories)];
+
+
+            xaxisLabels = resultsAreaLabels.map(date => {
+                const currentDate = new Date(date);
+                const quarter = Math.floor(currentDate.getMonth() / 3) + 1;
+
+                if ([0, 3, 6, 9].includes(currentDate.getMonth())) {
+                    return `Q${quarter} ${currentDate.getFullYear()}`;
+                }
+                return '';
+            });
+        }
+
+        return {
+            chart: {
+                height: 350,
+                type: 'area',
+            },
+            dataLabels: {
+                enabled: false,
+            },
+            stroke: {
+                curve: 'smooth',
+            },
+            xaxis: {
+                type: 'category',
+                categories: xaxisLabels.lenght > 0 ? xaxisLabels : categories,
+                labels: {
+                    show: true,
+                    formatter: function (value) {
+                        return value || '';
+                    }
+                },
+            },
+            tooltip: {
+                x: {
+                    format: dateFormat,
+                },
+            },
+        };
+    }, [resultsAreaLabels, chartType]);
+
+    const series = useMemo(() => [{
+        name: 'Series 1',
+        data: resultsArea,
+    }], [resultsArea]);
+
 
     return (
         <div id="chart">

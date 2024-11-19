@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { getCustomerTypeByName, addCustomerType } from '../../apis/apis'
 
 export const AddCustomerType = () => {
     const navigate = useNavigate();
@@ -31,23 +32,11 @@ export const AddCustomerType = () => {
             return false;
         }
         let customer_type = { customer_type_name: state.customer_type };
-        let customer_types = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-customer-type-by-name`, {
-            method: 'post',
-            body: JSON.stringify(customer_type),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let customer_types = await getCustomerTypeByName(customer_type)
         if (customer_types.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { customer_type: state.customer_type, company_id: companies_id, status: state.status };
-            let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-customer-type`, {
-                method: 'post',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            let result = await addCustomerType(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {

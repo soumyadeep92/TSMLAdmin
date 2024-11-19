@@ -4,8 +4,8 @@ import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
-import { getStatusUsers, addUsers } from '../../apis/users';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { createCustomer, listCustomerType } from '../../apis/apis'
 
 export const AddCustomer = () => {
     const navigate = useNavigate();
@@ -96,11 +96,7 @@ export const AddCustomer = () => {
         formData.append('business_nature', state.business_nature);
         formData.append('organization_address_plant', state.organization_address_plant);
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}create-customer-info`, {
-            method: 'post',
-            body: formData,
-            headers: {}
-        });
+        let result = await createCustomer(formData);
         if (result.response.status === false && result.response.code === 5) {
             setErroremail(true);
             setErrorphone(false);
@@ -180,12 +176,7 @@ export const AddCustomer = () => {
 
     useEffect(() => {
         async function fetchData() {
-            let resultCompany = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-customer-type?status=1`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+            let resultCompany = await listCustomerType();
             setCustomerTypes(resultCompany.response.data);
         }
         fetchData();

@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { editThemes, getThemeById, listAllCompanies } from '../../apis/apis';
 
 export const EditTheme = () => {
     const { id } = useParams();
@@ -132,11 +133,7 @@ export const EditTheme = () => {
         formData.append('page_name', state.page_name);
         formData.append('status', state.status);
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}edit-themes/${id}`, {
-            method: 'put',
-            body: formData,
-            headers: {}
-        });
+        let result = await editThemes(id, formData)
         if (result.response.status === true) {
             setShowAlert(true);
             setTimeout(() => {
@@ -185,19 +182,9 @@ export const EditTheme = () => {
     }, [file1, file2, file3])
 
     async function fetchData() {
-        let resultCompany = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/companies?status=1`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let resultCompany = await listAllCompanies()
         setCompany(resultCompany.response.companyDetails);
-        let resultTheme = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-theme-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
+        let resultTheme = await getThemeById(id)
         setState(resultTheme.response.themeDetails)
         setFile1(resultTheme.response.themeDetails.image_1);
         setFileName1(resultTheme.response.themeDetails.image_1);
@@ -208,7 +195,7 @@ export const EditTheme = () => {
     }
     useEffect(() => {
         fetchData();
-    }, [state.page_name])
+    }, [id])
 
     const handleFileChange = (fileIndex, file) => {
         if (fileIndex === 1) {
@@ -308,7 +295,7 @@ export const EditTheme = () => {
                                     <Form.Label>Upload Image 1</Form.Label>
                                     <InputGroup>
                                         <Form.Control style={{ display: "none" }} type="file" ref={inputFile1} onChange={(e) => handleFileChange(1, e.target.files[0])} />
-                                        <Form.Control value={fileName1 ? fileName1 : file1} disabled />
+                                        <Form.Control value={fileName1 ? fileName1 : state.image_1 ? state.image_1 : ''} disabled />
                                         <InputGroup.Text onClick={browserBtn1} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                     </InputGroup>
                                     {errorfile1 && <span style={invalidInput}>{errorfilemsg1}</span>}
@@ -317,7 +304,7 @@ export const EditTheme = () => {
                                     <Form.Label>Upload Image 2</Form.Label>
                                     <InputGroup>
                                         <Form.Control style={{ display: "none" }} type="file" ref={inputFile2} onChange={(e) => handleFileChange(2, e.target.files[0])} />
-                                        <Form.Control value={fileName2 ? fileName2 : file2} disabled />
+                                        <Form.Control value={fileName2 ? fileName2 : state.image_2 ? state.image_2 : ''} disabled />
                                         <InputGroup.Text onClick={browserBtn2} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                     </InputGroup>
                                     {errorfile2 && <span style={invalidInput}>{errorfilemsg2}</span>}
@@ -341,7 +328,7 @@ export const EditTheme = () => {
                                     <Form.Label>Upload Image 3</Form.Label>
                                     <InputGroup>
                                         <Form.Control style={{ display: "none" }} type="file" ref={inputFile3} onChange={(e) => handleFileChange(3, e.target.files[0])} />
-                                        <Form.Control value={fileName3 ? fileName3 : file3} disabled />
+                                        <Form.Control value={fileName3 ? fileName3 : state.image_3 ? state.image_3 : ''} disabled />
                                         <InputGroup.Text onClick={browserBtn3} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                     </InputGroup>
                                     {errorfile3 && <span style={invalidInput}>{errorfilemsg1}</span>}

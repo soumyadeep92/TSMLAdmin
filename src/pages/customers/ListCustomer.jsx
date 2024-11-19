@@ -9,6 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { getAllCustomers, deleteCustomerById } from '../../apis/apis'
 
 
 export const ListCustomer = () => {
@@ -33,12 +34,7 @@ export const ListCustomer = () => {
         navigate('/edit-customer/' + item);
     };
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}delete-customer-by-id/${item}`, {
-            method: 'put',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await deleteCustomerById(item)
         if (result.response.status === true) {
             setShowAlert(true);
             getCustomers();
@@ -56,12 +52,7 @@ export const ListCustomer = () => {
         getCustomers();
     }, [])
     const getCustomers = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-all-customer`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await getAllCustomers()
         //result = await result.json();
         if (result.response.status === true && result.response.customerInfoDetails) {
             const itemElements = [];
@@ -137,7 +128,7 @@ export const ListCustomer = () => {
     }
     return (
         <>
-        {show1 && (
+            {show1 && (
                 <SweetAlert
                     warning
                     title="Oops!"

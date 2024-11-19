@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { editReason, getReasonById } from '../../apis/apis'
 
 export const EditReason = () => {
     const { id } = useParams();
@@ -31,13 +32,7 @@ export const EditReason = () => {
         }
 
         const data = { 'reason_name': state.reason, 'status': state.status };
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}edit-reason/${id}`, {
-            method: 'put',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await editReason(id, data)
         if (result.response.status === true) {
             setShowAlert(true);
             setTimeout(() => {
@@ -57,12 +52,7 @@ export const EditReason = () => {
     }
 
     const getApiDatas = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-reason-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await getReasonById(id)
         if (result.success === true && result.response.data) {
             let itemElements = {};
             itemElements = {

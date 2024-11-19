@@ -8,6 +8,8 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import MultiSelectDropdown from '../../layout/MultiSelectDropdown';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
+import { listNoticeById, getUserByAdmin, editNotice } from '../../apis/apis'
 
 export const EditNotice = () => {
     const navigate = useNavigate();
@@ -43,23 +45,17 @@ export const EditNotice = () => {
     };
     const handleClose1 = () => setShow1(false);
     const editNoticeForm = async () => {
-        if (!state.title || !state.description || (users.length == 0 && selectedItems.length == 0) || state.status == 2 || !selectedStartDateTime || !selectedEndDateTime) {
+        if (!state.title || !state.description || (state.user_names.length == 0 && selectedItems.length == 0) || state.status == 2 || (!state.start_date && !selectedStartDateTime) || (!state.end_date && !selectedEndDateTime)) {
             setError(true)
             return false;
         }
         let user_ids = res.filter(obj => {
-            let index_user_id = selectedItems.findIndex(obj1 => obj['username'] == obj1);
+            let index_user_id = selectedItems.length > 0 ? selectedItems.findIndex(obj1 => obj['username'] == obj1) : state.user_names.findIndex(obj1 => obj['username'] == obj1);
             return res[index_user_id]
         })
         user_ids = user_ids.map(obj => obj['id'])
-        const data = { title: state.title, description: state.description, user_id: user_ids, start_date: selectedStartDateTime, end_date: selectedEndDateTime }
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}/update/notice/${id}`, {
-            method: 'post',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        const data = { title: state.title, description: state.description, user_id: user_ids, start_date: selectedStartDateTime ? selectedStartDateTime : state.start_date, end_date: selectedEndDateTime ? selectedEndDateTime : state.end_date }
+        let result = await editNotice(id, data)
         if (result.response.status === true) {
             setShowAlert(true);
             setTimeout(() => {
@@ -91,30 +87,22 @@ export const EditNotice = () => {
 
     const options = res.map(obj => obj['username']);
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-admin`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        getUserByAdmin().then(result => {
             if (result.response.status === true) {
                 setRes(result.response.data)
             }
         })
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}/list/notice/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        listNoticeById(id).then(result => {
             if (result.response.status === true) {
                 setState(result.response.noticeDetails)
+                setUsers(state.user_names)
             }
         })
-        setUsers(state.user_names)
-    }, [state.name])
-    useEffect(() => {
-    }, [users])
+    }, [id])
+    // useEffect(() => {
+    //     console.log(users)
+    // }, [users])
+
     return (
         <>
             {show1 && (
@@ -169,10 +157,12 @@ export const EditNotice = () => {
                                     <Form.Label>Start Date</Form.Label><span style={asteriskStyle}> *</span>
                                     <br />
                                     <DatePicker
-                                        selected={selectedStartDateTime}
+                                        selected={
+                                            selectedStartDateTime ? selectedStartDateTime : state.start_date
+                                        }
                                         onChange={handleStartDateTimeChange}
                                         showTimeSelect
-                                        dateFormat="MMMM d, yyyy h:mm aa"
+                                        dateFormat="yyyy-MM-dd HH:mm:ss"
                                         placeholderText="Select date and time"
                                         className="form-control wide-datepicker"
                                     />
@@ -184,10 +174,10 @@ export const EditNotice = () => {
                                     <Form.Label>End Date</Form.Label><span style={asteriskStyle}> *</span>
                                     <br />
                                     <DatePicker
-                                        selected={selectedEndDateTime}
+                                        selected={selectedEndDateTime ? selectedEndDateTime : state.end_date}
                                         onChange={handleEndDateTimeChange}
                                         showTimeSelect
-                                        dateFormat="MMMM d, yyyy h:mm aa"
+                                        dateFormat="yyyy-MM-dd HH:mm:ss"
                                         placeholderText="Select date and time"
                                         className="form-control wide-datepicker"
                                     />
@@ -199,7 +189,7 @@ export const EditNotice = () => {
                             <Row className="g-2">
                                 <Col md>
                                     <Form.Label>Select Users</Form.Label><span style={asteriskStyle}> *</span>
-                                    <MultiSelectDropdown options={options} onSelect={handleSelect} fetchedOptions={users} />
+                                    <MultiSelectDropdown options={options} onSelect={handleSelect} fetchedOptions={state.user_names} />
                                     {error && (selectedItems.length == 0 && users.length == 0) && <span style={invalidInput}>Please select users</span>}
                                 </Col>
                                 <Col md>

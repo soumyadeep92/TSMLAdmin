@@ -17,7 +17,8 @@ const SideBar = () => {
   const [settingsDropdown, setSettingsDropdown] = useState(false);
   const [cvrDropdown, setCvrDropdown] = useState(false);
   const [noticeDropdown, setNoticeDropdown] = useState(false);
-
+  const [largeLogo, setLargeLogo] = useState('')
+  const [smallLogo, setSmallLogo] = useState('')
   // Function to log out
   const logout = useCallback(() => {
     localStorage.clear();
@@ -45,6 +46,10 @@ const SideBar = () => {
   };
 
   useEffect(() => {
+    const company_large_logo = JSON.parse(localStorage.getItem('user')).large_logo;
+    const company_small_logo = JSON.parse(localStorage.getItem('user')).small_logo;
+    setLargeLogo(company_large_logo);
+    setSmallLogo(company_small_logo);
     const roleId = JSON.parse(localStorage.getItem('user')).user_role_id;
     let userManagementRoutes = [];
     let masterManagementRoutes = [];
@@ -171,9 +176,9 @@ const SideBar = () => {
         overflowY: 'auto',
       }}>
       {isToggled ? (
-        <div className="text-center logo-block"><Image src={LogoSmall} /></div>
+        <div className="text-center logo-block"><Image src={smallLogo ? smallLogo : LogoSmall} style={{ width: '40px' }} /></div>
       ) : (
-        <div className="text-center logo-block"><Image src={Logo} /></div>
+        <div className="text-center logo-block"><Image src={largeLogo ? largeLogo : Logo} style={{ width: '100px' }} /></div>
       )}
       {JSON.parse(localStorage.getItem('user')).user_role_id != 1 ? <ul className="left-sidebar-menu">
         <li>
@@ -228,13 +233,6 @@ const SideBar = () => {
             <li><Link to="/list-customer-type">Type List</Link></li>
           </ul>
         )}
-        <li>
-          {isToggled ?
-            <UserCheck />
-            :
-            <Link to="/cvr-time-schedule">CVR Schedule</Link>
-          }
-        </li>
         {/* <li>
           {isToggled ?
             <UserCheck />
@@ -249,9 +247,9 @@ const SideBar = () => {
         )} */}
         <li>
           {isToggled ?
-            <Archive />
+            <UserCheck />
             :
-            <Link to="/list-notice">Notice List</Link>
+            <Link to="/cvr-time-schedule">CVR Schedule</Link>
           }
         </li>
         {/* <li>
@@ -266,6 +264,13 @@ const SideBar = () => {
             <li><Link to="/list-notice">Notice List</Link></li>
           </ul>
         )} */}
+        <li>
+          {isToggled ?
+            <Archive />
+            :
+            <Link to="/list-notice">Notice List</Link>
+          }
+        </li>
         <li>
           {isToggled ?
             <Settings />
@@ -296,13 +301,6 @@ const SideBar = () => {
               <Link to="/dashboard">Dashboard</Link>
             )}
           </li>
-          <li>
-            {isToggled ? (
-              <Users />
-            ) : (
-              <Link to="/list-user">User List</Link>
-            )}
-          </li>
           {/* <li>
             {isToggled ? (
               <Users />
@@ -316,11 +314,11 @@ const SideBar = () => {
             </ul>
           )} */}
           <li>
-            {isToggled ?
-              <Sliders />
-              :
-              <Link to="/list-company">Company List</Link>
-            }
+            {isToggled ? (
+              <Users />
+            ) : (
+              <Link to="/list-user">User List</Link>
+            )}
           </li>
           {/* <li>
             {isToggled ?
@@ -335,6 +333,13 @@ const SideBar = () => {
 
             </ul>
           } */}
+          <li>
+            {isToggled ?
+              <Sliders />
+              :
+              <Link to="/list-company">Company List</Link>
+            }
+          </li>
           <li>
             {isToggled ?
               <Settings />

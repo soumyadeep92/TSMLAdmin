@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import AdminLayout from '../../layout/AdminLayout';
 import { Container, Row, Col, Form, Button, InputGroup, Image } from "react-bootstrap";
-import { Link, useParams,useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
+import { getProductById } from '../../apis/apis'
 
 export const ViewProduct = () => {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const { id } = useParams();
     const [state, setState] = useState(
         {
@@ -15,12 +16,7 @@ export const ViewProduct = () => {
     );
 
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-product-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        getProductById(id).then(result => {
             if (result.response.status === true && result.response.data) {
                 setState(
                     {

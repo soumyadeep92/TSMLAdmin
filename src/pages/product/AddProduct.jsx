@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import {getProductByName,addProduct} from '../../apis/apis'
 
 export const AddProduct = () => {
     const navigate = useNavigate();
@@ -31,23 +32,11 @@ export const AddProduct = () => {
             return false;
         }
         let product = { product_name: state.product };
-        let products = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-product-by-name`, {
-            method: 'post',
-            body: JSON.stringify(product),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let products = await getProductByName(product)
         if (products.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { product_name: state.product, company_id: companies_id, status: state.status };
-            let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-product`, {
-                method: 'post',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            let result = await addProduct(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {

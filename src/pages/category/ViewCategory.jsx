@@ -4,6 +4,7 @@ import { Container, Row, Col, Form, Button, InputGroup, Image } from "react-boot
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
+import { getCategoriesById } from '../../apis/apis'
 
 export const ViewCategory = () => {
     const navigate = useNavigate();
@@ -15,12 +16,7 @@ export const ViewCategory = () => {
     );
 
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-category-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        getCategoriesById(id).then(result => {
             if (result.response.status === true && result.response.data) {
                 let itemElements = {};
                 itemElements = {

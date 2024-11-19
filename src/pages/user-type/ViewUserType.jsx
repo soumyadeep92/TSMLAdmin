@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import AdminLayout from '../../layout/AdminLayout';
 import { Container, Row, Col, Form, Button, InputGroup, Image, Table } from "react-bootstrap";
-import { Link, useParams,useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
+import { getRoleById, getRolePermissions } from '../../apis/apis'
 
 export const ViewUserType = () => {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const { id } = useParams();
     const [state, setState] = useState(
         {
@@ -16,12 +17,7 @@ export const ViewUserType = () => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-role-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        getRoleById(id).then(result => {
             if (result.response.status === true && result.response.data) {
                 let itemElements = {};
                 itemElements = {
@@ -37,12 +33,7 @@ export const ViewUserType = () => {
                         status: itemElements.status == 1 ? "Active" : "Inactive"
                     }
                 );
-                fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-role-permission/${result.response.data.id}`, {
-                    method: 'get',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }).then(res => {
+                getRolePermissions(result.response.data.id).then(res => {
                     setUsers(res.response.permissionDetails);
                 }).catch(err => {
 
@@ -51,10 +42,9 @@ export const ViewUserType = () => {
         }).catch(error => {
 
         });
-    }, [state.id])
+    }, [id])
 
     useEffect(() => {
-        console.log(12121212, users)
     }, [users])
     const handleNavigate = () => {
         navigate('/list-user-type')
@@ -63,9 +53,9 @@ export const ViewUserType = () => {
         <AdminLayout>
             <Container fluid="true">
                 <Row>
-                    <Col sm={3}><p className='page_left_panel'>View Reason</p></Col>
+                    <Col sm={3}><p className='page_left_panel'>View User Type</p></Col>
                     <Col sm={5}></Col>
-                    <Col sm={4}><p className='page_right_panel'><span style={{ cursor: 'pointer' }} onClick={handleNavigate}>User Type List</span> / View Reason</p></Col>
+                    <Col sm={4}><p className='page_right_panel'><span style={{ cursor: 'pointer' }} onClick={handleNavigate}>User Type List</span> / View User Type</p></Col>
                 </Row>
                 <Row style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px' }}>
                     <Form style={{ padding: '25px 20px 25px 25px' }}>
@@ -93,25 +83,25 @@ export const ViewUserType = () => {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>{state.role_name}</td>
+                                            <td>{state.role_name ? state.role_name : ''}</td>
                                             <td>
                                                 <input name="can_add" type="checkbox"
-                                                    checked={users?.can_add} disabled
+                                                    checked={users.can_add ? users.can_add : ''} disabled
                                                 />
                                             </td>
                                             <td>
                                                 <input name="can_edit" type="checkbox"
-                                                    checked={users?.can_edit} disabled
+                                                    checked={users.can_edit ? users.can_edit : ''} disabled
                                                 />
                                             </td>
                                             <td>
                                                 <input name="can_delete" type="checkbox"
-                                                    checked={users?.can_delete} disabled
+                                                    checked={users.can_delete ? users.can_delete : ''} disabled
                                                 />
                                             </td>
                                             <td>
                                                 <input name="can_view" type="checkbox"
-                                                    checked={users?.can_view} disabled
+                                                    checked={users.can_view ? users.can_view : ''} disabled
                                                 />
                                             </td>
                                         </tr>

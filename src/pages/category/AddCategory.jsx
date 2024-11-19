@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { getCategoriesByName, addCategories } from '../../apis/apis'
 
 export const AddCategory = () => {
     const navigate = useNavigate();
@@ -31,23 +32,11 @@ export const AddCategory = () => {
             return false;
         }
         let category = { category_name: state.category };
-        let categories = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-category-by-name`, {
-            method: 'post',
-            body: JSON.stringify(category),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let categories = await getCategoriesByName(category);
         if (categories.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { category_name: state.category, company_id: companies_id, status: state.status };
-            let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-category`, {
-                method: 'post',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            let result = await addCategories(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {

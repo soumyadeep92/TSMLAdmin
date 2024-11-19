@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { editCompanies, getCompanyById } from '../../apis/apis'
 
 export const EditCompany = () => {
     const { id } = useParams();
@@ -116,12 +117,7 @@ export const EditCompany = () => {
         formData.append('contact_person_address', state.contact_person_address);
         formData.append('status', state.status);
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}edit/company/${id}`, {
-            method: 'put',
-            body: formData,
-            headers: {
-            }
-        });
+        let result = await editCompanies(id, formData)
         if (result.response.status === false && result.response.code === 5) {
             setErroremail(true);
             setErrorContactemail(false);
@@ -187,51 +183,14 @@ export const EditCompany = () => {
     const formClear = async (e) => {
         e.preventDefault();
         setState({
-            company_name: "", address: "", company_logo: "", email: "", pan_number: "", GSTN: "", business_nature: "", city: "", state: "", pin_code: "", contact_person_name: "", contact_person_email: "", contact_person_phone: "", contact_person_address: ""
+            id: "", company_name: "", address: "", large_logo: "", small_logo: "", email: "", pan_number: "", GSTN: "", pin_code: "", business_nature: "", city: "", state: "", contact_person_name: "", contact_person_email: "", contact_person_phone: "", contact_person_address: "", status: ""
         })
-        setFile(null);
-        setFile1(null);
+        setFile('');
+        setFile1('');
     }
 
-    // const getApiDatas = async () => {
-    //     let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/company/${id}`, {
-    //         method: 'get',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         }
-    //     });
-    //     if (result.success === true && result.response.companyDetails) {
-    //         let itemElements = {};
-    //         itemElements = {
-    //             id: result.response.companyDetails.id,
-    //             company_name: result.response.companyDetails.company_name,
-    //             address: result.response.companyDetails.address,
-    //             company_logo: result.response.companyDetails.logo,
-    //             email: result.response.companyDetails.email,
-    //             pan_number: result.response.companyDetails.pan_number,
-    //             GSTN: result.response.companyDetails.GSTN,
-    //             business_nature: result.response.companyDetails.business_nature,
-    //             city: result.response.companyDetails.city,
-    //             state: result.response.companyDetails.state,
-    //             contact_person_name: result.response.companyDetails.contact_person_name,
-    //             contact_person_email: result.response.companyDetails.contact_person_email,
-    //             contact_person_phone: result.response.companyDetails.contact_person_phone,
-    //             contact_person_address: result.response.companyDetails.contact_person_address,
-    //             status: result.response.companyDetails.is_active
-    //         };
-
-    //         setApiData(itemElements);
-    //     }
-    // }
-
     useEffect(() => {
-        // getApiDatas();
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/company/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        getCompanyById(id).then(result => {
             setState({
                 id: result.response.companyDetails.id,
                 company_name: result.response.companyDetails.company_name,
@@ -256,29 +215,7 @@ export const EditCompany = () => {
         }).catch(err => {
 
         })
-        // if (apiData.company_name && apiData.address && apiData.email && apiData.contact_person_name && apiData.contact_person_email) {
-        //     setState(
-        //         {
-        //             id: apiData.id,
-        //             company_name: apiData.company_name,
-        //             address: apiData.address,
-        //             company_logo: apiData.company_logo,
-        //             email: apiData.email,
-        //             pan_number: apiData.pan_number,
-        //             GSTN: apiData.GSTN,
-        //             business_nature: apiData.business_nature,
-        //             city: apiData.city,
-        //             state: apiData.state,
-        //             contact_person_name: apiData.contact_person_name,
-        //             contact_person_email: apiData.contact_person_email,
-        //             contact_person_phone: apiData.contact_person_phone,
-        //             contact_person_address: apiData.contact_person_address,
-        //             status: apiData.status ? "Active" : "Inactive"
-        //         }
-        //     );
-
-        // }
-    }, [state.id])
+    }, [id])
 
     const handleNavigate = () => {
         navigate('/list-company')
@@ -337,7 +274,6 @@ export const EditCompany = () => {
                                 <Col md>
                                     <Form.Label>PAN Number</Form.Label>
                                     <Form.Control value={state.pan_number} onChange={(e) => { setState({ ...state, pan_number: e.target.value }) }} type="text" />
-                                    {/* {error && !state.pan_number && <span style={invalidInput}>Enter company PAN Number</span>} */}
                                     {state.pan_number && errorpan && <span style={invalidInput}>{errorpanmsg}</span>}
                                 </Col>
                             </Row>
@@ -351,26 +287,22 @@ export const EditCompany = () => {
                                 <Col md>
                                     <Form.Label>Business Nature</Form.Label>
                                     <Form.Control value={state.business_nature} onChange={(e) => { setState({ ...state, business_nature: e.target.value }) }} type="text" />
-                                    {/* {error && !state.business_nature && <span style={invalidInput}>Enter Company Business Nature</span>} */}
                                 </Col>
                             </Row>
                             <Row className="g-2" style={row_style}>
                                 <Col md>
                                     <Form.Label>City</Form.Label>
                                     <Form.Control value={state.city} onChange={(e) => { setState({ ...state, city: e.target.value }) }} type="text" />
-                                    {/* {error && !state.city && <span style={invalidInput}>Enter company city</span>} */}
                                 </Col>
                                 <Col md>
                                     <Form.Label>State</Form.Label>
                                     <Form.Control value={state.state} onChange={(e) => { setState({ ...state, state: e.target.value }) }} type="text" />
-                                    {/* {error && !state.state && <span style={invalidInput}>Enter Company State</span>} */}
                                 </Col>
                             </Row>
                             <Row className="g-2" style={row_style}>
                                 <Col md>
                                     <Form.Label>Pin Code</Form.Label>
                                     <Form.Control value={state.pin_code} onChange={(e) => { setState({ ...state, pin_code: e.target.value }) }} type="text" />
-                                    {/* {error && !state.pin_code && <span style={invalidInput}>Enter Company Pin Code</span>} */}
                                 </Col>
                                 <Col md>
                                     <Form.Label>Contact Person Name</Form.Label><span style={asteriskStyle}> *</span>
@@ -388,21 +320,19 @@ export const EditCompany = () => {
                                 <Col md>
                                     <Form.Label>Contact Person Address</Form.Label>
                                     <Form.Control value={state.contact_person_address} onChange={(e) => { setState({ ...state, contact_person_address: e.target.value }) }} type="text" />
-                                    {/* {error && !state.contact_person_address && <span style={invalidInput}>Enter Company Contact Person Address</span>} */}
                                 </Col>
                             </Row>
                             <Row className="g-2" style={row_style}>
                                 <Col md>
                                     <Form.Label>Contact Person Phone</Form.Label>
                                     <Form.Control value={state.contact_person_phone} onChange={(e) => { setState({ ...state, contact_person_phone: e.target.value }) }} type="text" />
-                                    {/* {error && !state.contact_person_phone && <span style={invalidInput}>Enter company contact person phome</span>} */}
                                     {state.contact_person_phone && errorcontactphone && <span style={invalidInput}>{errorcontactphonemsg}</span>}
                                 </Col>
                                 <Col md>
                                     <Form.Label>Upload Company Large Logo</Form.Label><span style={asteriskStyle}> *</span>
                                     <InputGroup>
                                         <Form.Control style={{ display: "none" }} type="file" ref={inputFile} onChange={(e) => { setFile(e.target.files[0]) }} />
-                                        <Form.Control value={fileName ? fileName : file} disabled />
+                                        <Form.Control value={fileName ? fileName : state.large_logo ? state.large_logo : ''} disabled />
                                         <InputGroup.Text onClick={browserBtn} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                     </InputGroup>
                                     {error && !file && <span style={invalidInput}>Choose File</span>}
@@ -423,7 +353,7 @@ export const EditCompany = () => {
                                     <Form.Label>Upload Company Small Logo</Form.Label><span style={asteriskStyle}> *</span>
                                     <InputGroup>
                                         <Form.Control style={{ display: "none" }} type="file" ref={inputFile1} onChange={(e) => { setFile1(e.target.files[0]) }} />
-                                        <Form.Control value={fileName1 ? fileName1 : file1} disabled />
+                                        <Form.Control value={fileName1 ? fileName1 : state.small_logo ? state.small_logo : ''} disabled />
                                         <InputGroup.Text onClick={browserBtn1} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                     </InputGroup>
                                     {error && !file1 && <span style={invalidInput}>Choose File</span>}

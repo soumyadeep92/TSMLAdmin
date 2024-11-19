@@ -7,6 +7,7 @@ import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL 
 import fetchWithAuth from '../fetchWithAuth';
 import { useNavigate } from "react-router-dom";
 import Toast from 'react-bootstrap/Toast';
+import { getUsersById, listNotifications, updateNotifications } from '../apis/apis';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -19,12 +20,7 @@ const Header = () => {
     const [notificationsCount, setNotificationsCount] = useState(0);
     const userId = JSON.parse(localStorage.getItem('user')).id;
     const getUser = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${userId}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await getUsersById(userId)
         if (result.success === true && result.response.data) {
             let itemElements = {};
             itemElements = {
@@ -37,12 +33,7 @@ const Header = () => {
     }
     useEffect(() => {
         getUser();
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/notifications`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        listNotifications().then(result => {
             if (result.success === true && result.response.data) {
                 let itemElements = [];
                 result.response.data.map((item, index) => {
@@ -67,12 +58,7 @@ const Header = () => {
 
     const handleNotification = async () => {
         setShowA(!showA)
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}update/all/notifications/status`, {
-            method: 'post',
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await updateNotifications()
         setNotificationsCount(0)
     }
 
@@ -102,7 +88,7 @@ const Header = () => {
                                         <span className="notification">0</span>
                                     </div>
                                 </li> */}
-                                <li>
+                                <li className="top-0 start-0">
                                     <div className='notification-header mt-0'>
                                         <Bell />
                                         <span className="notification" style={{ cursor: 'pointer' }} onClick={handleNotification}>{notificationsCount}</span>
@@ -122,10 +108,10 @@ const Header = () => {
                                     </div>
                                 </li>
 
-                                <li>
+                                <li className="top-0 start-0">
                                     <div className='pro-img-block'>
                                         <div className="profile-container">
-                                            <Image className="profile-image" src={ADMIN_BACKEND_BASE_URL + user.profile_pic} />
+                                            <Image className="profile-image" src={user.profile_pic} />
                                         </div>
                                         <div className='ml-10'>
                                             <span className='user-name'>{user.name}</span>

@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { editMaterial, getMaterialById } from '../../apis/apis'
 
 export const EditMaterial = () => {
     const { id } = useParams();
@@ -31,13 +32,7 @@ export const EditMaterial = () => {
             return false;
         }
         const data = { 'material_name': state.material, 'status': state.status };
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}edit-material/${id}`, {
-            method: 'put',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await editMaterial(id, data)
         if (result.response.status === true) {
             setShowAlert(true);
             setTimeout(() => {
@@ -56,12 +51,7 @@ export const EditMaterial = () => {
         })
     }
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-material-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(res => {
+        getMaterialById(id).then(res => {
             let itemElements = {
                 material: res.response.data.material_name,
                 status: res.response.data.status

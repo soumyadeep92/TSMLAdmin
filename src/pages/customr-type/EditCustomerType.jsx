@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import {editCustomerType,getCustomerTypeById} from '../../apis/apis'
 
 export const EditCustomerType = () => {
     const { id } = useParams();
@@ -31,13 +32,7 @@ export const EditCustomerType = () => {
             return false;
         }
         const data = { 'customer_type': state.customer_type, 'status': state.status };
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}edit-customer-type/${id}`, {
-            method: 'put',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await editCustomerType(id,data)
         if (result.response.status === true) {
             setShowAlert(true);
             setTimeout(() => {
@@ -56,12 +51,7 @@ export const EditCustomerType = () => {
         })
     }
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-customer-type-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(res => {
+        getCustomerTypeById(id).then(res => {
             let itemElements = {
                 id: res.response.data.id,
                 customer_type: res.response.data.customer_type,

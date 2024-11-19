@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_AUTH_API_URL } from '../../constant';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { resetPassword } from '../../apis/apis';
 
 export const ResetPassword = () => {
 
@@ -52,13 +53,7 @@ export const ResetPassword = () => {
         }
         if (state.password === state.confirm_password) {
             const data = { newPassword: state.password };
-            let result = await fetch(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_AUTH_API_URL}reset-password/${token}`, {
-                method: 'post',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            let result = await resetPassword(data, token)
             result = await result.json();
             if (result.response.status === true) {
                 setSuccessAlert(true);

@@ -9,6 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import {listReasons} from '../../apis/apis'
 
 export const ListReason = () => {
     const [showAlert, setShowAlert] = useState(false);
@@ -51,12 +52,7 @@ export const ListReason = () => {
         getApiDatas();
     }, [])
     const getApiDatas = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-reason`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await listReasons()
         if (result.response.status === true && result.response.data) {
             const itemElements = [];
             result.response.data.map((item, index) => {

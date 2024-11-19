@@ -6,6 +6,7 @@ import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_A
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import MultiSelectDropdown from '../../layout/MultiSelectDropdown';
+import { getUserByAdmin, listNoticeById } from '../../apis/apis'
 
 export const ViewNotice = () => {
     const navigate = useNavigate();
@@ -53,22 +54,12 @@ export const ViewNotice = () => {
         }
     }
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-admin`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        getUserByAdmin().then(result => {
             if (result.response.status === true) {
                 setRes(result.response.data)
             }
         })
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}/list/notice/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        listNoticeById(id).then(result => {
             if (result.response.status === true) {
                 setState(result.response.noticeDetails)
             }

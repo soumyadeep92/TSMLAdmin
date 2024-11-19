@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { editCustomer, listCustomerType, getCustomerById } from '../../apis/apis'
 
 export const EditCustomer = () => {
     const { id } = useParams();
@@ -111,11 +112,7 @@ export const EditCustomer = () => {
         formData.append('organization_address_plant', state.organization_address_plant);
         formData.append('status', state.status);
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}edit-customer-info/${id}`, {
-            method: 'put',
-            body: formData,
-            headers: {}
-        });
+        let result = await editCustomer(id, formData);
         if (result.response.status === false && result.response.code === 5) {
             setErroremail(true);
             setErrorphone(false);
@@ -195,19 +192,9 @@ export const EditCustomer = () => {
 
     useEffect(() => {
         async function fetchData() {
-            let resultCompany = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list-customer-type?status=1`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+            let resultCompany = await listCustomerType()
             setCustomerTypes(resultCompany.response.data);
-            fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-customer-by-id/${id}`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }).then(result => {
+            getCustomerById(id).then(result => {
                 setState({
                     id: result.response.customerInfoDetails.id,
                     user_code: result.response.customerInfoDetails.user_code,
@@ -235,7 +222,7 @@ export const EditCustomer = () => {
             })
         }
         fetchData();
-    }, [state.id])
+    }, [id])
 
     const handleNavigate = () => {
         navigate('/get-all-customer')
@@ -384,7 +371,7 @@ export const EditCustomer = () => {
                                     <Form.Label>Upload Customer Profile Image</Form.Label>
                                     <InputGroup>
                                         <Form.Control style={{ display: "none" }} type="file" ref={inputFile} onChange={(e) => { setFile(e.target.files[0]) }} />
-                                        <Form.Control value={fileName ? fileName : file} disabled />
+                                        <Form.Control value={fileName ? fileName : state.profile_image ? state.profile_image : ''} disabled />
                                         <InputGroup.Text onClick={browserBtn} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                     </InputGroup>
                                     {/* {error && !file && <span style={invalidInput}>Choose File</span>} */}
@@ -400,10 +387,10 @@ export const EditCustomer = () => {
                                     {error && state.status == 2 && <span style={invalidInput}>Select Status</span>}
                                 </Col>
                             </Row>
-                            {typeof file === 'string' &&
+                            {file && typeof file === 'string' &&
                                 <Row className="g-2" style={row_style}>
                                     <Col lg="6" style={{ textAlign: 'left' }}>
-                                        <Image style={{ width: '80px', height: '80px' }} src={ADMIN_BACKEND_BASE_URL + file} />
+                                        <Image style={{ width: '80px', height: '80px' }} src={file} />
                                     </Col>
                                     <Col md></Col>
                                 </Row>

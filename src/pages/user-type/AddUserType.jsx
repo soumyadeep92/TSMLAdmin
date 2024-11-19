@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { getRoleByName, createRole, permissions } from '../../apis/apis'
 
 export const AddUserType = () => {
     const navigate = useNavigate();
@@ -63,23 +64,11 @@ export const AddUserType = () => {
             return false;
         }
         let user_type = { role_name: state.type };
-        let user_types = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-role-by-name`, {
-            method: 'post',
-            body: JSON.stringify(user_type),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let user_types = await getRoleByName(user_type);
         if (user_types.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { role_name: state.type, company_id: companies_id, status: state.status };
-            let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}create-role`, {
-                method: 'post',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            let result = await createRole(data)
             if (result.response.status === true) {
                 const data = {
                     role_id: result.response.data.id,
@@ -88,13 +77,7 @@ export const AddUserType = () => {
                     can_delete: (checked.can_delete === true) ? 1 : 0,
                     can_view: (checked.can_view === true) ? 1 : 0,
                 };
-                await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}permissions`, {
-                    method: 'post',
-                    body: JSON.stringify(data),
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
+                await permissions(data)
                 setShowAlert(true);
                 setTimeout(() => {
                     navigate('/list-user-type');

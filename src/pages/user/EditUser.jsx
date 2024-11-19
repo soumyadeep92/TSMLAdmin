@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { editUsers, listAllCompanies, getUserById, listRoles } from '../../apis/apis'
 
 export const EditUser = () => {
     const { id } = useParams();
@@ -34,7 +35,8 @@ export const EditUser = () => {
             status: "",
             password: "",
             companyName: "",
-            status: ""
+            status: "",
+            picture: ""
         }
     );
     const [erroremail, setErroremail] = useState(false);
@@ -88,11 +90,7 @@ export const EditUser = () => {
         formData.append('companies_name', state.companyName);
         formData.append('status', state.status);
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}edit-user/${id}`, {
-            method: 'put',
-            body: formData,
-            headers: {}
-        });
+        let result = await editUsers(id, formData)
         if (result.response.code === 5) {
             setErroremail(true);
             setErrorphone(false);
@@ -159,9 +157,10 @@ export const EditUser = () => {
             location: "",
             status: "",
             password: "",
-            companyName: ""
+            companyName: "",
+            picture: ""
         })
-        setFile(null);
+        setFile('');
         setFileName('')
     }
     const browserBtn = () => {
@@ -174,12 +173,7 @@ export const EditUser = () => {
     }, [file])
 
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(res => {
+        getUserById(id).then(res => {
             let user = res.response.data;
             if (user) {
                 setState(
@@ -192,7 +186,8 @@ export const EditUser = () => {
                         password: "",
                         location: user.location,
                         status: user.status,
-                        companyName: user.company.company_name
+                        companyName: user.company.company_name,
+                        picture: user.profile_pic
                     }
                 );
                 setFile(user.profile_pic);
@@ -212,19 +207,9 @@ export const EditUser = () => {
             //     }
             // });
             // setUserStatus(resultStatus.response.statusDetails);
-            let resultCompany = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/companies?status=1`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+            let resultCompany = await listAllCompanies()
             setCompany(resultCompany.response.companyDetails);
-            let resultRole = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list-role?status=1`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+            let resultRole = await listRoles()
             setUserRole(resultRole.response.data);
         }
         fetchData();
@@ -337,10 +322,10 @@ export const EditUser = () => {
                                 </Row>
                                     <Row className="g-2" style={row_style}>
                                         <Col md>
-                                            <Form.Label>Upload User Image</Form.Label>\\
+                                            <Form.Label>Upload User Image</Form.Label>
                                             <InputGroup>
                                                 <Form.Control style={{ display: "none" }} type="file" ref={inputFile} onChange={(e) => { setFile(e.target.files[0]) }} />
-                                                <Form.Control value={fileName ? fileName : file} disabled />
+                                                <Form.Control value={fileName ? fileName : state.picture} disabled />
                                                 <InputGroup.Text onClick={browserBtn} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                             </InputGroup>
                                             {error && !file && <span style={invalidInput}>Choose File</span>}
@@ -360,7 +345,7 @@ export const EditUser = () => {
                                     </Row>
                                     {file && typeof file === 'string' &&
                                         <Col lg="6" style={{ textAlign: 'left' }}>
-                                            <Image style={{ width: '80px' }} src={ADMIN_BACKEND_BASE_URL + file} />
+                                            <Image style={{ width: '80px' }} src={file} />
                                         </Col>
                                     }
                                 </>
@@ -377,7 +362,7 @@ export const EditUser = () => {
                                             <Form.Label>Upload User Image</Form.Label>
                                             <InputGroup>
                                                 <Form.Control style={{ display: "none" }} type="file" ref={inputFile} onChange={(e) => { setFile(e.target.files[0]) }} />
-                                                <Form.Control value={fileName ? fileName : file} disabled />
+                                                <Form.Control value={fileName ? fileName : state.picture} disabled />
                                                 <InputGroup.Text onClick={browserBtn} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
                                             </InputGroup>
                                             {error && !file && <span style={invalidInput}>Choose File</span>}
@@ -389,7 +374,7 @@ export const EditUser = () => {
                                         <Row className="g-2" style={row_style}>
                                             <Col md></Col>
                                             <Col lg="6" style={{ textAlign: 'left' }}>
-                                                <Image style={{ width: '80px', height: '80px' }} src={ADMIN_BACKEND_BASE_URL + file} />
+                                                <Image style={{ width: '80px', height: '80px' }} src={file} />
                                             </Col>
                                         </Row>
                                     }

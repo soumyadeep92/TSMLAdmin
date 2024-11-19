@@ -9,7 +9,7 @@ import { ArrowDown } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
-
+import { deleteUserById, listAllUsers } from '../../apis/apis'
 
 export const ListUser = () => {
     const navigate = useNavigate();
@@ -33,13 +33,7 @@ export const ListUser = () => {
         navigate('/edit-user/' + item);
     };
     const handleDelete = async (item) => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}delete-user/${item}`, {
-            method: 'put',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        console.log(121221,result)
+        let result = await deleteUserById(item)
         if (result.response.status === true) {
             setShowAlert(true);
             getUsers();
@@ -57,12 +51,7 @@ export const ListUser = () => {
         getUsers();
     }, [])
     const getUsers = async () => {
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list-user`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        let result = await listAllUsers()
         //result = await result.json();
         if (result.response.status === true && result.response.data) {
             const itemElements = [];
@@ -137,7 +126,7 @@ export const ListUser = () => {
     }
     return (
         <>
-        {show1 && (
+            {show1 && (
                 <SweetAlert
                     warning
                     title="Oops!"

@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { getMaterialByName, addMaterial } from '../../apis/apis'
 
 export const AddMaterial = () => {
     const navigate = useNavigate();
@@ -31,23 +32,11 @@ export const AddMaterial = () => {
             return false;
         }
         let material = { material_name: state.material };
-        let materials = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}get-material-by-name`, {
-            method: 'post',
-            body: JSON.stringify(material),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let materials = await getMaterialByName(material)
         if (materials.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { material_name: state.material, company_id: companies_id, status: state.status };
-            let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-material`, {
-                method: 'post',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+            let result = await addMaterial(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {

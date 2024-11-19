@@ -8,6 +8,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import MultiSelectDropdown from '../../layout/MultiSelectDropdown';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { addNotice, getUserByAdmin } from '../../apis/apis'
 
 export const AddNotice = () => {
     const navigate = useNavigate();
@@ -50,13 +51,7 @@ export const AddNotice = () => {
         })
         user_ids = user_ids.map(obj => obj['id'])
         const data = { title: state.title, description: state.description, user_id: user_ids, start_date: selectedStartDateTime, end_date: selectedEndDateTime }
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add/notice`, {
-            method: 'post',
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        let result = await addNotice(data)
         if (result.response.status === true) {
             setShowAlert(true);
             setTimeout(() => {
@@ -88,12 +83,7 @@ export const AddNotice = () => {
 
     const options = res.map(obj => obj['username']);
     useEffect(() => {
-        fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-admin`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(result => {
+        getUserByAdmin().then(result => {
             if (result.response.status === true) {
                 setRes(result.response.data)
             }
@@ -156,7 +146,7 @@ export const AddNotice = () => {
                                         selected={selectedStartDateTime}
                                         onChange={handleStartDateTimeChange}
                                         showTimeSelect
-                                        dateFormat="MMMM d, yyyy h:mm aa"
+                                        dateFormat="yyyy-MM-dd hh:mm:ss"
                                         placeholderText="Select date and time"
                                         className="form-control wide-datepicker"
                                     />
@@ -168,7 +158,7 @@ export const AddNotice = () => {
                                         selected={selectedEndDateTime}
                                         onChange={handleEndDateTimeChange}
                                         showTimeSelect
-                                        dateFormat="MMMM d, yyyy h:mm aa"
+                                        dateFormat="yyyy-MM-dd hh:mm:ss"
                                         placeholderText="Select date and time"
                                         className="form-control wide-datepicker"
                                     />
