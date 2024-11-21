@@ -1,72 +1,124 @@
 import React, { useState, useMemo } from 'react';
 import { Charts } from './Charts';
-import * as moment from 'moment';
-import { useSelector } from 'react-redux';
 
-export const BarChart = ({ barOpenResults = [], barWIPResults = [], barClosedResults = [], barType = '' }) => {
+export const BarChart = ({ barChartOpen = [], barChartWIP = [], barChartClosed = [], months = [], frequency = '' }) => {
 
     const [height] = useState(280);
 
     const series = useMemo(() => [
         {
             name: 'Open',
-            data: barType == "Open" ? barOpenResults : [],
+            data: barChartOpen.length > 0 ? barChartOpen : [],
         },
         {
             name: 'WIP',
-            data: barType == "WIP" ? barWIPResults : [],
+            data: barChartWIP.length > 0 ? barChartWIP : [],
         },
         {
             name: 'Closed',
-            data: barType == "Closed" ? barClosedResults : [],
+            data: barChartClosed.length > 0 ? barChartClosed : [],
         },
-    ], [barOpenResults, barWIPResults, barClosedResults]);
+    ], [barChartOpen, barChartWIP, barChartClosed]);
 
     const options = useMemo(() => {
-        const categories = [];
-
-        if (barOpenResults.length > 0) {
-            categories.push(...barOpenResults.map((_, index) => barOpenResults[index].x));
-        }
-        if (barWIPResults.length > 0) {
-            categories.push(...barWIPResults.map((_, index) => barWIPResults[index].x));
-        }
-        if (barClosedResults.length > 0) {
-            categories.push(...barClosedResults.map((_, index) => barClosedResults[index].x));
-        }
-
-        return {
-            chart: {
-                type: 'bar',
-                height: 380,
-                stacked: true, // Optional: stack bars if relevant
-            },
-            xaxis: {
-                categories: categories.length > 0 ? categories : [],
-                type: 'category',
-                labels: {
-                    style: {
-                        fontSize: '12px',
-                        fontWeight: 600,
+        if (frequency == 'Monthly') {
+            return {
+                chart: {
+                    type: 'bar',
+                    height: 380,
+                    stacked: true,
+                },
+                xaxis: {
+                    categories: months.length > 0 ? months : [],
+                    type: 'category',
+                    labels: {
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 600,
+                        },
                     },
                 },
-            },
-            tooltip: {
-                x: {
-                    formatter: (val) => `Label: ${val}`,
+                tooltip: {
+                    x: {
+                        formatter: (val) => `Label: ${val}`,
+                    },
                 },
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '50%',
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '50%',
+                    },
                 },
-            },
-            legend: {
-                position: 'top',
-            },
+                legend: {
+                    position: 'top',
+                },
+            }
+        } else if (frequency == 'Yearly') {
+            return {
+                chart: {
+                    type: 'bar',
+                    height: 380,
+                    stacked: true,
+                },
+                xaxis: {
+                    categories: [2024],
+                    type: 'category',
+                    labels: {
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 600,
+                        },
+                    },
+                },
+                tooltip: {
+                    x: {
+                        formatter: (val) => `Label: ${val}`,
+                    },
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '50%',
+                    },
+                },
+                legend: {
+                    position: 'top',
+                },
+            }
+        } else {
+            return {
+                chart: {
+                    type: 'bar',
+                    height: 380,
+                    stacked: true,
+                },
+                xaxis: {
+                    categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                    type: 'category',
+                    labels: {
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 600,
+                        },
+                    },
+                },
+                tooltip: {
+                    x: {
+                        formatter: (val) => `Label: ${val}`,
+                    },
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '50%',
+                    },
+                },
+                legend: {
+                    position: 'top',
+                },
+            }
         }
-    }, [barOpenResults, barWIPResults, barClosedResults]);
+    }, [barChartOpen, barChartWIP, barChartClosed]);
 
     return (
         <Charts options={options} type="bar" series={series} height={height} />

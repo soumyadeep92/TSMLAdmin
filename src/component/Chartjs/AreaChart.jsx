@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import ReactApexChart from 'react-apexcharts';
+import moment from 'moment'
 
 export const AreaChart = ({ resultsArea, resultsAreaLabels, chartType = "monthly" }) => {
     const options = useMemo(() => {
@@ -7,11 +8,30 @@ export const AreaChart = ({ resultsArea, resultsAreaLabels, chartType = "monthly
         let categories = resultsAreaLabels;
 
         if (chartType === 'weekly') {
-            dateFormat = 'MMM dd, yyyy';
-            categories = resultsAreaLabels.map(date => {
-                const currentDate = new Date(date);
-                return `${currentDate.toLocaleString('default', { month: 'long' })} ${currentDate.getDate()}, ${currentDate.getFullYear()}`;
-            });
+            // dateFormat = 'MMM dd, yyyy';
+            // categories = resultsAreaLabels.map(date => {
+            //     const currentDate = new Date(date);
+            //     return `${currentDate.toLocaleString('default', { month: 'long' })} ${currentDate.getDate()}, ${currentDate.getFullYear()}`;
+            // });
+            const currentDate = moment(new Date());
+            const startOfWeek = currentDate.startOf('month');
+            const endOfWeek = moment(new Date()).endOf('month');
+            const startTimestamp = startOfWeek.valueOf();
+            const endTimestamp = endOfWeek.valueOf();
+            const filteredData = resultsAreaLabels.reduce((acc, date, index) => {
+                const currentLabelDate = new Date(date);
+                const currentTimestamp = currentLabelDate.getTime();
+                if (currentTimestamp >= startTimestamp && currentTimestamp <= endTimestamp) {
+                    acc.push({
+                        date: date,
+                        value: resultsArea[index],
+                    });
+                }
+                return acc;
+            }, []);
+
+            categories = filteredData.map(item => item.date);
+            resultsArea = filteredData.map(item => item.value);
         }
 
         if (chartType === 'daily') {

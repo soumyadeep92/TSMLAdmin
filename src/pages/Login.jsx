@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'react-feather';
 import { ADMIN_BACKEND_BASE_URL } from '../constant';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { login } from '../apis/apis'
 
 export const Login = () => {
 
@@ -64,13 +65,7 @@ export const Login = () => {
             const newErrors = {};
             if (captcha === captchacode) {
 
-                let result = await fetch(`${ADMIN_BACKEND_BASE_URL}api/v1/auth/login`, {
-                    method: 'post',
-                    body: JSON.stringify({ username, password }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+                let result = await login(username, password)
                 result = await result.json();
 
                 if (result.response.admin_login) {
@@ -172,7 +167,7 @@ export const Login = () => {
             )}
             <Container fluid className="vh-100">
                 <Row className="h-100">
-                    <Col xs={12} lg={7} className="d-flex align-items-center px-0">
+                    <Col xs={12} lg={7} className="d-flex align-items-center px-0 bbg-blue">
                         <div className='login-bg-wrap w-100' style={{ backgroundImage: `url(${LoginImg})` }}>
                         </div>
                     </Col>

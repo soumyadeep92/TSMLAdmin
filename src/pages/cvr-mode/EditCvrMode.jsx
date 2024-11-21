@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import {listCompanies,getCvrModeById} from '../../apis/apis'
+import { listCompanies, getCvrModeById, updateCvrMode } from '../../apis/apis'
 
 export const EditCvrMode = () => {
     const { id } = useParams();
@@ -32,7 +32,7 @@ export const EditCvrMode = () => {
             return false;
         }
         const data = { 'mode_name': state.mode, 'status': state.status };
-        let result = await editCvrMode(id, data)
+        let result = await updateCvrMode(id, data)
         if (result.response.status === true) {
             setShowAlert(true);
             setTimeout(() => {

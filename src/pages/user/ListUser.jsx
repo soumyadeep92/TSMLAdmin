@@ -150,79 +150,82 @@ export const ListUser = () => {
             <AdminLayout>
                 <Container fluid="true">
                     <Row>
-                        <Col sm={3}><p className='page_left_panel'>List User</p></Col>
-                        <Col sm={5}></Col>
-                        <Col sm={4}><p className='page_right_panel'><span style={{ cursor: 'pointer' }} onClick={handleNavigate}>Dashboard</span> / List User</p></Col>
+                        <Col xs={12} md={6}><p className='page_left_panel'>List User</p></Col>
+                        <Col xs={12} md={6}><p className='page_right_panel'><span style={{ cursor: 'pointer' }} onClick={handleNavigate}>Dashboard</span> / List User</p></Col>
                     </Row>
-                    <div style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px', padding: '25px 20px 25px 25px' }}>
-                        <Row style={tableHeaderStyle}>
-                            <Col style={{ textAlign: 'left' }} sm={3}>
-                                <div style={fontFamilyStyle}>
-                                    <select
-                                        value={state.pageSize}
-                                        onChange={e => {
-                                            setPageSize(Number(e.target.value));
-                                        }}
-                                    >
-                                        {[5, 10, 20].map(pageSize => (
-                                            <option key={pageSize} value={pageSize}>
-                                                {pageSize}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <span>     entries per page</span>
-                                </div>
-                            </Col>
-                            <Col sm={6}></Col>
-                            <Col sm={3}>
-                                <div style={fontFamilyStyle}>
-                                    <InputGroup className="mb-3">
-                                        <Form.Control onChange={handleFilterChange} value={filterInput} placeholder="Search Here" />
-                                        <InputGroup.Text>
-                                            <FontAwesomeIcon icon={faSearch} />
-                                        </InputGroup.Text>
-                                    </InputGroup>
-                                </div>
-                            </Col>
-                        </Row>
-                        <Table {...getTableProps()} style={{ width: '100%', marginTop: '20px' }} striped bordered hover >
-                            <thead>
-                                {headerGroups.map((headerGroup, headKey) => (
-                                    <tr {...headerGroup.getHeaderGroupProps()} key={headKey}>
-                                        {headerGroup.headers.map((column, key) => (
-                                            <th {...column.getHeaderProps()} key={key}>{column.render('Header')}</th>
-                                        ))}
-                                        <th>Action</th>
-                                    </tr>
-                                ))}
-                            </thead>
-                            <tbody {...getTableBodyProps()}>
-                                {page.map((row, index) => {
-                                    prepareRow(row);
-                                    return (
-                                        <tr {...row.getRowProps()} key={index}>
-                                            <td>{row.original.usercode}</td>
-                                            <td>{row.original.username}</td>
-                                            <td>{row.original.usertype}</td>
-                                            <td>{row.original.email}</td>
-                                            <td>{row.original.phone}</td>
-                                            <td>{row.original.location}</td>
-                                            <td>{row.original.status == 0 ? 'Inactive' : 'Active'}</td>
-                                            <td style={{ position: 'relative' }}>
-                                                <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
-                                                {showOptions === index &&
-                                                    <ul className='dropdown-option'>
-                                                        <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
-                                                        <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
-                                                        <li onClick={() => handleDelete(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Delete</li>
-                                                    </ul>
-                                                }
-                                            </td>
+                    <div className="mainWrap">
+                        <div className='topShadow'>
+                            <Row>
+                                <Col style={{ textAlign: 'left' }} sm={3}>
+                                    <div style={fontFamilyStyle}>
+                                        <select
+                                            value={state.pageSize}
+                                            onChange={e => {
+                                                setPageSize(Number(e.target.value));
+                                            }}
+                                        >
+                                            {[5, 10, 20].map(pageSize => (
+                                                <option key={pageSize} value={pageSize}>
+                                                    {pageSize}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <span>     entries per page</span>
+                                    </div>
+                                </Col>
+                                <Col sm={6}></Col>
+                                <Col sm={3}>
+                                    <div style={fontFamilyStyle}>
+                                        <InputGroup className="mb-3">
+                                            <Form.Control onChange={handleFilterChange} value={filterInput} placeholder="Search Here" />
+                                            <InputGroup.Text>
+                                                <FontAwesomeIcon icon={faSearch} />
+                                            </InputGroup.Text>
+                                        </InputGroup>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </div>
+                        <div className='p-3'>
+                            <Table {...getTableProps()} style={{ width: '100%', marginTop: '20px' }} striped bordered hover >
+                                <thead>
+                                    {headerGroups.map((headerGroup, headKey) => (
+                                        <tr {...headerGroup.getHeaderGroupProps()} key={headKey}>
+                                            {headerGroup.headers.map((column, key) => (
+                                                <th {...column.getHeaderProps()} key={key}>{column.render('Header')}</th>
+                                            ))}
+                                            <th>Action</th>
                                         </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </Table>
+                                    ))}
+                                </thead>
+                                <tbody {...getTableBodyProps()}>
+                                    {page.map((row, index) => {
+                                        prepareRow(row);
+                                        return (
+                                            <tr {...row.getRowProps()} key={index}>
+                                                <td>{row.original.usercode}</td>
+                                                <td>{row.original.username}</td>
+                                                <td>{row.original.usertype}</td>
+                                                <td>{row.original.email}</td>
+                                                <td>{row.original.phone}</td>
+                                                <td>{row.original.location}</td>
+                                                <td>{row.original.status == 0 ? 'Inactive' : 'Active'}</td>
+                                                <td style={{ position: 'relative' }}>
+                                                    <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
+                                                    {showOptions === index &&
+                                                        <ul className='dropdown-option'>
+                                                            <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
+                                                            <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
+                                                            <li onClick={() => handleDelete(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Delete</li>
+                                                        </ul>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </Table>
+                        </div>
                         <Row style={tableFooterStyle}>
                             <Col style={{ textAlign: 'left' }} sm={3}>
                                 <span style={fontFamilyStyle}>

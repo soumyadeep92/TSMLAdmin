@@ -157,7 +157,7 @@ export const addCvrMode = async (data) => {
     return result;
 }
 
-export const editCvrMode = async (id, data) => {
+export const updateCvrMode = async (id, data) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}edit-cvr-mode/${id}`, 'put', data);
     return result;
 }
@@ -376,6 +376,7 @@ export const listAllCompanies = async () => {
 
 export const editThemes = async (id, formData) => {
     let result = await allRequestsFormData(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}edit-themes/${id}`, 'put', formData);
+    console.log(result)
     return result;
 }
 
@@ -455,5 +456,41 @@ export const deleteRoleById = async (item) => {
 
 export const getDashboard = async () => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get/admin/report`, 'get')
+    return result;
+}
+
+export const login = async (username, password) => {
+    let result = await fetch(`${ADMIN_BACKEND_BASE_URL}api/v1/auth/login`, {
+        method: 'post',
+        body: JSON.stringify({ username, password }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return result;
+}
+
+export const getUserRefresh = async (user_id) => {
+    let result = await fetch(`${ADMIN_BACKEND_BASE_URL}api/v1/auth/list-user/${user_id}`, {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return result;
+}
+
+export const listAllThemeHeaders = async () => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get/themes/headers`, 'get')
+    return result;
+}
+
+export const dashboardBarResults = async (data) => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get/admin/bar-chart`, 'post', data)
+    return result;
+}
+
+export const getSuperadminDashboard = async () => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get/super-admin/report`, 'get')
     return result;
 }

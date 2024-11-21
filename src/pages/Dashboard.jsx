@@ -11,7 +11,7 @@ import { AreaChart } from '../component/Chartjs/AreaChart';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../constant';
 import fetchWithAuth from '../fetchWithAuth';
 import Select from 'react-select'
-import { getDashboard } from '../apis/apis'
+import { getDashboard, dashboardBarResults, getSuperadminDashboard } from '../apis/apis'
 
 const Dashboard = () => {
     const [results, setResults] = useState({})
@@ -22,15 +22,36 @@ const Dashboard = () => {
     const [resultsAreaLabels, setResultsAreaLabels] = useState([])
     const [chartType, setChartType] = useState('')
     const [barType, setBarType] = useState('')
+    const [status, setStatus] = useState([])
+    const [frequency, setFrequency] = useState('')
+    const [barChartOpen, setBarChartOpen] = useState([])
+    const [barChartWIP, setBarChartWIP] = useState([])
+    const [barChartClosed, setBarChartClosed] = useState([])
+    const [superadminRes, setSuperadminRes] = useState({})
+    const [months, setMonths] = useState([])
     const options = [
-        { value: 'All', label: 'All' },
+        // { value: 'All', label: 'All' },
         { value: 'Open', label: 'Open' },
         { value: 'WIP', label: 'WIP' },
         { value: 'Closed', label: 'Closed' }
     ]
 
     const handleChange = (data) => {
-        console.log(data)
+        data = data.map(obj => obj['value'])
+        setStatus(data)
+    }
+
+    const handleSubmit = async () => {
+        const body = {
+            status_arr: status,
+            frequency: frequency
+        }
+        await dashboardBarResults(body).then(res => {
+            setBarChartOpen(res.response.data.cvrOpenArr)
+            setBarChartWIP(res.response.data.cvrWIPArr)
+            setBarChartClosed(res.response.data.cvrClosedArr)
+            setMonths(res.response.data.months)
+        })
     }
 
     useEffect(() => {
@@ -39,113 +60,118 @@ const Dashboard = () => {
             setResultsArea(res.response.data.cvrMonthlyArr)
             setResultsAreaLabels(res.response.data.cvrMonthlyDateArr)
         })
-    }, [results.id])
+        getSuperadminDashboard().then(res => {
+            setSuperadminRes(res.response.data)
+        })
+    }, [results.id, options.value, frequency])
     return (
         <AdminLayout>
             <Container fluid="true">
-                <Row style={rowStyle}>
-                    <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
-                        <Card style={cardStyle}>
-                            <div style={shape}>
-                                <Card.Img style={images} src="/images/hourglass-end.png" />
-                            </div>
-                            <div style={shapeSide}>
-                                <p className='mb-0' style={opNumber}>{results?.customerDetails}</p>
-                                <span style={openPoint}>Customers</span><br />
-                                {/* <span style={lastMonth}><span style={lmNumber}>50</span> Last Month</span> */}
-                            </div>
-                        </Card>
-                    </Col>
-                    <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
-                        <Card style={cardStyle}>
-                            <div style={shape}>
-                                <Card.Img style={images} src="/images/assept-document.png" />
-                            </div>
-                            <div style={shapeSide}>
-                                <p className='mb-0' style={opNumber}>{results?.cvrDetails}</p>
-                                <span style={openPoint}>CVRs</span><br />
-                                {/* <span style={lastMonth}><span style={lmNumber}>20</span> Last Month</span> */}
-                            </div>
-                        </Card>
-                    </Col>
-                    <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
-                        <Card style={cardStyle}>
-                            <div style={shape}>
-                                <Card.Img style={images} src="/images/file.png" />
-                            </div>
-                            <div style={shapeSide}>
-                                <p className='mb-0' style={opNumber}>{results?.userDetails}</p>
-                                <span style={openPoint}>Users</span><br />
-                                {/* <span style={lastMonth}><span style={lmNumber}>22</span> Last Month</span> */}
-                            </div>
-                        </Card>
-                    </Col>
-                    <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
-                        <Card style={cardStyle}>
-                            <div style={shape}>
-                                <Card.Img style={images} src="/images/meeting.png" />
-                            </div>
-                            <div style={shapeSide}>
-                                <p className='mb-0' style={opNumber}>{results?.cvrWIPDetails}</p>
-                                <span style={openPoint}>CVRs WIP</span><br />
-                                {/* <span style={lastMonth}><span style={lmNumber}>80</span> Last Month</span> */}
-                            </div>
-                        </Card>
-                    </Col>
-                </Row>
-                <Row style={rowStyle}>
-                    <Col xs={12} lg={5}>
-                        <Card style={{ height: '100%' }}>
-                            <Row style={{ margin: '10px' }}>
-                                <Col sm={6}><span style={textStyle}>Customer Type Wise CVR</span></Col>
-                                <Col sm={6} style={{ textAlign: "right" }}>
-                                </Col>
-                            </Row>
-                            <Row style={{ margin: '10px' }}>
-                                <PieChart pieResults={results?.customerTypeCVRArr} pieLabels={results?.customerTypeArr} />
-                            </Row>
-                        </Card>
-                    </Col>
-                    <Col xs={12} lg={7} style={{ height: '100%' }}>
-                        <Card>
-                            <Row style={{ margin: '10px' }}>
-                                <Col sm={6}><span style={textStyle}>CVR</span></Col>
-                                <Col sm={6} style={{ textAlign: "right" }}>
+                {JSON.parse(localStorage.getItem('user')).user_role_id != 1 ? (
+                    <>
+                        <Row style={rowStyle}>
+                            <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
+                                <Card style={cardStyle}>
+                                    <div style={shape}>
+                                        <Card.Img style={images} src="/images/hourglass-end.png" />
+                                    </div>
+                                    <div style={shapeSide}>
+                                        <p className='mb-0' style={opNumber}>{results?.customerDetails}</p>
+                                        <span style={openPoint}>Customers</span><br />
+                                        {/* <span style={lastMonth}><span style={lmNumber}>50</span> Last Month</span> */}
+                                    </div>
+                                </Card>
+                            </Col>
+                            <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
+                                <Card style={cardStyle}>
+                                    <div style={shape}>
+                                        <Card.Img style={images} src="/images/assept-document.png" />
+                                    </div>
+                                    <div style={shapeSide}>
+                                        <p className='mb-0' style={opNumber}>{results?.cvrDetails}</p>
+                                        <span style={openPoint}>CVRs</span><br />
+                                        {/* <span style={lastMonth}><span style={lmNumber}>20</span> Last Month</span> */}
+                                    </div>
+                                </Card>
+                            </Col>
+                            <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
+                                <Card style={cardStyle}>
+                                    <div style={shape}>
+                                        <Card.Img style={images} src="/images/file.png" />
+                                    </div>
+                                    <div style={shapeSide}>
+                                        <p className='mb-0' style={opNumber}>{results?.userDetails}</p>
+                                        <span style={openPoint}>Users</span><br />
+                                        {/* <span style={lastMonth}><span style={lmNumber}>22</span> Last Month</span> */}
+                                    </div>
+                                </Card>
+                            </Col>
+                            <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
+                                <Card style={cardStyle}>
+                                    <div style={shape}>
+                                        <Card.Img style={images} src="/images/meeting.png" />
+                                    </div>
+                                    <div style={shapeSide}>
+                                        <p className='mb-0' style={opNumber}>{results?.cvrWIPDetails}</p>
+                                        <span style={openPoint}>CVRs WIP</span><br />
+                                        {/* <span style={lastMonth}><span style={lmNumber}>80</span> Last Month</span> */}
+                                    </div>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row style={rowStyle}>
+                            <Col xs={12} lg={5}>
+                                <Card style={{ height: '100%' }}>
+                                    <Row style={{ margin: '10px' }}>
+                                        <Col sm={6}><span style={textStyle}>Customer Type Wise CVR</span></Col>
+                                        <Col sm={6} style={{ textAlign: "right" }}>
+                                        </Col>
+                                    </Row>
+                                    <Row style={{ margin: '10px' }}>
+                                        <PieChart pieResults={results?.customerTypeCVRArr} pieLabels={results?.customerTypeArr} />
+                                    </Row>
+                                </Card>
+                            </Col>
+                            <Col xs={12} lg={7} style={{ height: '100%' }}>
+                                <Card>
+                                    <Row style={{ margin: '10px' }}>
+                                        <Col sm={6}><span style={textStyle}>CVR</span></Col>
+                                        <Col sm={6} style={{ textAlign: "right" }}>
 
-                                    <Dropdown data-bs-theme="dark">
-                                        <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary">
-                                            Please select frequency
-                                        </Dropdown.Toggle>
+                                            <Dropdown data-bs-theme="dark">
+                                                <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary">
+                                                    Please select frequency
+                                                </Dropdown.Toggle>
 
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item href="#/year" onClick={() => { setResultsArea(results?.cvrQuarterlyArr); setResultsAreaLabels(results?.cvrQuarterlyDateArr); setChartType('quarterly'); }}>Quarter</Dropdown.Item>
-                                            <Dropdown.Item href="#/month" onClick={() => { setResultsArea(results?.cvrMonthlyArr); setResultsAreaLabels(results?.cvrMonthlyDateArr); setChartType('monthly'); }}>Month</Dropdown.Item>
-                                            <Dropdown.Item href="#/week" onClick={() => { setResultsArea(results?.cvrWeeklyArr); setResultsAreaLabels(results?.cvrWeeklyDateArr); setChartType('weekly'); }}>Week</Dropdown.Item>
-                                            <Dropdown.Item href="#/day" onClick={() => { setResultsArea(results?.cvrDailyArr); setResultsAreaLabels(results?.cvrDailyDateArr); setChartType('daily'); }}>Day</Dropdown.Item>
-                                        </Dropdown.Menu>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item href="#/year" onClick={() => { setResultsArea(results?.cvrQuarterlyArr); setResultsAreaLabels(results?.cvrQuarterlyDateArr); setChartType('quarterly'); }}>Quarter</Dropdown.Item>
+                                                    <Dropdown.Item href="#/month" onClick={() => { setResultsArea(results?.cvrMonthlyArr); setResultsAreaLabels(results?.cvrMonthlyDateArr); setChartType('monthly'); }}>Month</Dropdown.Item>
+                                                    <Dropdown.Item href="#/week" onClick={() => { setResultsArea(results?.cvrWeeklyArr); setResultsAreaLabels(results?.cvrWeeklyDateArr); setChartType('weekly'); }}>Week</Dropdown.Item>
+                                                    <Dropdown.Item href="#/day" onClick={() => { setResultsArea(results?.cvrDailyArr); setResultsAreaLabels(results?.cvrDailyDateArr); setChartType('daily'); }}>Day</Dropdown.Item>
+                                                </Dropdown.Menu>
 
-                                    </Dropdown>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <AreaChart resultsArea={resultsArea} resultsAreaLabels={resultsAreaLabels} chartType={chartType} />
-                                </Col>
+                                            </Dropdown>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                            <AreaChart resultsArea={resultsArea} resultsAreaLabels={resultsAreaLabels} chartType={chartType} />
+                                        </Col>
 
-                            </Row>
-                        </Card>
-                    </Col>
-                </Row>
-                <Row style={rowStyle}>
-                    <Col xs={12} >
-                        <Card>
-                            <Row className='p-3'>
-                                <Col xs={12} lg={3}>
-                                    <span style={textStyle}>Status Wise CVR</span>
-                                </Col>
-                                <Col md></Col>
-                                <Col xs={12} lg={3}>
-                                    {/* <Dropdown data-bs-theme="dark">
+                                    </Row>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row style={rowStyle}>
+                            <Col xs={12} >
+                                <Card>
+                                    <Row className='p-3'>
+                                        <Col xs={12} lg={3}>
+                                            <span style={textStyle}>Status Wise CVR</span>
+                                        </Col>
+                                        <Col md></Col>
+                                        <Col xs={12} lg={3}>
+                                            {/* <Dropdown data-bs-theme="dark">
                                         <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary"
                                             className='w-100'>
                                             Status
@@ -159,42 +185,158 @@ const Dashboard = () => {
                                         </Dropdown.Menu>
 
                                     </Dropdown> */}
-                                    <Select
-                                        isMulti
-                                        name="colors"
-                                        options={options}
-                                        className="basic-multi-select"
-                                        classNamePrefix="select"
-                                        onChange={handleChange}
-                                    />
-                                </Col>
-                                <Col xs={12} lg={3}>
-                                    <Dropdown data-bs-theme="dark">
+                                            <Select
+                                                isMulti
+                                                name="colors"
+                                                options={options}
+                                                className="basic-multi-select"
+                                                classNamePrefix="select"
+                                                onChange={(data) => {
+                                                    data = data.map(obj => obj['value'])
+                                                    setStatus(data)
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={12} lg={3}>
+                                            <Dropdown data-bs-theme="dark">
+                                                <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary"
+                                                    className='w-100'>
+                                                    Please select frequency
+                                                </Dropdown.Toggle>
+
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item href="#/year" onClick={() => setFrequency('Yearly')}>Year</Dropdown.Item>
+                                                    <Dropdown.Item href="#/month" onClick={() => setFrequency('Monthly')}>Month</Dropdown.Item>
+                                                </Dropdown.Menu>
+
+                                            </Dropdown>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col md></Col>
+                                        <Col xs={10} lg={6}>
+                                            <Button onClick={handleSubmit}>Submit</Button>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <BarChart barChartOpen={barChartOpen} barChartWIP={barChartWIP} barChartClosed={barChartClosed} months={months} frequency={frequency} />
+                                    </Row>
+                                </Card>
+                            </Col>
+                        </Row>
+                    </>)
+                    :
+                    <>
+                        <Row style={rowStyle}>
+                            <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
+                                <Card style={cardStyle}>
+                                    <div style={shape}>
+                                        <Card.Img style={images} src="/images/hourglass-end.png" />
+                                    </div>
+                                    <div style={shapeSide}>
+                                        <p className='mb-0' style={opNumber}>{superadminRes?.totalCompaniesCount}</p>
+                                        <span style={openPoint}>Companies</span><br />
+                                        {/* <span style={lastMonth}><span style={lmNumber}>50</span> Last Month</span> */}
+                                    </div>
+                                </Card>
+                            </Col>
+                            <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
+                                <Card style={cardStyle}>
+                                    <div style={shape}>
+                                        <Card.Img style={images} src="/images/assept-document.png" />
+                                    </div>
+                                    <div style={shapeSide}>
+                                        <p className='mb-0' style={opNumber}>{superadminRes?.cvrsCount}</p>
+                                        <span style={openPoint}>CVRs</span><br />
+                                        {/* <span style={lastMonth}><span style={lmNumber}>20</span> Last Month</span> */}
+                                    </div>
+                                </Card>
+                            </Col>
+                            <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
+                                <Card style={cardStyle}>
+                                    <div style={shape}>
+                                        <Card.Img style={images} src="/images/file.png" />
+                                    </div>
+                                    <div style={shapeSide}>
+                                        <p className='mb-0' style={opNumber}>{superadminRes?.totalAdminCount}</p>
+                                        <span style={openPoint}>Admins</span><br />
+                                        {/* <span style={lastMonth}><span style={lmNumber}>22</span> Last Month</span> */}
+                                    </div>
+                                </Card>
+                            </Col>
+                            <Col xs={12} sm={6} lg={3} className='mb-4 mb-lg-0'>
+                                <Card style={cardStyle}>
+                                    <div style={shape}>
+                                        <Card.Img style={images} src="/images/meeting.png" />
+                                    </div>
+                                    <div style={shapeSide}>
+                                        <p className='mb-0' style={opNumber}>{superadminRes?.cvrsWipCount}</p>
+                                        <span style={openPoint}>CVRs WIP</span><br />
+                                        {/* <span style={lastMonth}><span style={lmNumber}>80</span> Last Month</span> */}
+                                    </div>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row style={rowStyle}>
+                            <Col xs={12} >
+                                <Card>
+                                    <Row className='p-3'>
+                                        <Col xs={12} lg={3}>
+                                            <span style={textStyle}>Status Wise CVR</span>
+                                        </Col>
+                                        <Col md></Col>
+                                        <Col xs={12} lg={3}>
+                                            {/* <Dropdown data-bs-theme="dark">
                                         <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary"
                                             className='w-100'>
-                                            Please select frequency
+                                            Status
                                         </Dropdown.Toggle>
 
                                         <Dropdown.Menu>
-                                            <Dropdown.Item href="#/year">Year</Dropdown.Item>
-                                            <Dropdown.Item href="#/month">Month</Dropdown.Item>
+                                            <Dropdown.Item href="#/all" onClick={() => { setResultsOpenBar(results?.openCVRArr); setResultsWIPBar(results?.WIPCVRArr); setResultsClosedBar(results?.closedCVRArr); setBarType('All'); }}>All</Dropdown.Item>
+                                            <Dropdown.Item href="#/open" onClick={() => { setResultsOpenBar(results?.openCVRArr); setResultsWIPBar([]); setResultsClosedBar([]); setBarType('Open'); }}>Open</Dropdown.Item>
+                                            <Dropdown.Item href="#/wip" onClick={() => { setResultsWIPBar(results?.WIPCVRArr); setResultsOpenBar([]); setResultsClosedBar([]); setBarType('WIP'); }}>WIP</Dropdown.Item>
+                                            <Dropdown.Item href="#/closed" onClick={() => { setResultsClosedBar(results?.closedCVRArr); setResultsWIPBar([]); setResultsOpenBar([]); setBarType('Closed'); }}>Closed</Dropdown.Item>
                                         </Dropdown.Menu>
 
-                                    </Dropdown>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col md></Col>
-                                <Col xs={10} lg={6}>
-                                    <Button>Submit</Button>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <BarChart barOpenResults={resultsOpenBar} barWIPResults={resultsWIPBar} barClosedResults={resultsClosedBar} barType={barType} />
-                            </Row>
-                        </Card>
-                    </Col>
-                </Row>
+                                    </Dropdown> */}
+                                            <Select
+                                                isMulti
+                                                name="colors"
+                                                options={options}
+                                                className="basic-multi-select"
+                                                classNamePrefix="select"
+                                                onChange={handleChange}
+                                            />
+                                        </Col>
+                                        <Col xs={12} lg={3}>
+                                            <Dropdown data-bs-theme="dark">
+                                                <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary"
+                                                    className='w-100'>
+                                                    Please select frequency
+                                                </Dropdown.Toggle>
+
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item href="#/year">Year</Dropdown.Item>
+                                                    <Dropdown.Item href="#/month">Month</Dropdown.Item>
+                                                </Dropdown.Menu>
+
+                                            </Dropdown>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col md></Col>
+                                        <Col xs={10} lg={6}>
+                                            <Button>Submit</Button>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <BarChart barOpenResults={resultsOpenBar} barWIPResults={resultsWIPBar} barClosedResults={resultsClosedBar} barType={barType} />
+                                    </Row>
+                                </Card>
+                            </Col>
+                        </Row>
+                    </>}
             </Container>
         </AdminLayout>
     )

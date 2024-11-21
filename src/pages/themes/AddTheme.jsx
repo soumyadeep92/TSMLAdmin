@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import {addThemes,listAllCompanies} from '../../apis/apis'
+import { addThemes, listAllCompanies, listAllThemeHeaders } from '../../apis/apis'
 
 export const AddTheme = () => {
     const navigate = useNavigate();
@@ -20,6 +20,8 @@ export const AddTheme = () => {
     const [fileName3, setFileName3] = useState('');
     const [userRole, setUserRole] = useState([]);
     const [company, setCompany] = useState([]);
+    const [themes, setThemes] = useState([]);
+    const [currentThemePage, setCurrentThemePage] = useState({});
     const [error, setError] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [showMessage, setShowMessage] = useState('');
@@ -174,9 +176,14 @@ export const AddTheme = () => {
         async function fetchData() {
             let resultCompany = await listAllCompanies()
             setCompany(resultCompany.response.companyDetails);
+            let themeDetails = await listAllThemeHeaders()
+            setThemes(themeDetails.response.data);
         }
         fetchData();
-    }, [])
+        if (state.page_name) {
+            setCurrentThemePage(themes[state.page_name]);
+        }
+    }, [state.page_name, currentThemePage])
     const handleNavigate = () => {
         navigate('/list-themes')
     }
@@ -249,9 +256,17 @@ export const AddTheme = () => {
                             </Row>
                             <Row className="g-2" style={row_style}>
                                 <Col md>
-                                    <Form.Label>Page Name</Form.Label><span style={asteriskStyle}> *</span>
-                                    <Form.Select aria-label="Floating label select example" value={state.page_name} onChange={(e) => { setState({ ...state, page_name: e.target.value }) }}>
-                                        <option value="0">Select OS Type</option>
+                                    <Form.Label>Page Name</Form.Label>
+                                    <span style={asteriskStyle}> *</span>
+                                    <Form.Select
+                                        aria-label="Floating label select example"
+                                        value={state.page_name || ""}
+                                        onChange={(e) => {
+                                            const selectedPageName = e.target.value;
+                                            setState({ ...state, page_name: selectedPageName });
+                                        }}
+                                    >
+                                        <option value="">Select OS Type</option>
                                         <option value="General Button Color">General Button Color</option>
                                         <option value="Splash Screen">Splash Screen</option>
                                         <option value="Login">Login</option>
@@ -261,27 +276,11 @@ export const AddTheme = () => {
                                         <option value="Footer">Footer</option>
                                         <option value="Statusbar Header">Statusbar Header</option>
                                     </Form.Select>
-                                    {error && !state.page_name && <span style={invalidInput}>Enter Page Name</span>}
+                                    {error && !state.page_name && (
+                                        <span style={invalidInput}>Enter Page Name</span>
+                                    )}
                                 </Col>
-                                <Col md>
-                                    <Form.Label>Screen Color</Form.Label>
-                                    <Form.Control value={state.screen_color} onChange={(e) => { setState({ ...state, screen_color: e.target.value }) }} type="text" />
-                                    {error && !state.screen_color && <span style={invalidInput}>Enter Screen Color</span>}
-                                </Col>
-                            </Row>
-                            <Row className="g-2" style={row_style}>
-                                <Col md>
-                                    <Form.Label>Button Color</Form.Label>
-                                    <Form.Control value={state.button_color} onChange={(e) => { setState({ ...state, button_color: e.target.value }) }} type="email" />
-                                    {error && !state.button_color && <span style={invalidInput}>Enter Button Color</span>}
-                                </Col>
-                                <Col md>
-                                    <Form.Label>Background Color</Form.Label>
-                                    <Form.Control value={state.background_color} onChange={(e) => { setState({ ...state, background_color: e.target.value }) }} type="text" />{error && !state.background_color && <span style={invalidInput}>Enter Background Color</span>}
-                                </Col>
-                            </Row>
-                            <Row className="g-2" style={row_style}>
-                                <Col md>
+                                {!state.page_name && <><Col md>
                                     <Form.Label>Upload Image 1</Form.Label>
                                     <InputGroup>
                                         <Form.Control style={{ display: "none" }} type="file" ref={inputFile1} onChange={(e) => { setFile1(e.target.files[0]) }} />
@@ -290,28 +289,160 @@ export const AddTheme = () => {
                                     </InputGroup>
                                     {errorfile1 && <span style={invalidInput}>{errorfilemsg1}</span>}
                                 </Col>
-                                <Col md>
-                                    <Form.Label>Upload Image 2</Form.Label>
-                                    <InputGroup>
-                                        <Form.Control style={{ display: "none" }} type="file" ref={inputFile2} onChange={(e) => { setFile2(e.target.files[0]) }} />
-                                        <Form.Control value={fileName2 ? fileName2 : ''} disabled />
-                                        <InputGroup.Text onClick={browserBtn2} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
-                                    </InputGroup>
-                                    {errorfile2 && <span style={invalidInput}>{errorfilemsg2}</span>}
-                                </Col>
+                                    <Row className="g-2" style={row_style}>
+                                        <Col md>
+                                            <Form.Label>Upload Image 2</Form.Label>
+                                            <InputGroup>
+                                                <Form.Control style={{ display: "none" }} type="file" ref={inputFile2} onChange={(e) => { setFile2(e.target.files[0]) }} />
+                                                <Form.Control value={fileName2 ? fileName2 : ''} disabled />
+                                                <InputGroup.Text onClick={browserBtn2} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                            </InputGroup>
+                                            {errorfile2 && <span style={invalidInput}>{errorfilemsg2}</span>}
+                                        </Col>
+                                        <Col md>
+                                            <Form.Label>Upload Image 3</Form.Label>
+                                            <InputGroup>
+                                                <Form.Control style={{ display: "none" }} type="file" ref={inputFile3} onChange={(e) => { setFile3(e.target.files[0]) }} />
+                                                <Form.Control value={fileName3 ? fileName3 : ''} disabled />
+                                                <InputGroup.Text onClick={browserBtn3} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                            </InputGroup>
+                                            {errorfile3 && <span style={invalidInput}>{errorfilemsg1}</span>}
+                                        </Col>
+                                    </Row>
+                                </>
+                                }
+                                {
+                                    state.page_name && currentThemePage['Color_1'] && <Col md>
+                                        <Form.Label>{currentThemePage['Color_1']}</Form.Label>
+                                        <Form.Control value={state.screen_color} onChange={(e) => { setState({ ...state, screen_color: e.target.value }) }} type="text" />
+                                        {error && !state.screen_color && <span style={invalidInput}>Enter Screen Color</span>}
+                                    </Col>
+                                }
                             </Row>
-                            <Row className="g-2" style={row_style}>
-                                <Col md>
-                                    <Form.Label>Upload Image 3</Form.Label>
-                                    <InputGroup>
-                                        <Form.Control style={{ display: "none" }} type="file" ref={inputFile3} onChange={(e) => { setFile3(e.target.files[0]) }} />
-                                        <Form.Control value={fileName3 ? fileName3 : ''} disabled />
-                                        <InputGroup.Text onClick={browserBtn3} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
-                                    </InputGroup>
-                                    {errorfile3 && <span style={invalidInput}>{errorfilemsg1}</span>}
-                                </Col>
-                                <Col md></Col>
-                            </Row>
+                            {state.page_name && currentThemePage['Color_2'] && currentThemePage['Color_3'] ?
+                                <>
+                                    <Row className="g-2" style={row_style}>
+                                        <Col md>
+                                            <Form.Label>{currentThemePage['Color_2']}</Form.Label>
+                                            <Form.Control value={state.button_color} onChange={(e) => { setState({ ...state, button_color: e.target.value }) }} type="email" />
+                                            {error && !state.button_color && <span style={invalidInput}>Enter Button Color</span>}
+                                        </Col>
+                                        <Col md>
+                                            <Form.Label>{currentThemePage['Color_3']}</Form.Label>
+                                            <Form.Control value={state.background_color} onChange={(e) => { setState({ ...state, background_color: e.target.value }) }} type="text" />{error && !state.background_color && <span style={invalidInput}>Enter Background Color</span>}
+                                        </Col>
+                                    </Row>
+                                    <Row className="g-2" style={row_style}>
+                                        <Col md>
+                                            <Form.Label>Upload Image 1</Form.Label>
+                                            <InputGroup>
+                                                <Form.Control style={{ display: "none" }} type="file" ref={inputFile1} onChange={(e) => { setFile1(e.target.files[0]) }} />
+                                                <Form.Control value={fileName1 ? fileName1 : ''} disabled />
+                                                <InputGroup.Text onClick={browserBtn1} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                            </InputGroup>
+                                            {errorfile1 && <span style={invalidInput}>{errorfilemsg1}</span>}
+                                        </Col>
+                                        <Col md>
+                                            <Form.Label>Upload Image 2</Form.Label>
+                                            <InputGroup>
+                                                <Form.Control style={{ display: "none" }} type="file" ref={inputFile2} onChange={(e) => { setFile2(e.target.files[0]) }} />
+                                                <Form.Control value={fileName2 ? fileName2 : ''} disabled />
+                                                <InputGroup.Text onClick={browserBtn2} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                            </InputGroup>
+                                            {errorfile2 && <span style={invalidInput}>{errorfilemsg2}</span>}
+                                        </Col>
+                                    </Row>
+                                    <Row className="g-2" style={row_style}>
+                                        <Col md>
+                                            <Form.Label>Upload Image 3</Form.Label>
+                                            <InputGroup>
+                                                <Form.Control style={{ display: "none" }} type="file" ref={inputFile3} onChange={(e) => { setFile3(e.target.files[0]) }} />
+                                                <Form.Control value={fileName3 ? fileName3 : ''} disabled />
+                                                <InputGroup.Text onClick={browserBtn3} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                            </InputGroup>
+                                            {errorfile3 && <span style={invalidInput}>{errorfilemsg1}</span>}
+                                        </Col>
+                                        <Col md></Col>
+                                    </Row>
+                                </>
+                                :
+                                <>
+                                    {currentThemePage['Color_2'] ?
+                                        <>
+                                            <Row className="g-2" style={row_style}>
+                                                <Col md>
+                                                    <Form.Label>{currentThemePage['Color_2']}</Form.Label>
+                                                    <Form.Control value={state.button_color} onChange={(e) => { setState({ ...state, button_color: e.target.value }) }} type="email" />
+                                                    {error && !state.button_color && <span style={invalidInput}>Enter Button Color</span>}
+                                                </Col>
+                                                <Col md>
+                                                    <Form.Label>Upload Image 1</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control style={{ display: "none" }} type="file" ref={inputFile1} onChange={(e) => { setFile1(e.target.files[0]) }} />
+                                                        <Form.Control value={fileName1 ? fileName1 : ''} disabled />
+                                                        <InputGroup.Text onClick={browserBtn1} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                                    </InputGroup>
+                                                    {errorfile1 && <span style={invalidInput}>{errorfilemsg1}</span>}
+                                                </Col>
+                                            </Row>
+                                            <Row className="g-2" style={row_style}>
+                                                <Col md>
+                                                    <Form.Label>Upload Image 2</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control style={{ display: "none" }} type="file" ref={inputFile2} onChange={(e) => { setFile2(e.target.files[0]) }} />
+                                                        <Form.Control value={fileName2 ? fileName2 : ''} disabled />
+                                                        <InputGroup.Text onClick={browserBtn2} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                                    </InputGroup>
+                                                    {errorfile2 && <span style={invalidInput}>{errorfilemsg2}</span>}
+                                                </Col>
+                                                <Col md>
+                                                    <Form.Label>Upload Image 3</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control style={{ display: "none" }} type="file" ref={inputFile3} onChange={(e) => { setFile3(e.target.files[0]) }} />
+                                                        <Form.Control value={fileName3 ? fileName3 : ''} disabled />
+                                                        <InputGroup.Text onClick={browserBtn3} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                                    </InputGroup>
+                                                    {errorfile3 && <span style={invalidInput}>{errorfilemsg1}</span>}
+                                                </Col>
+                                            </Row>
+                                        </> : (state.page_name && <>
+                                            <Row className="g-2" style={row_style}>
+                                                <Col md>
+                                                    <Form.Label>Upload Image 1</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control style={{ display: "none" }} type="file" ref={inputFile1} onChange={(e) => { setFile1(e.target.files[0]) }} />
+                                                        <Form.Control value={fileName1 ? fileName1 : ''} disabled />
+                                                        <InputGroup.Text onClick={browserBtn1} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                                    </InputGroup>
+                                                    {errorfile1 && <span style={invalidInput}>{errorfilemsg1}</span>}
+                                                </Col>
+                                                <Col md>
+                                                    <Form.Label>Upload Image 2</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control style={{ display: "none" }} type="file" ref={inputFile2} onChange={(e) => { setFile2(e.target.files[0]) }} />
+                                                        <Form.Control value={fileName2 ? fileName2 : ''} disabled />
+                                                        <InputGroup.Text onClick={browserBtn2} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                                    </InputGroup>
+                                                    {errorfile2 && <span style={invalidInput}>{errorfilemsg2}</span>}
+                                                </Col>
+                                            </Row>
+                                            <Row className="g-2" style={row_style}>
+                                                <Col md>
+                                                    <Form.Label>Upload Image 3</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control style={{ display: "none" }} type="file" ref={inputFile3} onChange={(e) => { setFile3(e.target.files[0]) }} />
+                                                        <Form.Control value={fileName3 ? fileName3 : ''} disabled />
+                                                        <InputGroup.Text onClick={browserBtn3} style={{ cursor: "pointer" }}>Browse</InputGroup.Text>
+                                                    </InputGroup>
+                                                    {errorfile3 && <span style={invalidInput}>{errorfilemsg1}</span>}
+                                                </Col>
+                                                <Col md></Col>
+                                            </Row>
+                                        </>
+                                        )
+                                    }
+                                </>
+                            }
                         </Form>
                     </Row>
                     <Row className="g-2" style={{ marginLeft: "629px" }}>

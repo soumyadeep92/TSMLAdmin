@@ -70,7 +70,7 @@ export const EditCategory = () => {
         }).catch(err => {
 
         })
-    }, [state.id])
+    }, [id])
     const handleNavigate = () => {
         navigate('/list-category')
     }

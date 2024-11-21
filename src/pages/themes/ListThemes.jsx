@@ -80,10 +80,10 @@ export const ListThemes = () => {
     const columns = React.useMemo(
         () => [
             { Header: 'User Id', accessor: 'id' },
-            { Header: 'Screen Color', accessor: 'screen_color' },
-            { Header: 'Button Color', accessor: 'button_color' },
             { Header: 'OS Type', accessor: 'os_type' },
-            { Header: 'Background Color', accessor: 'background_color' },
+            { Header: 'Color 1', accessor: 'screen_color' },
+            { Header: 'Color 2', accessor: 'button_color' },
+            { Header: 'Color 3', accessor: 'background_color' },
             { Header: 'Company Name', accessor: 'company_name' },
             { Header: 'Page Name', accessor: 'page_name' },
             { Header: 'status', accessor: 'Status' }
@@ -203,9 +203,9 @@ export const ListThemes = () => {
                                     return (
                                         <tr {...row.getRowProps()} key={index}>
                                             <td>{row.original.id}</td>
+                                            <td>{row.original.os_type}</td>
                                             <td>{row.original.screen_color}</td>
                                             <td>{row.original.button_color}</td>
-                                            <td>{row.original.os_type}</td>
                                             <td>{row.original.background_color}</td>
                                             <td>{row.original.company_name}</td>
                                             <td>{row.original.page_name}</td>

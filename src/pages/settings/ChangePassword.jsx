@@ -47,9 +47,9 @@ export const ChangePassword = ()=>{
         setWarningAlert(false);
     };
 
-    return(
+    return (
         <>
-        {successAlert && (
+            {successAlert && (
                 <SweetAlert
                     success
                     title="Thank you"
@@ -71,41 +71,39 @@ export const ChangePassword = ()=>{
                     Password not change
                 </SweetAlert>
             )}
-        <AdminLayout>
-            <Container fluid="true">
-                <Row>
-                    <Col sm={3}><p className='page_left_panel'>Change password</p></Col>
-                    <Col sm={5}></Col>
-                    <Col sm={4}><p className='page_right_panel'>Dashboard / Change password</p></Col>
-                </Row>
-                <Row style={{backgroundColor:'white', borderRadius:'1%',margin:'2px 1px'}}>
-                <Form style={{padding:'25px 20px 25px 25px'}}>
-                    <Row className="g-2">
-                        <Col md>
-                            <Form.Label>Old Password</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.old_password} onChange={(e) => { setState({ ...state, old_password: e.target.value }) }} type="text" />
-                            {error && !state.old_password && <span style={invalidInput}>Enter Old password</span>}
-                            {error && state.old_password.length>0 && state.old_password.length<6 && <span style={invalidInput}> Password must be at least 6 characters</span>}
-                        </Col>
-                        <Col md>
-                            <Form.Label>New Password</Form.Label><span style={asteriskStyle}> *</span>
-                            <Form.Control value={state.new_password} onChange={(e) => { setState({ ...state, new_password: e.target.value }) }} type="text" />
-                            {error && !state.new_password && <span style={invalidInput}>Enter New Password</span>}
-                            {error && state.new_password.length>0 && state.new_password.length<6 && <span style={invalidInput}> Password must be at least 6 characters</span>}
+            <AdminLayout>
+                <Container fluid="true">
+                    <Row>
+                        <Col xs={12} md={6}><p className='page_left_panel'>Change Password</p></Col>
+                        <Col xs={12} md={6}><p className='page_right_panel'><span>Dashboard</span> / Change password</p></Col>
+                    </Row>
+                    <Row style={{ backgroundColor: 'white', borderRadius: '1%', margin: '2px 1px' }}>
+                        <Form style={{ padding: '25px 20px 25px 25px' }}>
+                            <Row className="g-2">
+                                <Col md>
+                                    <Form.Label>Old Password</Form.Label><span style={asteriskStyle}> *</span>
+                                    <Form.Control value={state.old_password} onChange={(e) => { setState({ ...state, old_password: e.target.value }) }} type="text" />
+                                    {error && !state.old_password && <span style={invalidInput}>Enter Old password</span>}
+                                    {error && state.old_password.length > 0 && state.old_password.length < 6 && <span style={invalidInput}> Password must be at least 6 characters</span>}
+                                </Col>
+                                <Col md>
+                                    <Form.Label>New Password</Form.Label><span style={asteriskStyle}> *</span>
+                                    <Form.Control value={state.new_password} onChange={(e) => { setState({ ...state, new_password: e.target.value }) }} type="text" />
+                                    {error && !state.new_password && <span style={invalidInput}>Enter New Password</span>}
+                                    {error && state.new_password.length > 0 && state.new_password.length < 6 && <span style={invalidInput}> Password must be at least 6 characters</span>}
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Row>
+                    <Row className='mt-2 mb-150'>
+                        <Col xs={12}>
+                            <div className='btn-wrap'>
+                                <Button onClick={changePassword} style={submitbuttonStyle}>Submit</Button>
+                            </div>
                         </Col>
                     </Row>
-                </Form>
-                </Row>
-                <Row className="g-2" style={{ marginLeft: "629px" }}>
-                    <Col md style={{ textAlign: "right" }}>
-                        <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
-                    </Col>
-                    <Col md>
-                        <Button onClick={changePassword} style={submitbuttonStyle}>Submit</Button>
-                    </Col>
-                </Row>   
-            </Container>    
-        </AdminLayout>
+                </Container>
+            </AdminLayout>
         </>
     );
 }

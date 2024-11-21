@@ -1,4 +1,5 @@
 import { ADMIN_BACKEND_BASE_URL } from './constant';
+import { getUserRefresh } from './apis/apis'
 
 const isTokenExpired = (token) => {
     if (!token) return true; // No token, consider it expired
@@ -11,12 +12,7 @@ const fetchWithAuth = async (url, options = {}) => {
     const token = localStorage.getItem('token');
     const userDetails = localStorage.getItem('user');
     const user_id = JSON.parse(localStorage.getItem('user')).id;
-    let result = await fetch(`${ADMIN_BACKEND_BASE_URL}api/v1/auth/list-user/${user_id}`, {
-        method: 'get',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+    let result = await getUserRefresh(user_id);
     result = await result.json();
     if (isTokenExpired(token) || result.response.userDetails.status == 0 || result.response.userDetails.is_deleted == 1) {
         localStorage.clear();

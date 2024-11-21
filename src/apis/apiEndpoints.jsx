@@ -59,4 +59,12 @@ export const allRequestsFormData = (url, method, formData) => {
         });
         return results;
     }
+    if (method == 'put') {
+        let results = fetchWithAuth(url, {
+            method: method,
+            body: formData,
+            headers: {}
+        });
+        return results;
+    }
 }
