@@ -11,24 +11,18 @@ import { AreaChart } from '../component/Chartjs/AreaChart';
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../constant';
 import fetchWithAuth from '../fetchWithAuth';
 import Select from 'react-select'
-import { getDashboard, dashboardBarResults, getSuperadminDashboard } from '../apis/apis'
+import { getDashboard, listAllCompanies, getSuperadminDashboard, getSuperadminAreaChart } from '../apis/apis'
 
 const Dashboard = () => {
     const [results, setResults] = useState({})
-    const [resultsArea, setResultsArea] = useState([])
-    const [resultsOpenBar, setResultsOpenBar] = useState([])
-    const [resultsWIPBar, setResultsWIPBar] = useState([])
-    const [resultsClosedBar, setResultsClosedBar] = useState([])
-    const [resultsAreaLabels, setResultsAreaLabels] = useState([])
     const [chartType, setChartType] = useState('')
     const [barType, setBarType] = useState('')
+    const [body, setBody] = useState({ status_arr: [], frequency: '' })
     const [status, setStatus] = useState([])
     const [frequency, setFrequency] = useState('')
-    const [barChartOpen, setBarChartOpen] = useState([])
-    const [barChartWIP, setBarChartWIP] = useState([])
-    const [barChartClosed, setBarChartClosed] = useState([])
     const [superadminRes, setSuperadminRes] = useState({})
-    const [months, setMonths] = useState([])
+    const [companyArr, setCompanyArr] = useState([{ label: '', value: '' }])
+    const [areaSuperData, setAreaSuperData] = useState({});
     const options = [
         // { value: 'All', label: 'All' },
         { value: 'Open', label: 'Open' },
@@ -39,31 +33,41 @@ const Dashboard = () => {
     const handleChange = (data) => {
         data = data.map(obj => obj['value'])
         setStatus(data)
+        console.log(status)
     }
 
     const handleSubmit = async () => {
-        const body = {
-            status_arr: status,
-            frequency: frequency
+        if (JSON.parse(localStorage.getItem('user')).user_role_id != 1) {
+            const body = {
+                status_arr: status,
+                frequency: frequency
+            }
+            setBody(body)
+        } else {
+            const body = { "company_arr": status }
+            getSuperadminAreaChart(body).then(res => {
+                setAreaSuperData(res.response.data)
+            })
         }
-        await dashboardBarResults(body).then(res => {
-            setBarChartOpen(res.response.data.cvrOpenArr)
-            setBarChartWIP(res.response.data.cvrWIPArr)
-            setBarChartClosed(res.response.data.cvrClosedArr)
-            setMonths(res.response.data.months)
-        })
     }
 
     useEffect(() => {
-        getDashboard().then(res => {
-            setResults(res.response.data)
-            setResultsArea(res.response.data.cvrMonthlyArr)
-            setResultsAreaLabels(res.response.data.cvrMonthlyDateArr)
-        })
-        getSuperadminDashboard().then(res => {
-            setSuperadminRes(res.response.data)
-        })
-    }, [results.id, options.value, frequency])
+        if (JSON.parse(localStorage.getItem('user')).user_role_id != 1) {
+            getDashboard().then(res => {
+                setResults(res.response.data)
+            })
+        } else {
+            getSuperadminDashboard().then(res => {
+                setSuperadminRes(res.response.data)
+            })
+            listAllCompanies().then(res => {
+                let optionsCompany = res.response.companyDetails.map(obj => { return { "label": obj.company_name, "value": obj.company_name } })
+                setCompanyArr(optionsCompany)
+            })
+        }
+    }, [results.id])
+    useEffect(() => {
+    }, [status, areaSuperData])
     return (
         <AdminLayout>
             <Container fluid="true">
@@ -144,10 +148,10 @@ const Dashboard = () => {
                                                 </Dropdown.Toggle>
 
                                                 <Dropdown.Menu>
-                                                    <Dropdown.Item href="#/year" onClick={() => { setResultsArea(results?.cvrQuarterlyArr); setResultsAreaLabels(results?.cvrQuarterlyDateArr); setChartType('quarterly'); }}>Quarter</Dropdown.Item>
-                                                    <Dropdown.Item href="#/month" onClick={() => { setResultsArea(results?.cvrMonthlyArr); setResultsAreaLabels(results?.cvrMonthlyDateArr); setChartType('monthly'); }}>Month</Dropdown.Item>
-                                                    <Dropdown.Item href="#/week" onClick={() => { setResultsArea(results?.cvrWeeklyArr); setResultsAreaLabels(results?.cvrWeeklyDateArr); setChartType('weekly'); }}>Week</Dropdown.Item>
-                                                    <Dropdown.Item href="#/day" onClick={() => { setResultsArea(results?.cvrDailyArr); setResultsAreaLabels(results?.cvrDailyDateArr); setChartType('daily'); }}>Day</Dropdown.Item>
+                                                    <Dropdown.Item href="#/year" onClick={() => { setChartType('quarterly'); }}>Quarter</Dropdown.Item>
+                                                    <Dropdown.Item href="#/month" onClick={() => { setChartType('monthly'); }}>Month</Dropdown.Item>
+                                                    <Dropdown.Item href="#/week" onClick={() => { setChartType('weekly'); }}>Week</Dropdown.Item>
+                                                    <Dropdown.Item href="#/day" onClick={() => { setChartType('daily'); }}>Day</Dropdown.Item>
                                                 </Dropdown.Menu>
 
                                             </Dropdown>
@@ -155,7 +159,7 @@ const Dashboard = () => {
                                     </Row>
                                     <Row>
                                         <Col>
-                                            <AreaChart resultsArea={resultsArea} resultsAreaLabels={resultsAreaLabels} chartType={chartType} />
+                                            <AreaChart chartType={chartType} />
                                         </Col>
 
                                     </Row>
@@ -171,20 +175,6 @@ const Dashboard = () => {
                                         </Col>
                                         <Col md></Col>
                                         <Col xs={12} lg={3}>
-                                            {/* <Dropdown data-bs-theme="dark">
-                                        <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary"
-                                            className='w-100'>
-                                            Status
-                                        </Dropdown.Toggle>
-
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item href="#/all" onClick={() => { setResultsOpenBar(results?.openCVRArr); setResultsWIPBar(results?.WIPCVRArr); setResultsClosedBar(results?.closedCVRArr); setBarType('All'); }}>All</Dropdown.Item>
-                                            <Dropdown.Item href="#/open" onClick={() => { setResultsOpenBar(results?.openCVRArr); setResultsWIPBar([]); setResultsClosedBar([]); setBarType('Open'); }}>Open</Dropdown.Item>
-                                            <Dropdown.Item href="#/wip" onClick={() => { setResultsWIPBar(results?.WIPCVRArr); setResultsOpenBar([]); setResultsClosedBar([]); setBarType('WIP'); }}>WIP</Dropdown.Item>
-                                            <Dropdown.Item href="#/closed" onClick={() => { setResultsClosedBar(results?.closedCVRArr); setResultsWIPBar([]); setResultsOpenBar([]); setBarType('Closed'); }}>Closed</Dropdown.Item>
-                                        </Dropdown.Menu>
-
-                                    </Dropdown> */}
                                             <Select
                                                 isMulti
                                                 name="colors"
@@ -219,7 +209,7 @@ const Dashboard = () => {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <BarChart barChartOpen={barChartOpen} barChartWIP={barChartWIP} barChartClosed={barChartClosed} months={months} frequency={frequency} />
+                                        <BarChart bodyReq={body} frequency={frequency} />
                                     </Row>
                                 </Card>
                             </Col>
@@ -282,56 +272,26 @@ const Dashboard = () => {
                                 <Card>
                                     <Row className='p-3'>
                                         <Col xs={12} lg={3}>
-                                            <span style={textStyle}>Status Wise CVR</span>
+                                            <span style={textStyle}>Company Wise CVR</span>
                                         </Col>
-                                        <Col md></Col>
-                                        <Col xs={12} lg={3}>
-                                            {/* <Dropdown data-bs-theme="dark">
-                                        <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary"
-                                            className='w-100'>
-                                            Status
-                                        </Dropdown.Toggle>
-
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item href="#/all" onClick={() => { setResultsOpenBar(results?.openCVRArr); setResultsWIPBar(results?.WIPCVRArr); setResultsClosedBar(results?.closedCVRArr); setBarType('All'); }}>All</Dropdown.Item>
-                                            <Dropdown.Item href="#/open" onClick={() => { setResultsOpenBar(results?.openCVRArr); setResultsWIPBar([]); setResultsClosedBar([]); setBarType('Open'); }}>Open</Dropdown.Item>
-                                            <Dropdown.Item href="#/wip" onClick={() => { setResultsWIPBar(results?.WIPCVRArr); setResultsOpenBar([]); setResultsClosedBar([]); setBarType('WIP'); }}>WIP</Dropdown.Item>
-                                            <Dropdown.Item href="#/closed" onClick={() => { setResultsClosedBar(results?.closedCVRArr); setResultsWIPBar([]); setResultsOpenBar([]); setBarType('Closed'); }}>Closed</Dropdown.Item>
-                                        </Dropdown.Menu>
-
-                                    </Dropdown> */}
+                                        <Col xs={12} lg={5}>
                                             <Select
                                                 isMulti
                                                 name="colors"
-                                                options={options}
+                                                options={companyArr}
                                                 className="basic-multi-select"
                                                 classNamePrefix="select"
-                                                onChange={handleChange}
+                                                onChange={(data) => {
+                                                    data = data.map(obj => obj['value'])
+                                                    setStatus(data)
+                                                }}
                                             />
-                                        </Col>
-                                        <Col xs={12} lg={3}>
-                                            <Dropdown data-bs-theme="dark">
-                                                <Dropdown.Toggle id="dropdown-button-dark-example1" variant="secondary"
-                                                    className='w-100'>
-                                                    Please select frequency
-                                                </Dropdown.Toggle>
-
-                                                <Dropdown.Menu>
-                                                    <Dropdown.Item href="#/year">Year</Dropdown.Item>
-                                                    <Dropdown.Item href="#/month">Month</Dropdown.Item>
-                                                </Dropdown.Menu>
-
-                                            </Dropdown>
+                                            <br />
+                                            <Button onClick={handleSubmit}>Submit</Button>
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col md></Col>
-                                        <Col xs={10} lg={6}>
-                                            <Button>Submit</Button>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <BarChart barOpenResults={resultsOpenBar} barWIPResults={resultsWIPBar} barClosedResults={resultsClosedBar} barType={barType} />
+                                        <AreaChart companyArr={areaSuperData} />
                                     </Row>
                                 </Card>
                             </Col>

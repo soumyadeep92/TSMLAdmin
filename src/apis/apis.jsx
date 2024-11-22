@@ -287,7 +287,7 @@ export const listReasons = async () => {
     return result;
 }
 
-export const changePassword = async (data) => {
+export const changeOnePassword = async (data) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}change-password`, 'post', data);
     return result;
 }
@@ -492,5 +492,15 @@ export const dashboardBarResults = async (data) => {
 
 export const getSuperadminDashboard = async () => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get/super-admin/report`, 'get')
+    return result;
+}
+
+export const dashboardAreaResults = async () => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get/admin/area-chart`, 'get')
+    return result;
+}
+
+export const getSuperadminAreaChart = async (data) => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get/super-admin/area-chart`, 'post', data)
     return result;
 }

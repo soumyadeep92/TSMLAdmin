@@ -5,8 +5,9 @@ import { Link } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { changeOnePassword } from '../../apis/apis';
 
-export const ChangePassword = ()=>{
+export const ChangePassword = () => {
 
     const [error, setError] = useState(false);
     const [state, setState] = useState(
@@ -16,17 +17,17 @@ export const ChangePassword = ()=>{
         }
     );
     const changePassword = async () => {
-        if (!state.old_password || !state.new_password || state.new_password.length<6 || state.old_password.length<6 ) {
+        if (!state.old_password || !state.new_password || state.new_password.length < 6 || state.old_password.length < 6) {
             setError(true)
             return false;
         }
-        
+
         const data = { old_password: state.old_password, new_password: state.new_password };
-        let result = await changePassword(data)
+        let result = await changeOnePassword(data)
         if (result.response.status === true) {
             setSuccessAlert(true);
             formClear();
-        }else{
+        } else {
             setWarningAlert(true);
             formClear();
         }

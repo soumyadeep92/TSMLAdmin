@@ -1,8 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Charts } from './Charts';
+import { dashboardBarResults } from '../../apis/apis'
 
-export const BarChart = ({ barChartOpen = [], barChartWIP = [], barChartClosed = [], months = [], frequency = '' }) => {
+export const BarChart = ({ bodyReq = {}, frequency = '' }) => {//barChartOpen = [], barChartWIP = [], barChartClosed = [], months = []
+    const [barChartOpen, setBarChartOpen] = useState([])
+    const [barChartWIP, setBarChartWIP] = useState([])
+    const [barChartClosed, setBarChartClosed] = useState([])
+    const [months, setMonths] = useState([])
 
+    useEffect(() => {
+        dashboardBarResults(bodyReq).then(res => {
+            setBarChartOpen(res.response.data.cvrOpenArr)
+            setBarChartWIP(res.response.data.cvrWIPArr)
+            setBarChartClosed(res.response.data.cvrClosedArr)
+            setMonths(res.response.data.months)
+        })
+    }, [bodyReq])
     const [height] = useState(280);
 
     const series = useMemo(() => [
