@@ -24,12 +24,13 @@ export const Login = () => {
     const [show1, setShow1] = useState(false);
     const handleShow1 = () => setShow1(true);
     const handleClose1 = () => setShow1(false);
+    const [loading, setLoading] = useState(false);
 
     const [showAlert, setShowAlert] = useState(false);
     const handleLogin = () => {
         setShowAlert(true);
         setTimeout(() => {
-            navigate('/dashboard'); // Redirect after alert is shown
+            navigate('/dashboard'); 
         }, 2000);
     }
     const handleClose = () => {
@@ -80,23 +81,26 @@ export const Login = () => {
                         setErrors(newErrors);
                         return false;
                     }
-                    const userInfo = {
-                        "id": result.response.userData.id,
-                        "username": result.response.userData.username,
-                        "phone": result.response.userData.phone,
-                        "user_code": result.response.userData.user_code,
-                        "user_companies_id": result.response.userData.user_companies_id,
-                        "email": result.response.userData.email,
-                        "profile_pic": result.response.userData.profile_pic,
-                        "user_role_id": result.response.userData.user_role_id,
-                        "user_status_id": result.response.userData.user_status_id,
-                        "status": result.response.userData.status,
-                        "large_logo": result.response.companyDetails ? result.response.companyDetails.large_logo : '',
-                        "small_logo": result.response.companyDetails ? result.response.companyDetails.small_logo : ''
-                    };
-                    localStorage.setItem('user', JSON.stringify(userInfo))
-                    localStorage.setItem('token', result.response.access_token)
-                    handleLogin();
+                    if (result.success === true) {
+                        const userInfo = {
+                            "id": result.response.userData.id,
+                            "username": result.response.userData.username,
+                            "phone": result.response.userData.phone,
+                            "user_code": result.response.userData.user_code,
+                            "user_companies_id": result.response.userData.user_companies_id,
+                            "email": result.response.userData.email,
+                            "profile_pic": result.response.userData.profile_pic,
+                            "user_role_id": result.response.userData.user_role_id,
+                            "user_status_id": result.response.userData.user_status_id,
+                            "status": result.response.userData.status,
+                            "large_logo": result.response.companyDetails ? result.response.companyDetails.large_logo : '',
+                            "small_logo": result.response.companyDetails ? result.response.companyDetails.small_logo : ''
+                        };
+                        localStorage.setItem('user', JSON.stringify(userInfo))
+                        localStorage.setItem('token', result.response.access_token)
+
+                        handleLogin();
+                    }
                 } else {
                     handleShow1();
                     console.log("else");

@@ -78,7 +78,9 @@ export const AreaChart = ({ chartType = "monthly", companyArr = [] }) => {
     }, []);
 
     const seriesSuper = useMemo(() => {
-        if (!Array.isArray(companyArr) || companyArr.length === 0) return [];
+        if (!Array.isArray(companyArr) || companyArr.length === 0) {
+            return []
+        };
         return companyArr.map((dataset) => ({
             name: dataset.name,
             data: dataset.data,

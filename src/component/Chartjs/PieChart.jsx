@@ -18,20 +18,14 @@ export const PieChart = ({ pieResults = [], pieLabels = [] }) => {
                 breakpoint: 480,
                 options: {
                     chart: {
-                        width: 250,
-                        height: 250
+                        width: 200,
                     },
                     legend: {
-                        position: 'top',
-                        horizontalAlign: 'left',
-                        verticalAlign: 'top',
-                        floating: true,
-                        fontSize: '12px',
-                        offsetY: 0,
-                        offsetX: 0
+                        position: 'bottom',
                     },
                 },
             },
+            
         ],
     }), [pieLabels]);
 

@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { addCvrMode, getCvrModeByName } from '../../apis/apis'
+import { addCvrModes, getCvrModeByName } from '../../apis/apis'
 
 export const AddCvrMode = () => {
     const navigate = useNavigate();
@@ -36,7 +36,7 @@ export const AddCvrMode = () => {
         if (cvr_modes.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { mode_name: state.mode, company_id: companies_id, status: state.status };
-            let result = await addCvrMode(data)
+            let result = await addCvrModes(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {

@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { getCustomerTypeByName, addCustomerType } from '../../apis/apis'
+import { getCustomerTypeByName, addCustomerTypes } from '../../apis/apis'
 
 export const AddCustomerType = () => {
     const navigate = useNavigate();
@@ -36,7 +36,7 @@ export const AddCustomerType = () => {
         if (customer_types.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { customer_type: state.customer_type, company_id: companies_id, status: state.status };
-            let result = await addCustomerType(data)
+            let result = await addCustomerTypes(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {

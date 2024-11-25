@@ -220,7 +220,7 @@ export const ListCompany = () => {
                                                     <ul className='dropdown-option'>
                                                         <li onClick={() => handleView(row.original.id)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
                                                         <li onClick={() => handleEdit(row.original.id)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
-                                                        <li onClick={() => handleDelete(row.original.id)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Delete</li>
+                                                        {row.original.is_active == 1 && <li onClick={() => handleDelete(row.original.id)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Change Status</li>}
                                                     </ul>
                                                 }
                                             </td>

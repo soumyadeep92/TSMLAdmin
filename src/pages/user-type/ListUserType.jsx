@@ -207,7 +207,7 @@ export const ListUserType = () => {
                                                     <ul className='dropdown-option'>
                                                         <li onClick={() => handleView(row.original.roleid)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
                                                         <li onClick={() => handleEdit(row.original.roleid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
-                                                        <li onClick={() => handleDelete(row.original.roleid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Delete</li>
+                                                        {row.original.status === 1 && <li onClick={() => handleDelete(row.original.roleid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Change Status</li>}
                                                     </ul>
                                                 }
                                             </td>

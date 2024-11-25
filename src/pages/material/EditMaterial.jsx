@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { editMaterial, getMaterialById } from '../../apis/apis'
+import { editMaterials, getMaterialById } from '../../apis/apis'
 
 export const EditMaterial = () => {
     const { id } = useParams();
@@ -32,7 +32,7 @@ export const EditMaterial = () => {
             return false;
         }
         const data = { 'material_name': state.material, 'status': state.status };
-        let result = await editMaterial(id, data)
+        let result = await editMaterials(id, data)
         if (result.response.status === true) {
             setShowAlert(true);
             setTimeout(() => {

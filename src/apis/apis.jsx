@@ -122,12 +122,12 @@ export const getCustomerTypeByName = async (customer_type) => {
     return result;
 }
 
-export const addCustomerType = async (data) => {
+export const addCustomerTypes = async (data) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-customer-type`, 'post', data);
     return result;
 }
 
-export const editCustomerType = async (id, data) => {
+export const editCustomerTypes = async (id, data) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}edit-customer-type/${id}`, 'put', data);
     return result;
 }
@@ -152,7 +152,7 @@ export const getCvrModeByName = async (cvr) => {
     return result;
 }
 
-export const addCvrMode = async (data) => {
+export const addCvrModes = async (data) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-cvr-mode`, 'post', data);
     return result;
 }
@@ -182,12 +182,12 @@ export const getMaterialByName = async (material) => {
     return result;
 }
 
-export const addMaterial = async (data) => {
+export const addMaterials = async (data) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-material`, 'post', data);
     return result;
 }
 
-export const editMaterial = async (id, data) => {
+export const editMaterials = async (id, data) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}edit-material/${id}`, 'put', data);
     return result;
 }
@@ -237,7 +237,7 @@ export const getProductByName = async (product) => {
     return result;
 }
 
-export const addProduct = async (data) => {
+export const addProducts = async (data) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}add-product`, 'post', data);
     return result;
 }

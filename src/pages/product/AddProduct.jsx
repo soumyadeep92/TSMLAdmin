@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import {getProductByName,addProduct} from '../../apis/apis'
+import { getProductByName, addProducts } from '../../apis/apis'
 
 export const AddProduct = () => {
     const navigate = useNavigate();
@@ -36,7 +36,7 @@ export const AddProduct = () => {
         if (products.response.status == false) {
             const companies_id = JSON.parse(localStorage.getItem('user')).user_companies_id;
             const data = { product_name: state.product, company_id: companies_id, status: state.status };
-            let result = await addProduct(data)
+            let result = await addProducts(data)
             if (result.response.status === true) {
                 setShowAlert(true);
                 setTimeout(() => {
