@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'react-feather';
-import { ADMIN_BACKEND_BASE_URL } from '../constant';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { login } from '../apis/apis'
 

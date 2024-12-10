@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import AdminLayout from '../../layout/AdminLayout';
 import { Container, Row, Col, Form, Button, InputGroup, Image } from "react-bootstrap";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
+import { env } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import { getThemeById } from '../../apis/apis'
 
 export const ViewTheme = () => {
+    const ADMIN_BACKEND_BASE_URL = env.ADMIN_BACKEND_BASE_URL
     const navigate = useNavigate();
     const { id } = useParams();
     const [theme, setThemes] = useState({});

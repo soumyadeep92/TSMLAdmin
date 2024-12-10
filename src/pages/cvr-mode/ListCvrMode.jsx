@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { faSearch, faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowDown } from 'react-feather';
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { deleteCvrModeById, listCvrModes } from '../../apis/apis'
@@ -205,7 +204,7 @@ export const ListCvrMode = () => {
                                                     <ul className='dropdown-option'>
                                                         <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
                                                         <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
-                                                        {row.original.status === 1 && <li onClick={() => handleDelete(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Change Status</li>}
+                                                        {row.original.status === 1 && <li onClick={() => handleDelete(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Deactivate</li>}
                                                     </ul>
                                                 }
                                             </td>

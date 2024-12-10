@@ -184,13 +184,13 @@ body {
 
 @media (min-width: 1200px) {
 
-	.container,
+	/*.container,
 	.container-lg,
 	.container-md,
 	.container-sm,
 	.container-xl {
-		max-width: 95%;
-	}
+		max-width: 100%;
+	}*/
 }
 
 ////////////////////////Login page start///////////////////////////
@@ -219,13 +219,14 @@ body {
 	z-index: 99;
 	background: #f9f9f9;
 	padding: 5px;
-	width: 120px;
+	width: 130px;
 	top: 30px;
 	left: 0;
 }
 
 .dropdown-option li {
 	padding: 5px;
+	line-height: 15.5px;
 }
 
 .listing-style {
@@ -424,4 +425,37 @@ table th {
 	.left-sidebar-menu li {
 		padding: 3px 10px;
 	}
+}
+
+.w_100 button {
+	min-width: 100%;
+	text-align: left;
+}
+
+.w_100 button::after {
+	float: right;
+	margin-top: 12px;
+}
+
+.left-sidebar-menu li,
+ul.left-sidebar-menu li div {
+	display: flex;
+	gap: 5px;
+}
+
+.left-sidebar-menu li {
+	padding: 13px 0;
+}
+
+.number-input {
+	width: 60px;
+	text-align: center;
+	-moz-appearance: textfield;
+}
+
+.number-input::-webkit-outer-spin-button,
+.number-input::-webkit-inner-spin-button {
+	-webkit-appearance: inner-spin-button;
+	opacity: 1;
+	margin: 0;
 }

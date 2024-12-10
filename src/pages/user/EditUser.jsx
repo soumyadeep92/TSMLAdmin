@@ -2,7 +2,6 @@ import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button, InputGroup, Image } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { editUsers, listAllCompanies, getUserById, listRoles } from '../../apis/apis'
@@ -21,6 +20,7 @@ export const EditUser = () => {
     const handleClose = () => {
         setShowAlert(false);
     };
+
     const handleClose1 = () => setShow1(false);
     const [userRole, setUserRole] = useState([]);
     const [company, setCompany] = useState([]);
@@ -36,7 +36,9 @@ export const EditUser = () => {
             password: "",
             companyName: "",
             status: "",
-            picture: ""
+            picture: "",
+            portal_id: "",
+            select_portal_option: ""
         }
     );
     const [erroremail, setErroremail] = useState(false);
@@ -89,6 +91,7 @@ export const EditUser = () => {
         formData.append('password', state.password);
         formData.append('companies_name', state.companyName);
         formData.append('status', state.status);
+        formData.append('portal_id', state.portal_id);
 
         let result = await editUsers(id, formData)
         if (result.response.code === 5) {
@@ -146,6 +149,12 @@ export const EditUser = () => {
         }
     }
 
+    const handleChangeCheck = (event) => {
+        if (state.select_portal_option) {
+            setSelectedOption(!state.select_portal_option)
+        }
+        setSelectedOption(!selectedOption);
+    };
     const formClear = async (e) => {
         e.preventDefault();
         setState({
@@ -158,7 +167,9 @@ export const EditUser = () => {
             status: "",
             password: "",
             companyName: "",
-            picture: ""
+            picture: "",
+            portal_id: "",
+            select_portal_option: ""
         })
         setFile('');
         setFileName('')
@@ -167,6 +178,8 @@ export const EditUser = () => {
         inputFile.current.click();
         setbrowsClick(true);
     }
+
+    const [selectedOption, setSelectedOption] = useState(0);
 
     useEffect(() => {
         setFileName(file?.name);
@@ -187,16 +200,23 @@ export const EditUser = () => {
                         location: user.location,
                         status: user.status,
                         companyName: user.company.company_name,
-                        picture: user.profile_pic
+                        picture: user.profile_pic,
+                        portal_id: user.existing_portal_admin_id,
+                        select_portal_option: user.existing_portal_admin_id ? 1 : 0
                     }
                 );
                 setFile(user.profile_pic);
                 setFileName(user.profile_pic);
+                if (state.select_portal_option == 1) {
+                    setSelectedOption(1)
+                } else {
+                    setSelectedOption(0)
+                }
             }
         }).catch(err => {
 
         })
-    }, [])
+    }, [state.name])
 
     useEffect(() => {
         async function fetchData() {
@@ -320,6 +340,25 @@ export const EditUser = () => {
                                         {error && !state.companyName && <span style={invalidInput}>Enter Company Name</span>}
                                     </Col>
                                 </Row>
+                                    <Row className="g-2" style={row_style}>
+                                        <Col md>
+                                            <Form.Label>Do you have existing Admin Portal id?</Form.Label>
+                                            <Form.Check
+                                                type="checkbox"
+                                                id={`default-checkbox`}
+                                                checked={selectedOption}
+                                                onChange={() => handleChangeCheck(selectedOption)}
+                                            />
+                                            {/* <input name="checked" type="checkbox"
+                                                checked={selectedOption}
+                                                onChange={() => handleChangeCheck(selectedOption)}
+                                            /> */}
+                                        </Col>
+                                        <Col md>
+                                            <Form.Label>Existing Portal Admin Id</Form.Label>
+                                            {!selectedOption ? <Form.Control value={state.portal_id ? state.portal_id : ''} disabled onChange={(e) => { setState({ ...state, portal_id: e.target.value }) }} type="text" /> : <Form.Control value={state.portal_id ? state.portal_id : ''} onChange={(e) => { setState({ ...state, portal_id: e.target.value }) }} type="text" />}
+                                        </Col>
+                                    </Row>
                                     <Row className="g-2" style={row_style}>
                                         <Col md>
                                             <Form.Label>Upload User Image</Form.Label>

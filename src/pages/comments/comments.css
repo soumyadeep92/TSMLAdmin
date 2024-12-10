@@ -15,3 +15,20 @@
 .message.text-start {
     justify-content: flex-start;
 }
+
+.message.text-end p span.p-2.rounded.d-block.w-50.bg-primary.text-white {
+    float: right;
+}
+.clear {
+    clear: both;
+}
+.timetext {
+    font-size: 12px;
+    color: #d5d5d5;
+}
+.message.text-end .d-flex.w-50.justify-content-between {
+    float: right;
+}
+.usertext {
+    font-size: 14px;
+}

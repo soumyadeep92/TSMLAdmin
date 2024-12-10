@@ -2,11 +2,10 @@ import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import MultiSelectDropdown from '../../layout/MultiSelectDropdown';
-import { getUserByAdmin, listNoticeById } from '../../apis/apis'
+import { getUserByAdmin, listNoticeById, listRoles } from '../../apis/apis'
 
 export const ViewNotice = () => {
     const navigate = useNavigate();
@@ -17,6 +16,9 @@ export const ViewNotice = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [data, setData] = useState([]);
     const [users, setUsers] = useState([]);
+    const [roles, setRoles] = useState([]);
+    const [optionRoles, setOptionRoles] = useState([])
+    const [resRoles, setResRoles] = useState({})
     const [state, setState] = useState({
         name: '',
         title: '',
@@ -54,20 +56,30 @@ export const ViewNotice = () => {
         }
     }
     useEffect(() => {
-        getUserByAdmin().then(result => {
+        listRoles().then(result => {
             if (result.response.status === true) {
-                setRes(result.response.data)
+                setResRoles(result)
             }
         })
+        if (resRoles) {
+            const role_names = resRoles.response?.data.map(obj => obj['role_name'])
+            setOptionRoles(role_names)
+        }
         listNoticeById(id).then(result => {
             if (result.response.status === true) {
                 setState(result.response.noticeDetails)
             }
         })
         setUsers(state.user_names)
+        getUserByAdmin({ role_id: state.role_ids }).then(result => {
+            if (result.response.status) {
+                setRes(result.response.data);
+            }
+        });
+        setRoles(state.role_names)
     }, [state.name])
     useEffect(() => {
-    }, [users])
+    }, [users, resRoles])
     return (
         <>
             <AdminLayout>
@@ -95,23 +107,30 @@ export const ViewNotice = () => {
                             </Row>
                             <Row className="g-2">
                                 <Col md>
-                                    <Form.Label>Select Users</Form.Label>
-                                    <MultiSelectDropdown options={options} onSelect={handleSelect} fetchedOptions={users} disabled={true} />
+                                    <Form.Label>Select Roles</Form.Label>
+                                    <MultiSelectDropdown options={optionRoles} onSelect={handleSelect} fetchedOptions={roles} disabled={true} />
                                 </Col>
                                 <Col md>
-                                    <Form.Label>Start Date</Form.Label>
-                                    <Form.Control value={modifyDate(state.start_date)} disabled type="text" />
+                                    <Form.Label>Select Users</Form.Label>
+                                    <MultiSelectDropdown options={options} fetchedOptions={users} disabled={true} />
                                 </Col>
                             </Row>
                             <Row className="g-2">
                                 <Col md>
+                                    <Form.Label>Start Date</Form.Label>
+                                    <Form.Control value={modifyDate(state.start_date)} disabled type="text" />
+                                </Col>
+                                <Col md>
                                     <Form.Label>End Date</Form.Label>
                                     <Form.Control value={modifyDate(state.end_date)} disabled type="text" />
                                 </Col>
+                            </Row>
+                            <Row className="g-2">
                                 <Col md>
                                     <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
                                     <Form.Control value={state.status ? "Active" : "Inactive"} disabled />
                                 </Col>
+                                <Col md></Col>
                             </Row>
                         </Form>
                     </Row>

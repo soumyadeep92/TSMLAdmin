@@ -2,9 +2,9 @@ import AdminLayout from '../../layout/AdminLayout'
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { addUserForm, listRoles, listAllCompanies } from '../../apis/apis';
 
 export const AddUser = () => {
     const navigate = useNavigate();
@@ -17,6 +17,11 @@ export const AddUser = () => {
     const [error, setError] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [show1, setShow1] = useState(false);
+    const [selectedOption, setSelectedOption] = useState(0);
+
+    const handleChangeCheck = (event) => {
+        setSelectedOption(!selectedOption);
+    };
     const handleClose = () => {
         setShowAlert(false);
     };
@@ -31,6 +36,7 @@ export const AddUser = () => {
             location: "",
             companies_name: "",
             password: "",
+            portal_id: ""
         }
     );
     const [erroremail, setErroremail] = useState(false);
@@ -85,15 +91,11 @@ export const AddUser = () => {
         // formData.append('user_status_name', state.user_status);
         formData.append('user_role_name', state.userType);
         formData.append('password', state.password);
+        formData.append('portal_id', state.portal_id);
 
-        let result = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}add-user`, {
-            method: 'post',
-            body: formData,
-            headers: {}
-        });
+        let result = await addUserForm(formData);
 
         //result = await result.json();
-        console.log('resulthhh', result);
         if (result.response.status === false && result.response.code === 5) {
             setErroremail(true);
             setErrorphone(false);
@@ -101,7 +103,6 @@ export const AddUser = () => {
             setErrorcode(false);
             setErrorfile(false);
             setErroremailMsg(result.response.message);
-            console.log('email', result.response.message);
             return false;
         }
         if (result.response.status === false && result.response.code === 6) {
@@ -161,6 +162,7 @@ export const AddUser = () => {
             location: "",
             companies_name: "",
             password: "",
+            portal_id: ""
         })
         setFile(null);
         setFileName('')
@@ -177,23 +179,13 @@ export const AddUser = () => {
 
     useEffect(() => {
         async function fetchData() {
-            let resultRole = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list-role?status=1`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+            let resultRole = await listRoles();
             setUserRole(resultRole.response.data);
-            let resultCompany = await fetchWithAuth(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}list/companies?status=1`, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+            let resultCompany = await listAllCompanies()
             setCompany(resultCompany.response.companyDetails);
         }
         fetchData();
-    }, [setUserRole])
+    }, [userRole])
     return (
         <>
             {show1 && (
@@ -296,6 +288,25 @@ export const AddUser = () => {
                                                 }
                                             </Form.Select>
                                             {error && !state.companies_name && <span style={invalidInput}>Enter Company Name</span>}
+                                        </Col>
+                                    </Row>
+                                    <Row className="g-2" style={row_style}>
+                                        <Col md>
+                                            <Form.Label>Do you have existing Admin Portal id?</Form.Label>
+                                            <Form.Check
+                                                type="checkbox"
+                                                id={`default-checkbox`}
+                                                checked={selectedOption}
+                                                onChange={() => handleChangeCheck(selectedOption)}
+                                            />
+                                            {/* <input name="checked" type="checkbox"
+                                                checked={selectedOption}
+                                                onChange={() => handleChangeCheck(selectedOption)}
+                                            /> */}
+                                        </Col>
+                                        <Col md>
+                                            <Form.Label>Existing Portal Admin Id</Form.Label>
+                                            {!selectedOption ? <Form.Control value={state.portal_id} disabled onChange={(e) => { setState({ ...state, portal_id: e.target.value }) }} type="text" />:<Form.Control value={state.portal_id} onChange={(e) => { setState({ ...state, portal_id: e.target.value }) }} type="text" />}
                                         </Col>
                                     </Row>
                                     <Row className="g-2" style={row_style}>

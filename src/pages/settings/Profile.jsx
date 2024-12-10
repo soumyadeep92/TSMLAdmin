@@ -1,7 +1,6 @@
 import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button, InputGroup, Image } from 'react-bootstrap';
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import { Link, useNavigate } from "react-router-dom";
 import SweetAlert from 'react-bootstrap-sweetalert';

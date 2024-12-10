@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { faSearch, faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowDown } from 'react-feather';
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { deleteUserById, listAllUsers } from '../../apis/apis'
@@ -52,6 +51,7 @@ export const ListUser = () => {
     }, [])
     const getUsers = async () => {
         let result = await listAllUsers()
+        console.log(result)
         //result = await result.json();
         if (result.response.status === true && result.response.data) {
             const itemElements = [];
@@ -60,11 +60,12 @@ export const ListUser = () => {
                     dataid: item.id,
                     usercode: item.user_code,
                     username: item.username,
-                    usertype: item.role.role_name,
+                    usertype: item.role?.role_name,
                     email: item.email,
                     phone: item.phone,
                     location: item.location,
                     status: item.status,
+                    company_name: item.company?.company_name
                 });
                 return itemElements;
             })
@@ -78,15 +79,30 @@ export const ListUser = () => {
         [users]
     );
     const columns = React.useMemo(
-        () => [
-            { Header: 'User ID', accessor: 'usercode' },
-            { Header: 'User Name', accessor: 'username' },
-            { Header: 'User Type', accessor: 'usertype' },
-            { Header: 'Email', accessor: 'email' },
-            { Header: 'Phone', accessor: 'phone' },
-            { Header: 'Location', accessor: 'location' },
-            { Header: 'Status', accessor: 'status' },
-        ],
+        () => {
+            if (JSON.parse(localStorage.getItem('user')).user_role_id == 1) {
+                return [
+                    { Header: 'User ID', accessor: 'usercode' },
+                    { Header: 'User Name', accessor: 'username' },
+                    { Header: 'User Type', accessor: 'usertype' },
+                    { Header: 'Email', accessor: 'email' },
+                    { Header: 'Phone', accessor: 'phone' },
+                    { Header: 'Location', accessor: 'location' },
+                    { Header: 'Company Name', accessor: 'company_name' },
+                    { Header: 'Status', accessor: 'status' }
+                ]
+            } else {
+                return [
+                    { Header: 'User ID', accessor: 'usercode' },
+                    { Header: 'User Name', accessor: 'username' },
+                    { Header: 'User Type', accessor: 'usertype' },
+                    { Header: 'Email', accessor: 'email' },
+                    { Header: 'Phone', accessor: 'phone' },
+                    { Header: 'Location', accessor: 'location' },
+                    { Header: 'Status', accessor: 'status' }
+                ]
+            }
+        },
         [users]
     );
     const {
@@ -209,6 +225,7 @@ export const ListUser = () => {
                                                 <td>{row.original.email}</td>
                                                 <td>{row.original.phone}</td>
                                                 <td>{row.original.location}</td>
+                                                {JSON.parse(localStorage.getItem('user')).user_role_id == 1 && <td>{row.original.company_name}</td>}
                                                 <td>{row.original.status == 0 ? 'Inactive' : 'Active'}</td>
                                                 <td style={{ position: 'relative' }}>
                                                     <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
@@ -216,7 +233,7 @@ export const ListUser = () => {
                                                         <ul className='dropdown-option'>
                                                             <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
                                                             <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
-                                                            {row.original.status == 1 && <li onClick={() => handleDelete(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Change Status</li>}
+                                                            {row.original.status == 1 && <li onClick={() => handleDelete(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Deactivate</li>}
                                                         </ul>
                                                     }
                                                 </td>

@@ -2,7 +2,6 @@ import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { addCompany, getCompanyByName } from '../../apis/apis'
@@ -44,7 +43,7 @@ export const AddCompany = () => {
     const [errorpanmsg, setErrorpanMsg] = useState('');
     const [errorgstn, setErrorGSTN] = useState('');
     const [errorgstnmsg, setErrorgstnMsg] = useState('');
-    const addCompany = async () => {
+    const addCompanyForm = async () => {
         if (!state.company_name || !state.address || !state.email || !state.contact_person_name || !state.contact_person_email || !state.pan_number || !state.GSTN) {
             setError(true)
             return false;
@@ -350,7 +349,7 @@ export const AddCompany = () => {
                             <Button onClick={formClear} style={clearbuttonStyle}>Clear</Button>
                         </Col>
                         <Col md>
-                            <Button onClick={addCompany} style={submitbuttonStyle}>Add</Button>
+                            <Button onClick={addCompanyForm} style={submitbuttonStyle}>Add</Button>
                         </Col>
                     </Row>
                 </Container>

@@ -2,9 +2,8 @@ import AdminLayout from '../../layout/AdminLayout'
 import React, { useState, useEffect } from 'react';
 import { useTable, usePagination, useGlobalFilter } from 'react-table';
 import { Container, Col, Row, Table, Form, InputGroup, Button, Modal } from 'react-bootstrap';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faEye, faEdit, faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Link, useNavigate } from "react-router-dom";
@@ -56,7 +55,7 @@ export const CvrTimeSchedule = () => {
             { Header: 'User Code', accessor: 'usercode' },
             { Header: 'User Name', accessor: 'username' },
             { Header: 'CVR Code', accessor: 'cvrcode' },
-            // { Header: 'CVR Status', accessor: 'cvrstatus' },
+            { Header: 'CVR Status', accessor: 'cvrstatus' },
             { Header: 'Start Date', accessor: 'cvrstartdate' },
             { Header: 'End Date', accessor: 'cvrenddate' },
             // { Header: 'CVR Mode', accessor: 'cvrmode' },
@@ -101,9 +100,7 @@ export const CvrTimeSchedule = () => {
         for (let i = 0; i < apiData.length; i++) {
             setValues(prevItems => [...prevItems, 0]);
         }
-
-    }, [apiData])
-
+    }, [])
     const cvrShedule = async (cvrid, time) => {
 
         let result = await updateNotificationsTime(cvrid, time)
@@ -128,11 +125,19 @@ export const CvrTimeSchedule = () => {
     const handleNavigate = () => {
         navigate('/dashboard')
     }
+    const handleView = (id) => {
+        navigate('/view-cvr/' + id)
+    }
     const [isOpen, setIsOpen] = useState(false);
     const [show, setShow] = useState(false);
     const handleShow = (item) => {
         navigate('/comments/' + item);
     }
+    const [showOptions, setShowOptions] = useState(null);
+    const handleToggleOptions = (index) => {
+        //setShowOptions(index);
+        setShowOptions((prev) => (prev === index ? null : index));
+    };
     return (
         <>
             {successAlert && (
@@ -217,7 +222,7 @@ export const CvrTimeSchedule = () => {
                                 {page.map((row, index) => {
                                     const increment = (index) => {
                                         setValues((prevCounts) => {
-                                            const newCounts = [...prevCounts];
+                                            const newCounts = [...prevCounts, 0];
                                             newCounts[index] += 12;
                                             return newCounts;
                                         });
@@ -232,7 +237,8 @@ export const CvrTimeSchedule = () => {
                                     };
 
                                     const handleChange = (index, e) => {
-                                        const value = Number(e.target.value);
+                                        const value = parseInt(e.target.value);
+                                        console.log(value)
                                         if (!isNaN(value)) {
                                             setValues((prevCounts) => {
                                                 const newCounts = [...prevCounts];
@@ -248,30 +254,42 @@ export const CvrTimeSchedule = () => {
                                             <td>{row.original.usercode ? row.original.usercode : ''}</td>
                                             <td>{row.original.username ? row.original.username : ''}</td>
                                             <td>{row.original.cvrcode ? row.original.cvrcode : ''}</td>
-                                            {/* <td>{row.original.cvrstatus}</td> */}
+                                            <td>{row.original.cvrstatus}</td>
                                             <td>{modifyTime(row.original.cvrstartdate ? row.original.cvrstartdate : '')}</td>
                                             <td>{modifyTime(row.original.cvrenddate ? row.original.cvrenddate : '')}</td>
                                             {/* <td>{row.original.cvrmode}</td> */}
                                             <td>
                                                 <div>
-                                                    <div key={index} style={{ marginBottom: '10px' }}>
-                                                        <button onClick={() => decrement(index)}>-</button>
+                                                    <div key={index}>
+                                                        {/* <button onClick={() => decrement(index)}>-</button> */}
                                                         <input
-                                                            type="text"
-                                                            value={values[index] ? values[index] : 0}
+                                                            type="number"
+                                                            value={values[index]>0 ? values[index] : 0}
                                                             onChange={(e) => handleChange(index, e)}
-                                                            style={{ width: '30px', textAlign: 'center' }}
+                                                            style={{ width: '50px', textAlign: 'center' }}
+                                                            className="number-input"
                                                         />
-                                                        <button onClick={() => increment(index)}>+</button>
+                                                        {/* <button onClick={() => increment(index)}>+</button> */}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <div>
-                                                    <Button className="me-2" onClick={() => cvrShedule(row.original.dataid, values[index])}>Update</Button>
-                                                    <Button onClick={() => handleShow(row.original.cvrcode)}>Comment</Button>
-                                                </div>
+                                            <td style={{ position: 'relative' }}>
+                                                <p onClick={() => handleToggleOptions(index)} style={{ cursor: 'pointer' }}>...</p>
+                                                {showOptions === index &&
+                                                    <ul className='dropdown-option'>
+                                                        <li onClick={() => cvrShedule(row.original.dataid, values[index])} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Update</li>
+                                                        <li onClick={() => handleShow(row.original.cvrcode)} className="listing-style"><FontAwesomeIcon icon={faComment} className='mx-2' />Comment</li>
+                                                        <li onClick={() => handleView(row.original.cvrcode)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
+                                                    </ul>
+                                                }
                                             </td>
+                                            {/* <td> */}
+                                            {/* <div>
+                                                    <Button className="btn-sm me-2" onClick={() => cvrShedule(row.original.dataid, values[index])}>Update</Button>
+                                                    <Button className='btn-sm' onClick={() => handleShow(row.original.cvrcode)}>Comment</Button>
+                                                </div> */}
+
+                                            {/* </td> */}
                                         </tr>
                                     );
                                 })}
@@ -321,6 +339,7 @@ export const CvrTimeSchedule = () => {
         </>
     )
 }
+
 
 const tableHeaderStyle = {
     height: '70px',

@@ -39,7 +39,6 @@ import { ListCustomerType } from '../pages/customr-type/ListCustomerType'
 import { AddCustomerType } from '../pages/customr-type/AddCustomerType'
 import { EditCustomerType } from '../pages/customr-type/EditCustomerType'
 import { ViewCustomerType } from '../pages/customr-type/ViewCustomerType'
-import { RolePermission } from '../pages/role-permission/RolePermission'
 import { ChangePassword } from '../pages/settings/ChangePassword'
 import { Profile } from '../pages/settings/Profile'
 import { ForgotPassword } from '../pages/settings/ForgotPassword'
@@ -68,6 +67,9 @@ import { AddNotice } from '../pages/notices/AddNotice';
 import { EditNotice } from '../pages/notices/EditNotice';
 import { ListNotice } from '../pages/notices/ListNotice';
 import { ViewNotice } from '../pages/notices/ViewNotice';
+import { ImportCustomers } from '../pages/customers/ImportCustomer';
+import { ViewCVR } from '../pages/settings/ViewCVR';
+import { CVR } from '../pages/settings/CVR'
 
 const AppRoutes = () => {
   const roleIdAdmin = 2;
@@ -135,6 +137,7 @@ const AppRoutes = () => {
               <Route path='/edit-customer/:id' element={<EditCustomer />} />
               <Route path='/get-all-customer' element={<ListCustomer />} />
               <Route path='/view-customer/:id' element={<ViewCustomer />} />
+              <Route path='/import-customers' element={<ImportCustomers />} />
 
               <Route path='/add-notice' element={<AddNotice />} />
               <Route path='/edit-notice/:id' element={<EditNotice />} />
@@ -147,7 +150,9 @@ const AppRoutes = () => {
               <Route path='/view-user-status/:id' element={<ViewUserStatus />} /> */}
 
               <Route path='/cvr-time-schedule' element={<CvrTimeSchedule />} />
+              <Route path='/view-cvr/:id' element={<ViewCVR />} />
               <Route path='/comments/:id' element={<Comments />} />
+              <Route path='/cvr' element={<CVR />} />
             </Route>
             <Route element={<ProtectedRoute role_id={roleIdSuperAdmin} redirectPath="/not-found" />}>
               <Route path='/add-company' element={<AddCompany />} />

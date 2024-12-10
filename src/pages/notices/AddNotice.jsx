@@ -2,13 +2,13 @@ import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import MultiSelectDropdown from '../../layout/MultiSelectDropdown';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { addNotice, getUserByAdmin } from '../../apis/apis'
+import { addNotice, getUserByAdmin, listRoles } from '../../apis/apis'
+import { unwrapResult } from '@reduxjs/toolkit';
 
 export const AddNotice = () => {
     const navigate = useNavigate();
@@ -25,6 +25,10 @@ export const AddNotice = () => {
     const [showExistMessage, setShowExistMessage] = useState('');
     const [company, setCompany] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
+    const [selectedRoles, setSelectedRoles] = useState([]);
+    const [optionRoles, setOptionRoles] = useState([]);
+    const [optionRoleIds, setOptionRoleIds] = useState([]);
+    const [selectedItemsRoles, setSelectedItemsRoles] = useState([])
     const [state, setState] = useState({
         name: '',
         title: '',
@@ -33,6 +37,8 @@ export const AddNotice = () => {
         start_date: '',
         end_date: ''
     });
+    const [isAllSelected, setIsAllSelected] = useState(false)
+    const [resRoles, setResRoles] = useState([{ id: "", roles: "" }])
     const [showAlert, setShowAlert] = useState(false);
     const [show1, setShow1] = useState(false);
     const [res, setRes] = useState([]);
@@ -41,16 +47,16 @@ export const AddNotice = () => {
     };
     const handleClose1 = () => setShow1(false);
     const addNoticeForm = async () => {
-        if (!state.title || !state.description || selectedItems.length == 0 || !selectedStartDateTime || !selectedEndDateTime) {
+        if (!state.title || !state.description || res.length == 0 || !selectedStartDateTime || !selectedEndDateTime) {
             setError(true)
             return false;
         }
         let user_ids = res.filter(obj => {
-            let index_user_id = selectedItems.findIndex(obj1 => obj['username'] == obj1);
+            let index_user_id = selectedItems.findIndex(obj1 => obj['id'] == obj1);
             return res[index_user_id]
         })
         user_ids = user_ids.map(obj => obj['id'])
-        const data = { title: state.title, description: state.description, user_id: user_ids, start_date: selectedStartDateTime, end_date: selectedEndDateTime }
+        const data = { title: state.title, description: state.description, user_id: user_ids, role_id: selectedRoles, start_date: selectedStartDateTime, end_date: selectedEndDateTime }
         let result = await addNotice(data)
         if (result.response.status === true) {
             setShowAlert(true);
@@ -75,20 +81,60 @@ export const AddNotice = () => {
     const handleNavigate = () => {
         navigate('/list-cvr-mode')
     }
-
-    const handleSelect = (selected) => {
-        setSelectedItems(selected);
-        console.log('Selected options:', selected);
-    };
-
-    const options = res.map(obj => obj['username']);
-    useEffect(() => {
-        getUserByAdmin().then(result => {
+    const add_selected_filter = (selected) => {
+        setSelectedItemsRoles(selected)
+        const selected_filter = [];
+        for (let i = 0; i < selected.length; i++) {
+            let filtered_item = resRoles.response?.data.filter(obj => obj['role_name'] == selected[i]).map(obj => obj['id']);
+            selected_filter.push(filtered_item[0])
+        }
+        setSelectedRoles(selected_filter);
+        getUserByAdmin({ "role_id": selected_filter }).then(result => {
             if (result.response.status === true) {
                 setRes(result.response.data)
             }
         })
-    }, [])
+    }
+
+    const handleSelectRoles = (selected) => {
+        add_selected_filter(selected);
+    };
+
+    const handleSelectUsers = (selected) => {
+        const filterSelect = res.filter(obj => selected.includes(obj['username'])).map(obj => obj['id']);
+        setSelectedItems(filterSelect);
+    };
+
+    const options = res.map(obj => obj['username']);
+    useEffect(() => {
+        listRoles().then(result => {
+            if (result.response.status === true) {
+                setResRoles(result)
+            }
+        })
+        if (resRoles) {
+            const role_names = resRoles.response?.data.map(obj => obj['role_name'])
+            setOptionRoles(role_names)
+            const role_ids = resRoles.response?.data.map(obj => obj['id'])
+            setOptionRoleIds(role_ids)
+        }
+    }, [resRoles.success])
+    useEffect(() => {
+    }, [optionRoles, optionRoleIds, selectedItems]);
+
+    const handleSelectAllChangeRole = (isAllSelected) => {
+        if (isAllSelected == true) {
+            add_selected_filter(optionRoles);
+        }
+    };
+
+    const handleSelectAllChangeUser = (isAllSelected) => {
+        if (isAllSelected == true) {
+            const filterSelect = res.map(obj => obj['username']);
+            setSelectedItems(filterSelect);
+        }
+    };
+
     return (
         <>
             {show1 && (
@@ -166,11 +212,15 @@ export const AddNotice = () => {
                             </Row>
                             <Row className="g-2">
                                 <Col md>
-                                    <Form.Label>Select Users</Form.Label><span style={asteriskStyle}> *</span>
-                                    <MultiSelectDropdown options={options} onSelect={handleSelect} fetchedOptions={[]} />
-                                    {error && selectedItems.length == 0 && <span style={invalidInput}>Please select users</span>}
+                                    <Form.Label>Select Roles</Form.Label><span style={asteriskStyle}> *</span>
+                                    <MultiSelectDropdown options={optionRoles} onSelect={handleSelectRoles} fetchedOptions={selectedItemsRoles} onSelectAll={handleSelectAllChangeRole} />
+                                    {error && res.length == 0 && <span style={invalidInput}>Please select roles</span>}
                                 </Col>
-                                <Col md></Col>
+                                <Col md>
+                                    <Form.Label>Select Users</Form.Label>
+                                    <MultiSelectDropdown options={options} onSelect={handleSelectUsers} fetchedOptions={selectedItems} onSelectAll={handleSelectAllChangeUser} />
+                                    {/* {error && selectedItems.length == 0 && <span style={invalidInput}>Please select users</span>} */}
+                                </Col>
                             </Row>
                         </Form>
                     </Row>

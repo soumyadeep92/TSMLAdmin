@@ -4,7 +4,6 @@ import LoginImg from '../../assets/Login.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'react-feather';
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_AUTH_API_URL } from '../../constant';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { resetPassword } from '../../apis/apis';
 

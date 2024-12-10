@@ -2,7 +2,6 @@ import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Form, Button, InputGroup, Image } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { editCustomer, listCustomerType, getCustomerById } from '../../apis/apis'

@@ -185,28 +185,27 @@ const SideBar = () => {
           {isToggled ? (
             <Home />
           ) : (
-            <Link to="/dashboard">Dashboard</Link>
+            <><Home /><Link to="/dashboard">Dashboard</Link></>
           )}
         </li>
         <li>
           {isToggled ? (
             <Users />
           ) : (
-            <Link to="#" onClick={handleuserdropDown}>User Management</Link>
+            <><Users /><Link to="#" onClick={handleuserdropDown}>User Management</Link></>
           )}
         </li>
         {!isToggled && userDropdown && (
           <ul>
             <li><Link to="/list-user">User List</Link></li>
             <li><Link to="/list-user-type">User Type</Link></li>
-            {/* <li><Link to="/role-permission">Role Permission</Link></li> */}
           </ul>
         )}
         <li>
           {isToggled ?
             <Sliders />
             :
-            <Link to="#" onClick={handlemasterdropDown}>Master Management</Link>
+            <><Sliders /><Link to="#" onClick={handlemasterdropDown}>Master Management</Link></>
           }
         </li>
         {!isToggled && masterDropdown && (
@@ -217,14 +216,13 @@ const SideBar = () => {
             <li><Link to="/list-product">Product</Link></li>
             <li><Link to="/list-reason">Reason</Link></li>
             <li><Link to="/list-standard">Standard</Link></li>
-            {/* <li><Link to="/list-user-status">User Status</Link></li> */}
           </ul>
         )}
         <li>
           {isToggled ?
             <User />
             :
-            <Link to="#" onClick={handlecustomerdropDown}>Customer Management</Link>
+            <><User /><Link to="#" onClick={handlecustomerdropDown}>Customer Management</Link></>
           }
         </li>
         {!isToggled && customerDropdown && (
@@ -233,63 +231,39 @@ const SideBar = () => {
             <li><Link to="/list-customer-type">Type List</Link></li>
           </ul>
         )}
-        {/* <li>
-          {isToggled ?
-            <UserCheck />
-            :
-            <Link to="#" onClick={handlecvrdropDown}>CVR</Link>
-          }
-        </li>
-        {!isToggled && cvrDropdown && (
-          <ul>
-            <li><Link to="/cvr-time-schedule">CVR Schedule</Link></li>
-          </ul>
-        )} */}
         <li>
           {isToggled ?
             <UserCheck />
             :
-            <Link to="/cvr-time-schedule">CVR Schedule</Link>
+            <><UserCheck /><Link to="/cvr-time-schedule">CVR Schedule</Link></>
           }
         </li>
-        {/* <li>
-          {isToggled ?
-            <Archive />
-            :
-            <Link to="#" onClick={handlenoticedropDown}>Notices</Link>
-          }
-        </li>
-        {!isToggled && noticeDropdown && (
-          <ul>
-            <li><Link to="/list-notice">Notice List</Link></li>
-          </ul>
-        )} */}
         <li>
           {isToggled ?
             <Archive />
             :
-            <Link to="/list-notice">Notice List</Link>
+            <><Archive /><Link to="/list-notice">Notice List</Link></>
           }
         </li>
         <li>
           {isToggled ?
             <Settings />
             :
-            <Link to="#" onClick={handlesettingsdropDown}>Settings</Link>
+            <><Settings /><Link to="#" onClick={handlesettingsdropDown}>Settings</Link></>
           }
         </li>
         {!isToggled && settingsDropdown && (
           <ul>
+            <li><Link to="/cvr">CVR Settings</Link></li>
             <li><Link to="/profile">Profile</Link></li>
             <li><Link to="/change-password">Change Password</Link></li>
-            {/* <li><Link to="/cvr-time-schedule">CVR Schedule</Link></li> */}
           </ul>
         )}
         <li>
           {isToggled ? (
             <Power />
           ) : (
-            <Link onClick={logout} to={'/'}>Logout</Link>
+            <><Power /><Link onClick={logout} to={'/'}>Logout</Link></>
           )}
         </li>
       </ul> :
@@ -298,53 +272,28 @@ const SideBar = () => {
             {isToggled ? (
               <Home />
             ) : (
-              <Link to="/dashboard">Dashboard</Link>
+              <><Home /><Link to="/dashboard">Dashboard</Link></>
             )}
           </li>
-          {/* <li>
-            {isToggled ? (
-              <Users />
-            ) : (
-              <Link to="#" onClick={handleuserdropDown}>User Management</Link>
-            )}
-          </li>
-          {!isToggled && userDropdown && (
-            <ul>
-              <li><Link to="/list-user">User List</Link></li>
-            </ul>
-          )} */}
           <li>
             {isToggled ? (
               <Users />
             ) : (
-              <Link to="/list-user">User List</Link>
+              <><Users /><Link to="/list-user">User List</Link></>
             )}
           </li>
-          {/* <li>
-            {isToggled ?
-              <Sliders />
-              :
-              <Link to="#" onClick={handlemasterdropDown}>Master Management</Link>
-            }
-          </li>
-          {!isToggled && masterDropdown &&
-            <ul>
-              <li><Link to="/list-company">Company</Link></li>
-
-            </ul>
-          } */}
           <li>
             {isToggled ?
               <Sliders />
               :
-              <Link to="/list-company">Company List</Link>
+              <><Sliders /><Link to="/list-company">Company List</Link></>
             }
           </li>
           <li>
             {isToggled ?
               <Settings />
               :
-              <Link to="#" onClick={handlesettingsdropDown}>Settings</Link>
+              <><Settings /><Link to="#" onClick={handlesettingsdropDown}>Settings</Link></>
             }
           </li>
           {!isToggled && settingsDropdown && (
@@ -358,7 +307,7 @@ const SideBar = () => {
             {isToggled ? (
               <Power />
             ) : (
-              <Link onClick={logout} to={'/'}>Logout</Link>
+              <><Power /><Link onClick={logout} to={'/'}>Logout</Link></>
             )}
           </li>
         </ul>}

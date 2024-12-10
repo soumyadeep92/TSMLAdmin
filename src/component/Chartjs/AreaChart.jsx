@@ -32,7 +32,7 @@ export const AreaChart = ({ chartType = "monthly", companyArr = [] }) => {
             })
         } else {
         }
-    }, [area.id, companyArr])
+    }, [chartType])
 
     const optionsSuper = useMemo(() => {
         return {
@@ -93,29 +93,8 @@ export const AreaChart = ({ chartType = "monthly", companyArr = [] }) => {
         let categories = resultsAreaLabelsMonthly;
         if (chartType === 'weekly') {
             dateFormat = 'MMM dd, yyyy';
-            // categories = resultsAreaLabels.map(date => {
-            //     const currentDate = new Date(date);
-            //     return `${currentDate.toLocaleString('default', { month: 'long' })} ${currentDate.getDate()}, ${currentDate.getFullYear()}`;
-            // });
-            const currentDate = moment(new Date());
-            const startOfWeek = currentDate.startOf('month');
-            const endOfWeek = moment(new Date()).endOf('month');
-            const startTimestamp = startOfWeek.valueOf();
-            const endTimestamp = endOfWeek.valueOf();
-            const filteredData = resultsAreaLabelsWeekly.reduce((acc, date, index) => {
-                const currentLabelDate = new Date(date);
-                const currentTimestamp = currentLabelDate.getTime();
-                if (currentTimestamp >= startTimestamp && currentTimestamp <= endTimestamp) {
-                    acc.push({
-                        date: date,
-                        value: resultsAreaWeekly[index],
-                    });
-                }
-                return acc;
-            }, []);
-
-            categories = filteredData.map(item => item.date);
-            resultsArea = filteredData.map(item => item.value);
+            resultsArea = resultsAreaWeekly;
+            categories = resultsAreaLabelsWeekly;
             setResults(resultsArea)
             setResultsLabel(categories)
         }
@@ -126,10 +105,15 @@ export const AreaChart = ({ chartType = "monthly", companyArr = [] }) => {
             const filteredData = resultsAreaLabelsDaily.reduce((acc, date, index) => {
                 const currentDate = new Date(date);
                 if (currentDate.getMonth() === currentMonth && currentDate.getFullYear() === currentYear) {
-                    acc.push({
-                        date: date,
-                        value: resultsAreaDaily[index],
-                    });
+                    let start_date = moment().subtract(15, 'days');
+                    let end_date = moment()
+                    let currentDateFix = moment(date)
+                    if (currentDateFix >= start_date && currentDateFix <= end_date) {
+                        acc.push({
+                            date: date,
+                            value: resultsAreaDaily[index],
+                        });
+                    }
                 }
                 return acc;
             }, []);
@@ -141,11 +125,10 @@ export const AreaChart = ({ chartType = "monthly", companyArr = [] }) => {
         }
 
         else if (chartType === 'quarterly') {
-            dateFormat = 'Q# yyyy';
+            dateFormat = 'MM yyyy';
             categories = resultsAreaLabelsQuarterly.map(date => {
-                const currentDate = new Date(date);
-                const quarter = Math.floor(currentDate.getMonth() / 3) + 1;
-                return `Q${quarter} ${currentDate.getFullYear()}`;
+                const currentDate = new Date();
+                return `${date} ${currentDate.getFullYear()}`;
             });
 
             categories = [...new Set(categories)];
@@ -227,4 +210,69 @@ export const AreaChart = ({ chartType = "monthly", companyArr = [] }) => {
         );
     }
 }
+
+// import React, { useState } from 'react';
+// import { Charts } from './Charts';
+// //import * as dayjs from "dayjs";
+// //import * as moment from 'moment';
+
+// export const AreaChart = () => {
+
+//     const [height] = useState(350);
+
+//     const [series] = useState([{
+//         name: "CVR",
+//         data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+//     }]);
+//     const [options] = useState({
+//         chart: {
+//             height: 350,
+//             type: 'area',
+//             zoom: {
+//                 enabled: false
+//             }
+//         },
+//         dataLabels: {
+//             enabled: false
+//         },
+//         stroke: {
+//             curve: 'straight'
+//         },
+//         grid: {
+//             row: {
+//                 colors: ['#f3f3f3', 'transparent'],
+//                 opacity: 0.5
+//             },
+//         },
+//         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+//         xaxis: {
+//             type: 'string',
+//         },
+//         yaxis: {
+//             opposite: true
+//         },
+//         legend: {
+//             horizontalAlign: 'left'
+//         },
+//         responsive: [
+//             {
+//                 breakpoint: 800,
+//                 options: {
+//                     chart: {
+//                         width: 300,
+//                     },
+//                     legend: {
+//                         position: 'bottom',
+//                     },
+//                 },
+
+//             },
+
+//         ],
+//     });
+
+//     return (
+//         <Charts options={options} type="area" series={series} height={height} />
+//     );
+// }
 

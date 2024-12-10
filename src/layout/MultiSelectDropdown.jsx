@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './MultiCheckboxDropdown.css';
 
-const MultiSelectDropdown = ({ options, onSelect, fetchedOptions, disabled = false }) => {
+const MultiSelectDropdown = ({ options, onSelect, fetchedOptions, disabled = false, onSelectAll }) => {
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -37,6 +37,7 @@ const MultiSelectDropdown = ({ options, onSelect, fetchedOptions, disabled = fal
             setSelectedOptions(options);
         }
         setSelectAll(!selectAll);
+        onSelectAll(!selectAll);
     };
 
     useEffect(() => {
@@ -45,12 +46,18 @@ const MultiSelectDropdown = ({ options, onSelect, fetchedOptions, disabled = fal
 
             setSelectAll(fetchedOptions.length === options.length);
         };
-        if (fetchedOptions.length > 0) {
+        if (fetchedOptions && fetchedOptions.length > 0) {
             fetchSelectedOptions();
+        }
+        if (fetchedOptions.length == 0) {
+            setSelectedOptions([])
+            setSelectAll(false)
         }
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [fetchedOptions]);
+    useEffect(() => {
+    }, [selectedOptions])
 
     return (
         <div className="multi-checkbox-dropdown" ref={dropdownRef}>

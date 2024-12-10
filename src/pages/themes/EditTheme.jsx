@@ -6,8 +6,10 @@ import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { editThemes, getThemeById, listAllCompanies, listAllThemeHeaders } from '../../apis/apis';
+import { env } from '../../constant';
 
 export const EditTheme = () => {
+    const ADMIN_BACKEND_BASE_URL = env.ADMIN_BACKEND_BASE_URL
     const { id } = useParams();
     const navigate = useNavigate();
     const inputFile1 = useRef(null);

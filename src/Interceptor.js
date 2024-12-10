@@ -7,7 +7,6 @@ export const unregister = fetchIntercept.register({
         // Modify the url or config here
 
         const token = localStorage.getItem('token');
-
         // const decoded = jwtDecode(token);
         // const ac_time = decoded.exp * 1000;
         // if( ac_time < Date.now() ){

@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Charts } from './Charts';
 import { dashboardBarResults } from '../../apis/apis'
 
-export const BarChart = ({ bodyReq = {}, frequency = '' }) => {//barChartOpen = [], barChartWIP = [], barChartClosed = [], months = []
+export const BarChart = ({ bodyReq = {}, frequency = '' }) => {
     const [barChartOpen, setBarChartOpen] = useState([])
     const [barChartWIP, setBarChartWIP] = useState([])
     const [barChartClosed, setBarChartClosed] = useState([])

@@ -2,14 +2,13 @@ import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import MultiSelectDropdown from '../../layout/MultiSelectDropdown';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
-import { listNoticeById, getUserByAdmin, editNotice } from '../../apis/apis'
+import { listNoticeById, getUserByAdmin, editNotice, listRoles } from '../../apis/apis'
 
 export const EditNotice = () => {
     const navigate = useNavigate();
@@ -20,6 +19,14 @@ export const EditNotice = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [data, setData] = useState([]);
     const [users, setUsers] = useState([]);
+    const [resRoles, setResRoles] = useState([{ id: "", roles: "" }])
+    const [optionRoles, setOptionRoles] = useState([]);
+    const [optionRoleIds, setOptionRoleIds] = useState([]);
+    const [selectedRoles, setSelectedRoles] = useState([]);
+    const [selectedRoleIds, setSelectedRoleIds] = useState([]);
+    const [roles, setRoles] = useState([]);
+    const [username, setUserNames] = useState([]);
+    const [roleIds, setRoleIds] = useState([])
     const [state, setState] = useState({
         name: '',
         title: '',
@@ -45,7 +52,7 @@ export const EditNotice = () => {
     };
     const handleClose1 = () => setShow1(false);
     const editNoticeForm = async () => {
-        if (!state.title || !state.description || (state.user_names.length == 0 && selectedItems.length == 0) || state.status == 2 || (!state.start_date && !selectedStartDateTime) || (!state.end_date && !selectedEndDateTime)) {
+        if (!state.title || !state.description || (selectedRoleIds.length == 0 && roles.length == 0) || state.status == 2 || (!state.start_date && !selectedStartDateTime) || (!state.end_date && !selectedEndDateTime)) {
             setError(true)
             return false;
         }
@@ -53,8 +60,8 @@ export const EditNotice = () => {
             let index_user_id = selectedItems.length > 0 ? selectedItems.findIndex(obj1 => obj['username'] == obj1) : state.user_names.findIndex(obj1 => obj['username'] == obj1);
             return res[index_user_id]
         })
-        user_ids = user_ids.map(obj => obj['id'])
-        const data = { title: state.title, description: state.description, user_id: user_ids, start_date: selectedStartDateTime ? selectedStartDateTime : state.start_date, end_date: selectedEndDateTime ? selectedEndDateTime : state.end_date }
+        user_ids = user_ids.length > 0 && user_ids.map(obj => obj['id'])
+        const data = { title: state.title, description: state.description, user_id: user_ids, role_id: selectedRoleIds, start_date: selectedStartDateTime ? selectedStartDateTime : state.start_date, end_date: selectedEndDateTime ? selectedEndDateTime : state.end_date }
         let result = await editNotice(id, data)
         if (result.response.status === true) {
             setShowAlert(true);
@@ -73,35 +80,93 @@ export const EditNotice = () => {
             description: '',
             user_id: [],
             status: '',
-            user_names: []
+            user_names: [],
         })
+        setRoles([])
+        setUserNames([])
     }
     const handleNavigate = () => {
         navigate('/list-notice')
     }
 
-    const handleSelect = (selected) => {
-        setSelectedItems(selected);
-        console.log('Selected options:', selected);
-    };
-
-    const options = res.map(obj => obj['username']);
-    useEffect(() => {
-        getUserByAdmin().then(result => {
+    const add_selected_filter = async (selected) => {
+        selected = selected.concat(state.role_names)
+        setSelectedRoles(selected)
+        const filterSelect = resRoles?.data.filter(obj => selected.includes(obj['role_name'])).map(obj => obj['id']);
+        await getUserByAdmin({ "role_id": filterSelect }).then(result => {
             if (result.response.status === true) {
                 setRes(result.response.data)
             }
         })
-        listNoticeById(id).then(result => {
-            if (result.response.status === true) {
-                setState(result.response.noticeDetails)
-                setUsers(state.user_names)
+        setSelectedRoleIds(filterSelect)
+    }
+
+    const handleSelectRoles = async (selected) => {
+        await add_selected_filter(selected);
+    };
+
+    const handleSelectUsers = (selected) => {
+        const filterSelect = res.filter(obj => selected.includes(obj['username'])).map(obj => obj['username']);
+        setSelectedItems(filterSelect);
+    };
+
+    const options = res.map(obj => obj['username']);
+
+    useEffect(() => {
+        listRoles().then(result => {
+            if (result.response.status) {
+                setResRoles(result.response);
             }
-        })
-    }, [id])
-    // useEffect(() => {
-    //     console.log(users)
-    // }, [users])
+        });
+    }, []);
+
+    useEffect(() => {
+        if (id) {
+            listNoticeById(id).then(result => {
+                if (result.response.status) {
+                    setState(result.response.noticeDetails);
+                    setUsers(result.response.noticeDetails.user_names || []);
+                    setRoles(result.response.noticeDetails.role_names || []);
+                    setSelectedRoleIds(result.response.noticeDetails.role_ids || []);
+                }
+            });
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (resRoles.data) {
+            const roleNames = resRoles.data.map(obj => obj['role_name']);
+            setOptionRoles(roleNames);
+
+            const roleIds = resRoles.data.map(obj => obj['id']);
+            setOptionRoleIds(roleIds);
+        }
+    }, [resRoles, selectedRoleIds]);
+
+    useEffect(() => {
+        if (selectedRoleIds.length > 0) {
+            getUserByAdmin({ role_id: selectedRoleIds }).then(result => {
+                if (result.response.status) {
+                    setRes(result.response.data);
+                    const user_names = res.length > 0 ? res.map(obj => obj['username']) : [];
+                    setUserNames(user_names)
+                }
+            });
+        }
+    }, [optionRoleIds, selectedRoles]);
+
+    const handleSelectAllChangeRole = async (isAllSelected) => {
+        if (isAllSelected == true) {
+            await add_selected_filter(optionRoles);
+        }
+    };
+
+    const handleSelectAllChangeUser = (isAllSelected) => {
+        if (isAllSelected == true) {
+            const filterSelect = res.map(obj => obj['username']);
+            setSelectedItems(filterSelect);
+        }
+    };
 
     return (
         <>
@@ -167,7 +232,7 @@ export const EditNotice = () => {
                                         className="form-control wide-datepicker"
                                     />
                                     <Col md>
-                                        {error && !selectedStartDateTime && <span style={invalidInput}>Enter Start date</span>}
+                                        {error && (!selectedStartDateTime && !state.start_date) && <span style={invalidInput}>Enter Start date</span>}
                                     </Col>
                                 </Col>
                                 <Col md>
@@ -182,16 +247,23 @@ export const EditNotice = () => {
                                         className="form-control wide-datepicker"
                                     />
                                     <Col md>
-                                        {error && !selectedEndDateTime && <span style={invalidInput}>Enter End date</span>}
+                                        {error && (!selectedEndDateTime && !state.end_date) && <span style={invalidInput}>Enter End date</span>}
                                     </Col>
                                 </Col>
                             </Row>
                             <Row className="g-2">
                                 <Col md>
-                                    <Form.Label>Select Users</Form.Label><span style={asteriskStyle}> *</span>
-                                    <MultiSelectDropdown options={options} onSelect={handleSelect} fetchedOptions={state.user_names} />
-                                    {error && (selectedItems.length == 0 && users.length == 0) && <span style={invalidInput}>Please select users</span>}
+                                    <Form.Label>Select Roles</Form.Label><span style={asteriskStyle}> *</span>
+                                    <MultiSelectDropdown options={optionRoles} onSelect={handleSelectRoles} fetchedOptions={roles} onSelectAll={handleSelectAllChangeRole} />
+                                    {error && selectedRoleIds.length == 0 && <span style={invalidInput}>Please select roles</span>}
                                 </Col>
+                                <Col md>
+                                    <Form.Label>Select Users</Form.Label>
+                                    <MultiSelectDropdown options={options} onSelect={handleSelectUsers} fetchedOptions={username} onSelectAll={handleSelectAllChangeUser} />
+                                    {/* {error && (selectedItems.length == 0 && users.length == 0) && <span style={invalidInput}>Please select users</span>} */}
+                                </Col>
+                            </Row>
+                            <Row className="g-2">
                                 <Col md>
                                     <Form.Label>Status</Form.Label><span style={asteriskStyle}> *</span>
                                     <Form.Select aria-label="Floating label select example" value={state.status} onChange={(e) => { setState({ ...state, status: e.target.value }) }}>
@@ -201,6 +273,7 @@ export const EditNotice = () => {
                                     </Form.Select>
                                     {error && state.status == 2 && <span style={invalidInput}>Select Status</span>}
                                 </Col>
+                                <Col md></Col>
                             </Row>
                         </Form>
                     </Row>

@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { faSearch, faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowDown } from 'react-feather';
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { getAllCustomers, deleteCustomerById } from '../../apis/apis'
@@ -126,6 +125,9 @@ export const ListCustomer = () => {
     const addCustomer = () => {
         navigate('/create-customer');
     }
+    const navigateImport = () => {
+        navigate('/import-customers');
+    }
     return (
         <>
             {show1 && (
@@ -217,7 +219,7 @@ export const ListCustomer = () => {
                                                     <ul className='dropdown-option'>
                                                         <li onClick={() => handleView(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
                                                         <li onClick={() => handleEdit(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
-                                                        {row.original.status == 1 && <li onClick={() => handleDelete(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Change Status</li>}
+                                                        {row.original.status == 1 && <li onClick={() => handleDelete(row.original.dataid)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Deactivate</li>}
                                                     </ul>
                                                 }
                                             </td>
@@ -265,13 +267,12 @@ export const ListCustomer = () => {
                             </Col>
                         </Row>
                     </div>
-                    <Row className="g-2" style={{ marginLeft: "629px" }}>
-                        <Col md style={{ textAlign: "right" }}>
-                            <Button style={clearbuttonStyle}>Export< ArrowDown /></Button>
-                        </Col>
-                        <Col md>
-                            <Button onClick={addCustomer} style={submitbuttonStyle}>Add New Customer</Button>
-                        </Col>
+                    <Row className="g-2" style={{ marginLeft: "0px" }}>
+                        <div className='d-flex gap-3 justify-content-end'>
+                        <Button onClick={navigateImport} style={clearbuttonStyle}>Import< ArrowDown /></Button>
+                        <Button style={clearbuttonStyle}>Export< ArrowDown /></Button>
+                        <Button onClick={addCustomer} style={submitbuttonStyle}>Add New Customer</Button>
+                        </div>
                     </Row>
                 </Container>
             </AdminLayout>

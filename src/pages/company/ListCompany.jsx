@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { faSearch, faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowDown } from 'react-feather';
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { deleteCompanyById, listCompanies } from '../../apis/apis'
@@ -49,6 +48,7 @@ export const ListCompany = () => {
     }, [])
     const getApiDatas = async () => {
         let result = await listCompanies()
+        console.log(result)
         if (result.response.status === true && result.response.companyDetails
         ) {
             const itemElements = [];
@@ -220,7 +220,7 @@ export const ListCompany = () => {
                                                     <ul className='dropdown-option'>
                                                         <li onClick={() => handleView(row.original.id)} className="listing-style"><FontAwesomeIcon icon={faEye} className='mx-2' />View</li>
                                                         <li onClick={() => handleEdit(row.original.id)} className="listing-style"><FontAwesomeIcon icon={faEdit} className='mx-2' />Edit</li>
-                                                        {row.original.is_active == 1 && <li onClick={() => handleDelete(row.original.id)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Change Status</li>}
+                                                        {row.original.is_active == 1 && <li onClick={() => handleDelete(row.original.id)} className="listing-style"><FontAwesomeIcon icon={faTrash} className='mx-2' />Deactivate</li>}
                                                     </ul>
                                                 }
                                             </td>

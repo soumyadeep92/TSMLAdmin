@@ -2,7 +2,6 @@ import AdminLayout from '../../layout/AdminLayout';
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Table } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { editRole, permissions, getRoleById, getRolePermissions } from '../../apis/apis'

@@ -8,6 +8,7 @@ import fetchWithAuth from '../fetchWithAuth';
 import { useNavigate } from "react-router-dom";
 import Toast from 'react-bootstrap/Toast';
 import { getUsersById, listNotifications, updateNotifications } from '../apis/apis';
+import ProfileImage from '../assets/profileImage.png';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -111,7 +112,8 @@ const Header = () => {
                                 <li className="top-0 start-0">
                                     <div className='pro-img-block'>
                                         <div className="profile-container">
-                                            <Image className="profile-image" src={user.profile_pic} />
+                                            {JSON.parse(localStorage.getItem('user')).profile_pic && <Image className="profile-image" src={JSON.parse(localStorage.getItem('user')).profile_pic} />}
+                                            {!JSON.parse(localStorage.getItem('user')).profile_pic && <Image className="profile-image" src={ProfileImage} />}
                                         </div>
                                         <div className='ml-10'>
                                             <span className='user-name'>{user.name}</span>

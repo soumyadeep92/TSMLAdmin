@@ -1,7 +1,11 @@
-import fetchWithAuth from "../fetchWithAuth";
-import { ADMIN_BACKEND_API_URL, ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL, ADMIN_BACKEND_AUTH_API_URL } from "../constant";
+import { env } from "../constant";
 import { allRequests, allRequestsFormData } from './apiEndpoints';
 
+
+const ADMIN_BACKEND_API_URL = env.ADMIN_BACKEND_API_URL;
+const ADMIN_BACKEND_BASE_URL = env.ADMIN_BACKEND_BASE_URL;
+const ADMIN_BACKEND_CUSTOMER_API_URL = env.ADMIN_BACKEND_CUSTOMER_API_URL;
+const ADMIN_BACKEND_AUTH_API_URL = env.ADMIN_BACKEND_AUTH_API_URL;
 export const getUsersById = async (userId) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-id/${userId}`, 'get');
     return result;
@@ -202,8 +206,8 @@ export const listMaterials = async (id) => {
     return result;
 }
 
-export const getUserByAdmin = async () => {
-    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-admin`, 'get')
+export const getUserByAdmin = async (data) => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get-user-by-admin`, 'post', data)
     return result;
 }
 
@@ -213,12 +217,12 @@ export const addNotice = async (data) => {
 }
 
 export const editNotice = async (id, data) => {
-    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}/update/notice/${id}`, 'post', data);
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}update/notice/${id}`, 'post', data);
     return result;
 }
 
 export const listNoticeById = async (id) => {
-    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}/list/notice/${id}`, 'get')
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}list/notice/${id}`, 'get')
     return result;
 }
 
@@ -502,5 +506,45 @@ export const dashboardAreaResults = async () => {
 
 export const getSuperadminAreaChart = async (data) => {
     let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}get/super-admin/area-chart`, 'post', data)
+    return result;
+}
+
+export const addUserForm = async (formData) => {
+    let result = await allRequestsFormData(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}add-user`, 'post', formData);
+    return result;
+}
+
+export const deleteReason = async (item) => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-reason/${item}`, 'put');
+    return result
+}
+
+export const deleteMaterial = async (item) => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}delete-material/${item}`, 'put')
+    return result
+}
+
+export const listAllCustomers = async (item) => {
+    let result = await allRequestsFormData(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}upload/customers/file-list`, 'post', item)
+    return result
+}
+
+export const uploadAllCustomers = async (body) => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}upload/customers/file`, 'post', body)
+    return result
+}
+
+export const viewCVRById = async (id) => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}details-cvr/${id}`, 'get')
+    return result
+}
+
+export const createNotifications = async (body) => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_API_URL}create/notifications`, 'post', body)
+    return result;
+}
+
+export const CVRData = async (body) => {
+    let result = await allRequests(`${ADMIN_BACKEND_BASE_URL}${ADMIN_BACKEND_CUSTOMER_API_URL}cvr/flags`, 'post', body)
     return result;
 }

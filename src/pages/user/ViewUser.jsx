@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import AdminLayout from '../../layout/AdminLayout';
 import { Container, Row, Col, Form, Button, InputGroup, Image } from "react-bootstrap";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_API_URL, ADMIN_BACKEND_IMAGE_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import {getUserById} from '../../apis/apis'
 

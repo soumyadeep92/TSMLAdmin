@@ -4,13 +4,12 @@ import { useTable, usePagination, useGlobalFilter } from 'react-table';
 import { Container, Col, Row, Table, Form, InputGroup, Button, Modal } from 'react-bootstrap';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ADMIN_BACKEND_BASE_URL, ADMIN_BACKEND_CUSTOMER_API_URL } from '../../constant';
 import fetchWithAuth from '../../fetchWithAuth';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import './comments.css';
 import { CvrTimeSchedule } from '../settings/CvrTimeSchedule';
-import { addComments, listCommentsById } from '../../apis/apis'
+import { addComments, listCommentsById, createNotifications } from '../../apis/apis'
 
 export const Comments = () => {
     const navigate = useNavigate();
@@ -24,6 +23,7 @@ export const Comments = () => {
     const [messages, setMessages] = useState([
     ]);
     const [input, setInput] = useState("");
+    const [user, setUser] = useState({});
 
     const handleInputChange = (e) => {
         setInput(e.target.value);
@@ -32,6 +32,7 @@ export const Comments = () => {
     async function getApiData() {
         await listCommentsById(id).then(res => {
             setMessages(res.response.commentDetails);
+            setUser(res.response.userDetails)
             setInput("");
         }).catch(err => {
 
@@ -50,8 +51,24 @@ export const Comments = () => {
         let result = await addComments(data)
         if (result.response.status === true) {
             getApiData()
+            let body = {
+                "topic": `Admin has commented on cvr id ${id}`,
+                "os_type": "android",
+                user_ids: []
+            }
+            await createNotifications(body)
         } else {
 
+        }
+    }
+    function modifyDate(date) {
+        if (date) {
+            const searchDate = date.split('T')[1].indexOf('.000Z');
+            const modifDate = date.split('T')[1].substring(0, searchDate);
+            let onlyDate = modifDate.split(':')[0] + ":" + modifDate.split(':')[1];
+            return onlyDate;
+        } else {
+            return '';
         }
     }
     return (
@@ -82,9 +99,15 @@ export const Comments = () => {
                                 {messages.map((msg, index) => (
                                     <div key={index} className={`message ${msg.user_id === JSON.parse(localStorage.getItem('user')).id ? "text-end" : "text-start"}`}>
                                         <p>
-                                            <span className={`p-2 rounded ${msg.user_id === JSON.parse(localStorage.getItem('user')).id ? "bg-primary text-white" : "bg-light text-dark"}`}>
+                                            <span className={`p-2 rounded d-block w-50 ${msg.user_id === JSON.parse(localStorage.getItem('user')).id ? "bg-primary text-white" : "bg-light text-dark"}`}>
                                                 {msg.comment}
                                             </span>
+                                            <div className='clear'></div>
+                                            <div className='d-flex w-50 justify-content-between'>
+                                                <span className='usertext'>{msg.user_id === JSON.parse(localStorage.getItem('user')).id ? msg.userDetailsSend : msg.userDetailsReceive}</span>
+                                                <span className='timetext'>{modifyDate(msg.created_at)}</span>
+                                            </div>
+                                            <div className='clear'></div>
                                         </p>
                                     </div>
                                 ))}
